@@ -1,0 +1,153 @@
+/*
+ * Safehouse GEAR screen theme.
+ *
+ * Deliberately plain USS: solid colours, per-side borders and border-radius only. No
+ * background-image (no texture assets), no box-shadow or outline (support for those varies by
+ * Unity version and an unsupported property just silently does nothing - better to depend only on
+ * properties every UI Toolkit build has). The faceted-corner panels and the stash grid lines are
+ * drawn in code instead (Chrome/FacetedPanel.cs, Chrome/GridBackground.cs) for exactly that reason.
+ *
+ * Colours match the artboard at https://claude.ai/artifact/Y8ycmAv5F6yfN76Mr4LbDB - keep the two
+ * in sync by eye until real UI is what people look at instead of the mock-up.
+ */
+
+.gear-root {
+    flex-grow: 1;
+    background-color: rgb(11, 13, 12);
+    color: rgb(230, 233, 236);
+    font-size: 13px;
+}
+
+/* ---- bars ---- */
+
+.bar {
+    height: 56px;
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: center;
+    padding-left: 24px;
+    padding-right: 24px;
+    background-color: rgb(17, 20, 23);
+}
+
+.bar-top { border-bottom-width: 1px; border-bottom-color: rgb(42, 48, 56); }
+.bar-bottom { border-top-width: 1px; border-top-color: rgb(42, 48, 56); }
+
+/* ---- flat card: equipment slots, weapon row, ability box, search bar, tooltips ---- */
+
+.card {
+    background-color: rgb(25, 29, 35);
+    border-width: 1px;
+    border-color: rgb(38, 45, 54);
+}
+
+/* ---- nav tabs ---- */
+
+.navtab {
+    height: 56px;
+    padding-left: 16px;
+    padding-right: 16px;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(0, 0, 0, 0);
+    color: rgb(120, 132, 143);
+    font-size: 13px;
+    -unity-font-style: normal;
+    transition-property: color;
+    transition-duration: 0.15s;
+}
+.navtab:hover { color: rgb(199, 208, 218); }
+.navtab-active {
+    color: rgb(230, 233, 236);
+    border-bottom-color: rgb(217, 164, 65);
+    -unity-font-style: bold;
+}
+.navtab-disabled { color: rgb(74, 83, 92); }
+
+/* ---- buttons ---- */
+
+.btn {
+    height: 34px;
+    padding-left: 18px;
+    padding-right: 18px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    font-size: 12px;
+    transition-property: background-color, translate;
+    transition-duration: 0.1s;
+}
+.btn:hover { translate: 0 -1px; }
+.btn:active { translate: 0 1px; }
+
+.btn-primary {
+    background-color: rgb(217, 164, 65);
+    border-width: 0;
+    color: rgb(20, 23, 26);
+    -unity-font-style: bold;
+}
+.btn-primary:hover { background-color: rgb(224, 178, 94); }
+
+.btn-outline {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgb(59, 68, 80);
+    color: rgb(154, 165, 177);
+}
+.btn-outline:hover { border-color: rgb(90, 102, 116); color: rgb(230, 233, 236); }
+
+.btn-danger {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgb(122, 52, 40);
+    color: rgb(200, 80, 60);
+}
+
+.btn-disabled {
+    background-color: rgb(20, 23, 27);
+    border-width: 1px;
+    border-color: rgb(36, 43, 51);
+    color: rgb(74, 83, 92);
+}
+
+/* ---- stash / rig / backpack cells ---- */
+
+.cell {
+    position: absolute;
+    background-color: rgb(38, 43, 52);
+    border-width: 1px;
+    border-color: rgb(107, 118, 132);
+    padding: 3px 5px;
+    justify-content: space-between;
+    transition-property: translate, border-color;
+    transition-duration: 0.1s;
+}
+.cell:hover { translate: 0 -1px; border-color: rgb(139, 150, 162); }
+.cell-selected { border-color: rgb(217, 164, 65); border-width: 2px; }
+
+.cell-label {
+    font-size: 8px;
+    color: rgb(154, 165, 177);
+    -unity-text-overflow-position: end;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---- typography ---- */
+
+.text-heading { font-size: 15px; -unity-font-style: bold; letter-spacing: 3px; color: rgb(217, 164, 65); }
+.text-section { font-size: 12px; -unity-font-style: bold; letter-spacing: 2.4px; color: rgb(230, 233, 236); }
+.text-label { font-size: 10px; letter-spacing: 1.2px; color: rgb(120, 132, 143); }
+.text-mono { font-size: 13px; }
+.text-accent { color: rgb(217, 164, 65); }
+.text-muted { color: rgb(120, 132, 143); }
+.text-good { color: rgb(111, 158, 92); }
+.text-warn { color: rgb(217, 164, 65); }
+.text-danger { color: rgb(200, 80, 60); }
+
+/* ---- divider ---- */
+
+.divider-v { width: 1px; background-color: rgb(42, 48, 56); }
+.divider-h { height: 1px; background-color: rgb(36, 43, 51); flex-grow: 1; }

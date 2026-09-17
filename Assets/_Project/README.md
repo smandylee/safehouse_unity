@@ -78,13 +78,50 @@ input to Core.
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
 
+## The GEAR screen (`Scripts/UI`, `UI/`)
+
+A first real screen, built with UI Toolkit (UXML + USS) instead of uGUI/Canvas, matching the visual
+language worked out in the design artboard at
+https://claude.ai/artifact/Y8ycmAv5F6yfN76Mr4LbDB - open that link and `UI/Theme.uss` side by side
+if a colour or spacing value ever needs to change; keep them in sync by eye.
+
+- `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. LOADOUT and CARRIED show
+  one hand-written illustrative loadout (the same simplification the artboard made); only the STASH
+  panel is wired to real data.
+- `Scripts/UI/GearScreenController.cs` - loads the shipped catalog (`CatalogLoader`), builds a demo
+  stash (`Scripts/UI/Sample/SampleStash.cs`) by running real items through `PlacementRules.FirstFit`,
+  and renders one cell per placed item. Clicking a cell (`Button.clicked`) updates the detail panel.
+  This is the first place `Safehouse.Core`/`Safehouse.Data` actually drive a screen, not just a test.
+- `Scripts/UI/Chrome/FacetedPanel.cs`, `GridBackground.cs` - USS has no `clip-path` and no repeating
+  gradients, so the artboard's cut-corner panels and the stash's faint grid lines are drawn directly
+  with `MeshGenerationContext.painter2D` instead of needing texture assets. `Theme.uss` deliberately
+  avoids `box-shadow`/`outline` - support for those varies by Unity version, and an unsupported USS
+  property just silently does nothing, which is a worse failure mode than not using it.
+- Item icons are placeholder monograms (3 letters from the item's category), not art. The project
+  will use real Tarkov icon sprites once those are in place; swapping a monogram `Label` for an
+  `Image` is a one-line change per cell, so building throwaway vector icons here would waste effort.
+- `Scripts/Editor/GearSceneBuilder.cs` (menu: **Safehouse > Build Gear Scene**) is the generator for
+  `UI/GearPanelSettings.asset` and `Scenes/Gear.unity` - the same relationship as
+  `tools/import_tarkov.py` and `data/items.json` on the Python side: the generator is what gets
+  edited, its output is what gets committed (both files are checked in; don't hand-edit them, fix
+  the builder and re-run it instead, safe any time since it overwrites both). Open `Scenes/Gear.unity`
+  and press Play to actually see the screen - a batch-mode CLI run can compile and test it but cannot
+  render it, so this is the only way to eyeball a visual change.
+- `Assets/Tests/PlayMode/GearScreenControllerTests.cs` builds the real UXML + controller in a bare
+  `GameObject` (no scene needed) and drives selection through `GearScreenController.SelectItem()`
+  rather than simulating a pointer event, for the same coverage with far less machinery.
+
 ## Not done yet
 
-- `Scripts/UI` and `Scripts/Editor` are still empty and have no asmdef. Add one to each as soon as
-  it gets code.
+- `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
+  there as it's needed (data import from the Tarkov snapshot, build scripts).
+- LOADOUT and CARRIED on the GEAR screen are static mock data, not a real character's loadout -
+  that needs the save system (below) ported first.
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
 - The save system (`storage.py`, `models.Profile`, `migrations.py`) is not ported. Its shape depends
   on how abilities end up working.
+- No real fonts yet (Oswald / JetBrains Mono in the artboard) - the screen currently renders with
+  Unity's default UI Toolkit font. Needs the font files added and wired into `Theme.uss`.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).

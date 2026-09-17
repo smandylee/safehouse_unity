@@ -1,0 +1,350 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:sh="Safehouse.UI.Chrome">
+    <ui:Style src="Theme.uss" />
+
+    <!--
+      Item icons are placeholders (a short monogram) rather than drawn shapes: the project will use
+      the real Tarkov icon sprites once those are in place (tools/import_icons.py), so building
+      vector icon art here would be thrown away. Swapping a placeholder Label for an Image once a
+      sprite exists is a one-line change per cell.
+
+      No gap/flex-gap here: this Unity version's USS does not have it, so spacing between siblings
+      is done with an explicit margin on each child instead (the small inline "margin-*" you see
+      everywhere below), never with a container-level gap.
+    -->
+
+    <ui:VisualElement name="gear-root" class="gear-root" style="flex-direction: column;">
+
+        <!-- TOP BAR -->
+        <ui:VisualElement class="bar bar-top">
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 22px;">
+                <ui:Label text="SAFEHOUSE" class="text-heading" />
+            </ui:VisualElement>
+            <ui:Button text="CHARACTER" class="navtab" />
+            <ui:Button text="GEAR" name="navtab-gear" class="navtab navtab-active" />
+            <ui:Button text="HIDEOUT" class="navtab" />
+            <ui:Button text="TRADERS" class="navtab" />
+            <ui:Button text="SCAVENGE" class="navtab" />
+            <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end; margin-right: 18px;">
+                <ui:Label text="ROUBLES" class="text-label" style="margin-right: 7px;" />
+                <ui:Label name="label-roubles" text="1 284 500" class="text-mono text-accent" />
+            </ui:VisualElement>
+            <ui:VisualElement class="divider-v" style="height: 22px; margin-right: 18px;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end;">
+                <ui:Label text="RESTOCK" class="text-label" style="margin-right: 7px;" />
+                <ui:Label text="01:47" class="text-mono" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- MAIN -->
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; padding: 16px 24px;">
+
+            <!-- ===== LEFT: LOADOUT ===== -->
+            <sh:FacetedPanel style="width: 400px; flex-shrink: 0; flex-direction: column; padding: 14px; margin-right: 16px;">
+                <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 10px;">
+                    <ui:Label text="LOADOUT" class="text-section" style="margin-right: 10px;" />
+                    <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
+                    <ui:Label text="SVETLANA K." class="text-mono text-muted" />
+                </ui:VisualElement>
+
+                <ui:VisualElement style="flex-direction: row; margin-bottom: 10px;">
+                    <!-- left slot column -->
+                    <ui:VisualElement style="width: 96px; flex-direction: column; margin-right: 10px;">
+                        <ui:VisualElement class="card" style="height: 108px; padding: 7px; margin-bottom: 10px; justify-content: space-between;">
+                            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                                <ui:Label text="HELMET" class="text-label" />
+                                <ui:Label text="5" class="text-mono" style="color: rgb(78, 122, 158); font-size: 10px;" />
+                            </ui:VisualElement>
+                            <ui:Label text="HLM" style="align-self: center; color: rgb(78, 122, 158); -unity-font-style: bold;" />
+                            <ui:VisualElement>
+                                <ui:Label text="Rys-T bulletproof helmet" style="font-size: 10px; color: rgb(154, 165, 177); white-space: normal;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="height: 108px; padding: 7px; margin-bottom: 10px; justify-content: space-between;">
+                            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                                <ui:Label text="ARMOR" class="text-label" />
+                                <ui:Label text="6" class="text-mono" style="color: rgb(78, 122, 158); font-size: 10px;" />
+                            </ui:VisualElement>
+                            <ui:Label text="ARM" style="align-self: center; color: rgb(78, 122, 158); -unity-font-style: bold;" />
+                            <ui:Label text="6B45 body armor (EMR)" style="font-size: 10px; color: rgb(154, 165, 177); white-space: normal;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="height: 108px; padding: 7px; justify-content: space-between;">
+                            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                                <ui:Label text="RIG" class="text-label" />
+                                <ui:Label text="24" class="text-mono" style="color: rgb(95, 140, 110); font-size: 10px;" />
+                            </ui:VisualElement>
+                            <ui:Label text="RIG" style="align-self: center; color: rgb(95, 140, 110); -unity-font-style: bold;" />
+                            <ui:Label text="Spiritus Systems LV-119" style="font-size: 10px; color: rgb(154, 165, 177); white-space: normal;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- centre: body-part health -->
+                    <ui:VisualElement class="card" style="width: 160px; padding: 10px 8px; margin-right: 10px; justify-content: center;">
+                        <ui:VisualElement name="row-head" style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                            <ui:Label text="HEAD" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="35 / 35" class="text-mono text-good" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                            <ui:Label text="THORAX" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="85 / 85" class="text-mono text-good" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                            <ui:Label text="STOMACH" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="52 / 70" class="text-mono text-warn" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                            <ui:Label text="L. ARM" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="60 / 60" class="text-mono text-good" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                            <ui:Label text="R. ARM" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="41 / 60" class="text-mono text-danger" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                            <ui:Label text="L. LEG" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="65 / 65" class="text-mono text-good" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
+                            <ui:Label text="R. LEG" class="text-label" style="font-size: 8px;" />
+                            <ui:Label text="65 / 65" class="text-mono text-good" style="font-size: 8px;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; justify-content: space-between; border-top-width: 1px; border-top-color: rgb(36, 43, 51); padding-top: 7px;">
+                            <ui:Label text="TOTAL" class="text-label" />
+                            <ui:Label text="403" class="text-mono" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- right slot column -->
+                    <ui:VisualElement style="width: 96px; flex-direction: column;">
+                        <ui:VisualElement class="card" style="height: 108px; padding: 7px; margin-bottom: 10px; justify-content: space-between;">
+                            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                                <ui:Label text="BACKPACK" class="text-label" />
+                                <ui:Label text="48" class="text-mono" style="color: rgb(95, 140, 110); font-size: 10px;" />
+                            </ui:VisualElement>
+                            <ui:Label text="PCK" style="align-self: center; color: rgb(95, 140, 110); -unity-font-style: bold;" />
+                            <ui:Label text="6Sh118 raid backpack" style="font-size: 10px; color: rgb(154, 165, 177); white-space: normal;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="height: 108px; padding: 7px; margin-bottom: 10px; justify-content: space-between;">
+                            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                                <ui:Label text="MEDS" class="text-label" />
+                            </ui:VisualElement>
+                            <ui:Label text="MED" style="align-self: center; color: rgb(200, 80, 60); -unity-font-style: bold;" />
+                            <ui:VisualElement>
+                                <ui:Label text="CALOK-B hemostatic" style="font-size: 10px; color: rgb(154, 165, 177); white-space: normal;" />
+                                <ui:Label text="3 USES" class="text-mono text-good" style="font-size: 9px;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="height: 108px; padding: 7px; justify-content: space-between;">
+                            <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                                <ui:Label text="AMMO" class="text-label" />
+                                <ui:Label text="45" class="text-mono text-accent" style="font-size: 10px;" />
+                            </ui:VisualElement>
+                            <ui:Label text="AMO" style="align-self: center; color: rgb(217, 164, 65); -unity-font-style: bold;" />
+                            <ui:VisualElement>
+                                <ui:Label text="5.45x39mm BP gs" style="font-size: 10px; color: rgb(154, 165, 177); white-space: normal;" />
+                                <ui:Label text="PEN 45" class="text-mono text-muted" style="font-size: 9px;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- primary weapon -->
+                <ui:VisualElement class="card" style="padding: 10px 12px; margin-bottom: 10px; flex-direction: row; align-items: center;">
+                    <ui:VisualElement style="width: 54px; margin-right: 14px;">
+                        <ui:Label text="PRIMARY" class="text-label" />
+                        <ui:Label text="5.45" class="text-mono" style="color: rgb(78, 122, 158); font-size: 10px; margin-top: 3px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1;">
+                        <ui:Label text="Kalashnikov AK-12 5.45x39" style="font-size: 12px;" />
+                        <ui:VisualElement style="flex-direction: row; margin-top: 4px;">
+                            <ui:Label text="ERG 52" class="text-mono text-muted" style="font-size: 9px; margin-right: 12px;" />
+                            <ui:Label text="RCL 118" class="text-mono text-muted" style="font-size: 9px;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Label text="30" class="text-mono text-accent" style="font-size: 17px;" />
+                </ui:VisualElement>
+
+                <ui:VisualElement style="flex-grow: 1;" />
+
+                <!-- ability tiers -->
+                <ui:VisualElement class="card" style="padding: 11px;">
+                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 9px;">
+                        <ui:Label text="ABILITIES" class="text-label" style="letter-spacing: 2px; margin-right: 8px;" />
+                        <ui:VisualElement class="divider-h" style="margin-right: 8px;" />
+                        <ui:Label text="3 / 5 / 7 / 10" class="text-mono text-muted" style="font-size: 10px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-direction: row; flex-wrap: wrap;">
+                        <ui:VisualElement style="width: 33%; align-items: center; margin-bottom: 8px;">
+                            <ui:Label text="7" class="text-mono text-good" style="font-size: 19px;" />
+                            <ui:Label text="STRENGTH" style="font-size: 9px; letter-spacing: 1px; color: rgb(120, 132, 143);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="width: 33%; align-items: center; margin-bottom: 8px;">
+                            <ui:Label text="5" class="text-mono" style="font-size: 19px;" />
+                            <ui:Label text="ENDURANCE" style="font-size: 9px; letter-spacing: 1px; color: rgb(120, 132, 143);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="width: 33%; align-items: center; margin-bottom: 8px;">
+                            <ui:Label text="3" class="text-mono text-danger" style="font-size: 19px;" />
+                            <ui:Label text="HEALTH" style="font-size: 9px; letter-spacing: 1px; color: rgb(120, 132, 143);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="width: 33%; align-items: center;">
+                            <ui:Label text="10" class="text-mono text-accent" style="font-size: 19px;" />
+                            <ui:Label text="PERCEPTION" style="font-size: 9px; letter-spacing: 1px; color: rgb(120, 132, 143);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="width: 33%; align-items: center;">
+                            <ui:Label text="5" class="text-mono" style="font-size: 19px;" />
+                            <ui:Label text="CHARISMA" style="font-size: 9px; letter-spacing: 1px; color: rgb(120, 132, 143);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="width: 33%; align-items: center;">
+                            <ui:Label text="5" class="text-mono" style="font-size: 19px;" />
+                            <ui:Label text="INTELLECT" style="font-size: 9px; letter-spacing: 1px; color: rgb(120, 132, 143);" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </sh:FacetedPanel>
+
+            <!-- ===== MIDDLE: CARRIED ===== -->
+            <sh:FacetedPanel style="width: 392px; flex-shrink: 0; flex-direction: column; padding: 14px; margin-right: 16px;">
+                <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 12px;">
+                    <ui:Label text="CARRIED" class="text-section" style="margin-right: 10px;" />
+                    <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
+                    <ui:Label name="label-carried" text="21 / 72" class="text-mono text-accent" />
+                </ui:VisualElement>
+
+                <ui:VisualElement style="margin-bottom: 12px;">
+                    <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                        <ui:Label text="RIG — SPIRITUS LV-119" class="text-label" style="letter-spacing: 1.6px;" />
+                        <ui:Label text="6 × 4" class="text-mono text-muted" style="font-size: 10px;" />
+                    </ui:VisualElement>
+                    <sh:GridBackground pitch="48" style="width: 288px; height: 192px;">
+                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 2px; width: 94px; height: 46px; padding: 3px 5px; border-color: rgb(95, 140, 110); justify-content: space-between;">
+                            <ui:Label text="MAG" style="align-self: center; color: rgb(95, 140, 110); font-size: 10px; -unity-font-style: bold;" />
+                            <ui:Label text="AK-12 6L31 MAG" class="cell-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 98px; top: 2px; width: 94px; height: 46px; padding: 3px 5px; border-color: rgb(95, 140, 110); justify-content: space-between;">
+                            <ui:Label text="MAG" style="align-self: center; color: rgb(95, 140, 110); font-size: 10px; -unity-font-style: bold;" />
+                            <ui:Label text="AK-12 6L31 MAG" class="cell-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 194px; top: 2px; width: 46px; height: 46px; border-color: rgb(200, 80, 60); align-items: center; justify-content: center;">
+                            <ui:Label text="MED" style="color: rgb(200, 80, 60); -unity-font-style: bold;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 242px; top: 2px; width: 44px; height: 46px; border-color: rgb(200, 80, 60); align-items: center; justify-content: center;">
+                            <ui:Label text="MED" style="color: rgb(200, 80, 60); -unity-font-style: bold;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 50px; width: 46px; height: 94px; border-color: rgb(95, 140, 110); align-items: center; justify-content: center;">
+                            <ui:Label text="AID" style="color: rgb(95, 140, 110); -unity-font-style: bold;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 50px; top: 50px; width: 46px; height: 46px; border-color: rgb(107, 118, 132); align-items: center; justify-content: center;">
+                            <ui:Label text="TL" style="color: rgb(139, 150, 162); -unity-font-style: bold;" />
+                        </ui:VisualElement>
+                    </sh:GridBackground>
+                </ui:VisualElement>
+
+                <ui:VisualElement>
+                    <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 6px;">
+                        <ui:Label text="BACKPACK — 6SH118 RAID" class="text-label" style="letter-spacing: 1.6px;" />
+                        <ui:Label text="6 × 8" class="text-mono text-muted" style="font-size: 10px;" />
+                    </ui:VisualElement>
+                    <sh:GridBackground pitch="48" style="width: 288px; height: 384px;">
+                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 2px; width: 94px; height: 94px; padding: 5px 6px; border-color: rgb(138, 107, 168); justify-content: space-between;">
+                            <ui:Label text="CASE" style="align-self: center; color: rgb(138, 107, 168); -unity-font-style: bold;" />
+                            <ui:Label text="SICC CASE" class="cell-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 98px; top: 2px; width: 142px; height: 46px; padding: 3px 6px; border-color: rgb(78, 122, 158); flex-direction: row; align-items: center;">
+                            <ui:Label text="GFX" style="color: rgb(78, 122, 158); -unity-font-style: bold; margin-right: 8px;" />
+                            <ui:Label text="GRAPHICS CARD" class="cell-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 242px; top: 2px; width: 44px; height: 46px; border-color: rgb(192, 138, 62); align-items: center; justify-content: center;">
+                            <ui:Label text="BTC" style="color: rgb(217, 164, 65); -unity-font-style: bold;" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 98px; top: 50px; width: 94px; height: 94px; padding: 5px 6px; border-color: rgb(95, 140, 110); justify-content: space-between;">
+                            <ui:Label text="TOOL" style="align-self: center; color: rgb(95, 140, 110); -unity-font-style: bold;" />
+                            <ui:Label text="TOOLSET" class="cell-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 98px; width: 94px; height: 46px; padding: 3px 5px; border-color: rgb(95, 140, 110); justify-content: space-between;">
+                            <ui:Label text="AID" style="align-self: center; color: rgb(95, 140, 110); -unity-font-style: bold;" />
+                            <ui:Label text="CAR FIRST AID KIT" class="cell-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="card" style="position: absolute; left: 194px; top: 50px; width: 46px; height: 46px; border-color: rgb(107, 118, 132); align-items: center; justify-content: center;">
+                            <ui:Label text="PSU" style="color: rgb(139, 150, 162); -unity-font-style: bold;" />
+                        </ui:VisualElement>
+                    </sh:GridBackground>
+                </ui:VisualElement>
+            </sh:FacetedPanel>
+
+            <!-- ===== RIGHT: STASH ===== -->
+            <sh:FacetedPanel style="flex-grow: 1; flex-direction: column; padding: 14px;">
+                <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 12px;">
+                    <ui:Label text="STASH" class="text-section" style="margin-right: 10px;" />
+                    <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
+                    <ui:Label name="label-stash-cells" text="— / — CELLS" class="text-mono text-muted" style="margin-right: 10px;" />
+                    <ui:VisualElement class="divider-v" style="height: 14px; margin-right: 10px;" />
+                    <ui:Label name="label-stash-value" text="—" class="text-mono text-accent" />
+                </ui:VisualElement>
+
+                <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 12px;">
+                    <ui:VisualElement class="card" style="flex-grow: 1; height: 32px; flex-direction: row; align-items: center; padding: 0 10px; margin-right: 8px;">
+                        <ui:TextField name="field-search" placeholder-text="Search" style="flex-grow: 1; background-color: rgba(0,0,0,0); border-width: 0; font-size: 12px;" />
+                    </ui:VisualElement>
+                    <ui:Button text="SORT" class="card btn" style="border-width: 0; color: rgb(154, 165, 177); font-size: 11px; margin-right: 8px;" />
+                    <ui:Button text="ALL" class="btn" style="background-color: rgb(30, 34, 40); border-width: 1px; border-color: rgb(217, 164, 65); color: rgb(217, 164, 65); font-size: 11px; margin-right: 8px;" />
+                    <ui:Button text="MEDS" class="card btn" style="border-width: 0; color: rgb(154, 165, 177); font-size: 11px; margin-right: 8px;" />
+                    <ui:Button text="BARTER" class="card btn" style="border-width: 0; color: rgb(154, 165, 177); font-size: 11px;" />
+                </ui:VisualElement>
+
+                <sh:GridBackground name="stash-grid" pitch="48" style="width: 480px; height: 528px; margin-bottom: 12px;" />
+
+                <!-- selected item detail -->
+                <ui:VisualElement class="card" style="flex-grow: 1; padding: 12px; flex-direction: row;">
+                    <ui:VisualElement name="swatch-selected" style="width: 68px; height: 68px; background-color: rgb(38, 43, 52); border-width: 1px; align-items: center; justify-content: center; margin-right: 14px;">
+                        <ui:Label name="label-selected-icon" text="?" style="font-size: 20px; -unity-font-style: bold;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1;">
+                        <ui:VisualElement style="flex-direction: row; align-items: flex-end;">
+                            <ui:Label name="label-selected-name" text="Select an item" style="font-size: 15px; margin-right: 10px;" />
+                            <ui:Label name="label-selected-rarity" text="" class="text-mono" style="font-size: 10px; letter-spacing: 1.4px;" />
+                        </ui:VisualElement>
+                        <ui:Label name="label-selected-sub" text="" class="text-muted" style="font-size: 11px; margin-top: 3px;" />
+                        <ui:VisualElement style="flex-direction: row; margin-top: 10px;">
+                            <ui:VisualElement style="margin-right: 22px;">
+                                <ui:Label text="VALUE" class="text-label" />
+                                <ui:Label name="label-selected-value" text="—" class="text-mono text-accent" style="font-size: 13px;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement style="margin-right: 22px;">
+                                <ui:Label text="WEIGHT" class="text-label" />
+                                <ui:Label name="label-selected-weight" text="—" class="text-mono" style="font-size: 13px;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement>
+                                <ui:Label text="PER CELL" class="text-label" />
+                                <ui:Label name="label-selected-percell" text="—" class="text-mono text-muted" style="font-size: 13px;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement style="justify-content: flex-end;">
+                        <ui:Button text="EQUIP" class="btn btn-primary" style="margin-bottom: 6px; font-size: 11px;" />
+                        <ui:Button text="TO HIDEOUT" class="btn btn-outline" style="font-size: 11px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </sh:FacetedPanel>
+        </ui:VisualElement>
+
+        <!-- BOTTOM BAR -->
+        <ui:VisualElement class="bar bar-bottom">
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 28px;">
+                <ui:Label text="28.4" class="text-mono" style="margin-right: 6px;" />
+                <ui:Label text="/ 42.0 KG" class="text-muted" style="font-size: 11px;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 28px;">
+                <ui:Label text="403" class="text-mono text-good" style="margin-right: 6px;" />
+                <ui:Label text="/ 440 HP" class="text-muted" style="font-size: 11px;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; align-items: center;">
+                <ui:Label text="LIGHT BLEED — RIGHT ARM" class="text-danger" style="font-size: 11px; letter-spacing: 1.2px;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:Label text="CUSTOMS · NIGHT" class="text-muted" style="font-size: 11px; letter-spacing: 1.4px; margin-right: 20px;" />
+            <ui:Button text="SAVE PRESET" class="btn btn-outline" style="margin-right: 12px; font-size: 12px;" />
+            <ui:Button text="DEPLOY" class="btn btn-primary" style="font-size: 12px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
