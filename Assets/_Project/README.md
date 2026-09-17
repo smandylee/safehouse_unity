@@ -67,11 +67,24 @@ Mirrors the Python project's own rule ("규칙 계산은 순수 함수로 두고
 so game rules stay in one place instead of leaking into MonoBehaviours. UI only renders and forwards
 input to Core.
 
+## Ported so far
+
+| Python | C# | Notes |
+| --- | --- | --- |
+| `models.ItemDefinition`, `ItemInstance` | `Core/ItemDefinition.cs`, `Core/ItemInstance.cs` | Validation only; save parsing is not ported yet. |
+| `inventory.py` | `Core/Placement.cs` | Every rule, checked against the Python output for the same grids. |
+| `catalog.py` | `Data/CatalogLoader.cs` | JSON stays in Data so Core needs no dependencies. |
+
+`Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
+UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
+
 ## Not done yet
 
-- `Scripts/Core`, `Scripts/UI` and `Scripts/Editor` are still empty and have no asmdef. Add one to
-  each as soon as it gets code; only `Safehouse.Data` and `Safehouse.Tests.EditMode` exist so far.
-- No game rules ported yet - only the data loader. Combat, expeditions, inventory placement and the
-  injury system are all still Python-only.
+- `Scripts/UI` and `Scripts/Editor` are still empty and have no asmdef. Add one to each as soon as
+  it gets code.
+- Combat, expeditions, gear and the injury system are still Python-only. They wait on the
+  Gundog Revised combat/ability rules being settled.
+- The save system (`storage.py`, `models.Profile`, `migrations.py`) is not ported. Its shape depends
+  on how abilities end up working.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).
