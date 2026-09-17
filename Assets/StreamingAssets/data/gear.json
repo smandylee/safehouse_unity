@@ -1,0 +1,4931 @@
+{
+  "schema_version": 1,
+  "weapons": {
+    "20x1mm-toy-gun": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber20x1mm",
+      "ergonomics": 100,
+      "recoil": 380,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "accuracy-international-axmc-338-lm-bolt-action-sniper-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber86x70",
+      "ergonomics": 21,
+      "recoil": 468,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "adar-2-15-556x45-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 48,
+      "recoil": 120,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "aklys-defense-velociraptor-300-blackout-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x35",
+      "ergonomics": 35,
+      "recoil": 101,
+      "fire_rate": 600,
+      "effective_distance": 650
+    },
+    "as-val-9x39-special-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber9x39",
+      "ergonomics": 43,
+      "recoil": 80,
+      "fire_rate": 900,
+      "effective_distance": 400
+    },
+    "as-val-mod4-9x39-special-assault-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber9x39",
+      "ergonomics": 46,
+      "recoil": 70,
+      "fire_rate": 900,
+      "effective_distance": 400
+    },
+    "ash-12-127x55-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber127x55",
+      "ergonomics": 55,
+      "recoil": 128,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "benelli-m3-super-90-12ga-dual-mode-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 42,
+      "recoil": 336,
+      "fire_rate": 60,
+      "effective_distance": 70
+    },
+    "beretta-m9a3-9x19-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 70,
+      "recoil": 404,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "bt-mp9-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 75,
+      "recoil": 54,
+      "fire_rate": 900,
+      "effective_distance": 200
+    },
+    "bt-mp9-n-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 75,
+      "recoil": 51,
+      "fire_rate": 1100,
+      "effective_distance": 200
+    },
+    "chiappa-rhino-200ds-9x19-revolver": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 95,
+      "recoil": 306,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "chiappa-rhino-50ds-357-revolver": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x33R",
+      "ergonomics": 80,
+      "recoil": 383,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "cmmg-mk47-mutant-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 38,
+      "recoil": 136,
+      "fire_rate": 650,
+      "effective_distance": 500
+    },
+    "colt-m16a1-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 48,
+      "recoil": 121,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "colt-m16a2-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 48,
+      "recoil": 117,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "colt-m1911a1-45-acp-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber1143x23ACP",
+      "ergonomics": 75,
+      "recoil": 451,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "colt-m45a1-45-acp-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber1143x23ACP",
+      "ergonomics": 78,
+      "recoil": 438,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "colt-m4a1-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 48,
+      "recoil": 119,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "custom-guns-nl545-di-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 45,
+      "recoil": 109,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "custom-guns-nl545-gp-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 48,
+      "recoil": 114,
+      "fire_rate": 850,
+      "effective_distance": 500
+    },
+    "degtyarev-rpd-762x39-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x39",
+      "ergonomics": 45,
+      "recoil": 107,
+      "fire_rate": 700,
+      "effective_distance": 800
+    },
+    "degtyarev-rpdn-762x39-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x39",
+      "ergonomics": 45,
+      "recoil": 107,
+      "fire_rate": 700,
+      "effective_distance": 800
+    },
+    "desert-tech-mdr-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 67,
+      "recoil": 79,
+      "fire_rate": 650,
+      "effective_distance": 500
+    },
+    "desert-tech-mdr-762x51-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x51",
+      "ergonomics": 67,
+      "recoil": 125,
+      "fire_rate": 650,
+      "effective_distance": 500
+    },
+    "ds-arms-sa58-762x51-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x51",
+      "ergonomics": 30,
+      "recoil": 210,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "fn-five-seven-mk2-57x28-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber57x28",
+      "ergonomics": 86,
+      "recoil": 281,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "fn-five-seven-mk2-57x28-pistol-fde": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber57x28",
+      "ergonomics": 86,
+      "recoil": 281,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "fn-p90-57x28-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber57x28",
+      "ergonomics": 60,
+      "recoil": 54,
+      "fire_rate": 900,
+      "effective_distance": 200
+    },
+    "fn-scar-h-762x51-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x51",
+      "ergonomics": 45,
+      "recoil": 200,
+      "fire_rate": 600,
+      "effective_distance": 500
+    },
+    "fn-scar-h-762x51-assault-rifle-fde": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x51",
+      "ergonomics": 45,
+      "recoil": 200,
+      "fire_rate": 600,
+      "effective_distance": 500
+    },
+    "fn-scar-h-x-17-762x51-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x51",
+      "ergonomics": 47,
+      "recoil": 200,
+      "fire_rate": 600,
+      "effective_distance": 500
+    },
+    "fn-scar-l-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 45,
+      "recoil": 90,
+      "fire_rate": 650,
+      "effective_distance": 500
+    },
+    "fn-scar-l-556x45-assault-rifle-fde": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 45,
+      "recoil": 90,
+      "fire_rate": 650,
+      "effective_distance": 500
+    },
+    "fn40gl-mk2-40mm-grenade-launcher": {
+      "weapon_class": "special",
+      "caliber": "Caliber40x46",
+      "ergonomics": 51,
+      "recoil": 230,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "glock-17-9x19-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 90,
+      "recoil": 311,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "glock-18c-9x19-machine-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 90,
+      "recoil": 306,
+      "fire_rate": 1200,
+      "effective_distance": 50
+    },
+    "glock-19x-9x19-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 93,
+      "recoil": 302,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "hk-416a5-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 51,
+      "recoil": 125,
+      "fire_rate": 850,
+      "effective_distance": 500
+    },
+    "hk-416a5-556x45-assault-rifle-ral-8000": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 51,
+      "recoil": 125,
+      "fire_rate": 850,
+      "effective_distance": 500
+    },
+    "hk-g28-762x51-marksman-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber762x51",
+      "ergonomics": 48,
+      "recoil": 146,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "hk-g36-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 60,
+      "recoil": 106,
+      "fire_rate": 750,
+      "effective_distance": 500
+    },
+    "hk-mp5-9x19-submachine-gun-navy-3-round-burst": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 50,
+      "recoil": 56,
+      "fire_rate": 800,
+      "effective_distance": 200
+    },
+    "hk-mp5k-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 55,
+      "recoil": 57,
+      "fire_rate": 900,
+      "effective_distance": 200
+    },
+    "hk-mp7a1-46x30-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber46x30",
+      "ergonomics": 65,
+      "recoil": 50,
+      "fire_rate": 950,
+      "effective_distance": 200
+    },
+    "hk-mp7a2-46x30-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber46x30",
+      "ergonomics": 65,
+      "recoil": 50,
+      "fire_rate": 950,
+      "effective_distance": 200
+    },
+    "hk-ump-45-acp-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber1143x23ACP",
+      "ergonomics": 62,
+      "recoil": 72,
+      "fire_rate": 600,
+      "effective_distance": 200
+    },
+    "hk-usp-45-acp-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber1143x23ACP",
+      "ergonomics": 82,
+      "recoil": 410,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "howa-type-20-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 50,
+      "recoil": 97,
+      "fire_rate": 700,
+      "effective_distance": 500
+    },
+    "iwi-uzi-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 65,
+      "recoil": 54,
+      "fire_rate": 600,
+      "effective_distance": 200
+    },
+    "iwi-uzi-pro-pistol-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 73,
+      "recoil": 59,
+      "fire_rate": 1075,
+      "effective_distance": 100
+    },
+    "iwi-uzi-pro-smg-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 78,
+      "recoil": 56,
+      "fire_rate": 1075,
+      "effective_distance": 100
+    },
+    "kalashnikov-ak-101-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 35,
+      "recoil": 98,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-102-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 43,
+      "recoil": 103,
+      "fire_rate": 600,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-103-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 35,
+      "recoil": 118,
+      "fire_rate": 600,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-104-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 43,
+      "recoil": 120,
+      "fire_rate": 600,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-105-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 43,
+      "recoil": 100,
+      "fire_rate": 600,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-12-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 36,
+      "recoil": 100,
+      "fire_rate": 700,
+      "effective_distance": 800
+    },
+    "kalashnikov-ak-308-762x51-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x51",
+      "ergonomics": 33,
+      "recoil": 152,
+      "fire_rate": 700,
+      "effective_distance": 800
+    },
+    "kalashnikov-ak-74-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 30,
+      "recoil": 96,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-74m-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 33,
+      "recoil": 95,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "kalashnikov-ak-74n-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 31,
+      "recoil": 96,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "kalashnikov-akm-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 28,
+      "recoil": 121,
+      "fire_rate": 600,
+      "effective_distance": 400
+    },
+    "kalashnikov-akmn-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 28,
+      "recoil": 121,
+      "fire_rate": 600,
+      "effective_distance": 400
+    },
+    "kalashnikov-akms-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 26,
+      "recoil": 121,
+      "fire_rate": 600,
+      "effective_distance": 400
+    },
+    "kalashnikov-akmsn-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 26,
+      "recoil": 121,
+      "fire_rate": 600,
+      "effective_distance": 400
+    },
+    "kalashnikov-aks-74-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 31,
+      "recoil": 90,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "kalashnikov-aks-74n-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 32,
+      "recoil": 90,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "kalashnikov-aks-74u-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 44,
+      "recoil": 108,
+      "fire_rate": 650,
+      "effective_distance": 300
+    },
+    "kalashnikov-aks-74ub-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 44,
+      "recoil": 108,
+      "fire_rate": 650,
+      "effective_distance": 300
+    },
+    "kalashnikov-aks-74un-545x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber545x39",
+      "ergonomics": 44,
+      "recoil": 108,
+      "fire_rate": 650,
+      "effective_distance": 300
+    },
+    "kalashnikov-pkm-762x54r-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 55,
+      "recoil": 138,
+      "fire_rate": 650,
+      "effective_distance": 750
+    },
+    "kalashnikov-pkp-762x54r-infantry-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 55,
+      "recoil": 138,
+      "fire_rate": 650,
+      "effective_distance": 750
+    },
+    "kbp-9a-91-9x39-compact-assault-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber9x39",
+      "ergonomics": 50,
+      "recoil": 110,
+      "fire_rate": 700,
+      "effective_distance": 400
+    },
+    "kbp-vsk-94-9x39-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber9x39",
+      "ergonomics": 50,
+      "recoil": 110,
+      "fire_rate": 700,
+      "effective_distance": 400
+    },
+    "kel-tec-rfb-762x51-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x51",
+      "ergonomics": 80,
+      "recoil": 148,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "knights-armament-company-sr-25-762x51-marksman-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber762x51",
+      "ergonomics": 47,
+      "recoil": 155,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "knights-armament-company-sr-25-762x51-marksman-rifle-taupe": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber762x51",
+      "ergonomics": 47,
+      "recoil": 155,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "lebedev-pl-15-9x19-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 93,
+      "recoil": 289,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "lobaev-arms-dvl-10-762x51-bolt-action-sniper-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber762x51",
+      "ergonomics": 55,
+      "recoil": 111,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "lone-star-tx-15-dml-556x45-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 50,
+      "recoil": 101,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "magnum-research-desert-eagle-l5-357-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x33R",
+      "ergonomics": 68,
+      "recoil": 455,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "magnum-research-desert-eagle-l5-50-ae-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber127x33",
+      "ergonomics": 68,
+      "recoil": 465,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "magnum-research-desert-eagle-l6-50-ae-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber127x33",
+      "ergonomics": 64,
+      "recoil": 465,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "magnum-research-desert-eagle-l6-50-ae-pistol-wts": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber127x33",
+      "ergonomics": 64,
+      "recoil": 465,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "magnum-research-desert-eagle-mk-xix-50-ae-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber127x33",
+      "ergonomics": 64,
+      "recoil": 465,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "makarov-pm-9x18pm-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 85,
+      "recoil": 380,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "makarov-pm-t-9x18pm-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 84,
+      "recoil": 380,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "marlin-mxlr-308-me-lever-action-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber784x49",
+      "ergonomics": 34,
+      "recoil": 182,
+      "fire_rate": 100,
+      "effective_distance": 1000
+    },
+    "milkor-m32a1-msgl-40mm-grenade-launcher": {
+      "weapon_class": "special",
+      "caliber": "Caliber40x46",
+      "ergonomics": 30,
+      "recoil": 238,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "molot-arms-simonov-op-sks-762x39-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x39",
+      "ergonomics": 40,
+      "recoil": 155,
+      "fire_rate": 40,
+      "effective_distance": 400
+    },
+    "molot-arms-vpo-101-vepr-hunter-762x51-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x51",
+      "ergonomics": 29,
+      "recoil": 150,
+      "fire_rate": 600,
+      "effective_distance": 400
+    },
+    "molot-arms-vpo-136-vepr-km-762x39-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x39",
+      "ergonomics": 30,
+      "recoil": 149,
+      "fire_rate": 600,
+      "effective_distance": 400
+    },
+    "molot-arms-vpo-209-366-tkm-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber366TKM",
+      "ergonomics": 30,
+      "recoil": 154,
+      "fire_rate": 600,
+      "effective_distance": 300
+    },
+    "molot-arms-vpo-215-gornostay-366-tkm-bolt-action-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber366TKM",
+      "ergonomics": 41,
+      "recoil": 200,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "mosin-762x54r-bolt-action-rifle-infantry": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 30,
+      "recoil": 288,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "mosin-762x54r-bolt-action-rifle-sniper": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 30,
+      "recoil": 288,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "mossberg-590a1-12ga-pump-action-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 48,
+      "recoil": 421,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "mp-133-12ga-pump-action-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 40,
+      "recoil": 397,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "mp-153-12ga-semi-automatic-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 43,
+      "recoil": 348,
+      "fire_rate": 40,
+      "effective_distance": 70
+    },
+    "mp-155-12ga-semi-automatic-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 48,
+      "recoil": 341,
+      "fire_rate": 40,
+      "effective_distance": 70
+    },
+    "mp-18-762x54r-single-shot-rifle": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 44,
+      "recoil": 295,
+      "fire_rate": 10,
+      "effective_distance": 100
+    },
+    "mp-43-12ga-sawed-off-double-barrel-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 50,
+      "recoil": 279,
+      "fire_rate": 900,
+      "effective_distance": 100
+    },
+    "mp-43-1c-12ga-double-barrel-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 44,
+      "recoil": 279,
+      "fire_rate": 900,
+      "effective_distance": 100
+    },
+    "mps-auto-assault-12-gen-1-12ga-automatic-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 43,
+      "recoil": 175,
+      "fire_rate": 330,
+      "effective_distance": 70
+    },
+    "mps-auto-assault-12-gen-2-12ga-automatic-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 45,
+      "recoil": 173,
+      "fire_rate": 330,
+      "effective_distance": 70
+    },
+    "mts-255-12-12ga-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 50,
+      "recoil": 364,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "norinco-qbz-191-58x42-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber58x42",
+      "ergonomics": 48,
+      "recoil": 114,
+      "fire_rate": 750,
+      "effective_distance": 500
+    },
+    "orsis-t-5000m-762x51-bolt-action-sniper-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber762x51",
+      "ergonomics": 35,
+      "recoil": 141,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "pb-9x18pm-silenced-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 80,
+      "recoil": 380,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "pp-19-01-vityaz-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 35,
+      "recoil": 58,
+      "fire_rate": 700,
+      "effective_distance": 200
+    },
+    "pp-9-klin-9x18pmm-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x18PMM",
+      "ergonomics": 65,
+      "recoil": 50,
+      "fire_rate": 1000,
+      "effective_distance": 100
+    },
+    "pp-91-01-kedr-b-9x18pm-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 65,
+      "recoil": 50,
+      "fire_rate": 900,
+      "effective_distance": 100
+    },
+    "pp-91-kedr-9x18pm-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 65,
+      "recoil": 50,
+      "fire_rate": 900,
+      "effective_distance": 100
+    },
+    "ppsh-41-762x25-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber762x25TT",
+      "ergonomics": 16,
+      "recoil": 89,
+      "fire_rate": 1000,
+      "effective_distance": 200
+    },
+    "radian-weapons-model-1-fa-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 51,
+      "recoil": 112,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "remington-model-700-762x51-bolt-action-sniper-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber762x51",
+      "ergonomics": 49,
+      "recoil": 199,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "remington-model-870-12ga-pump-action-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 45,
+      "recoil": 397,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "remington-r11-rsass-762x51-marksman-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber762x51",
+      "ergonomics": 50,
+      "recoil": 145,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "rifle-dynamics-rd-704-762x39-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x39",
+      "ergonomics": 50,
+      "recoil": 135,
+      "fire_rate": 600,
+      "effective_distance": 650
+    },
+    "rop-30-reactive-flare-cartridge-white": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rpk-16-545x39-light-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber545x39",
+      "ergonomics": 45,
+      "recoil": 106,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "rsh-12-127x55-revolver": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber127x55",
+      "ergonomics": 40,
+      "recoil": 493,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "rshg-2-725mm-rocket-launcher": {
+      "weapon_class": "special",
+      "caliber": "Caliber725",
+      "ergonomics": 39,
+      "recoil": 180,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rsp-30-reactive-signal-cartridge-blue": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rsp-30-reactive-signal-cartridge-firework": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rsp-30-reactive-signal-cartridge-green": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rsp-30-reactive-signal-cartridge-red": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rsp-30-reactive-signal-cartridge-special-yellow": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "rsp-30-reactive-signal-cartridge-yellow": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "sag-ak-545-545x39-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber545x39",
+      "ergonomics": 50,
+      "recoil": 91,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "sag-ak-545-short-545x39-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber545x39",
+      "ergonomics": 53,
+      "recoil": 93,
+      "fire_rate": 650,
+      "effective_distance": 650
+    },
+    "saiga-12k-12ga-automatic-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 30,
+      "recoil": 298,
+      "fire_rate": 450,
+      "effective_distance": 70
+    },
+    "saiga-12k-12ga-automatic-shotgun-redline": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 35,
+      "recoil": 298,
+      "fire_rate": 450,
+      "effective_distance": 70
+    },
+    "saiga-12k-ver10-12ga-semi-automatic-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber12g",
+      "ergonomics": 30,
+      "recoil": 298,
+      "fire_rate": 40,
+      "effective_distance": 70
+    },
+    "saiga-9-9x19-carbine": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 32,
+      "recoil": 42,
+      "fire_rate": 650,
+      "effective_distance": 300
+    },
+    "sako-trg-m10-338-lm-bolt-action-sniper-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber86x70",
+      "ergonomics": 25,
+      "recoil": 428,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "serdyukov-sr-1mp-gyurza-9x21-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x21",
+      "ergonomics": 82,
+      "recoil": 442,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "sig-mcx-300-blackout-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber762x35",
+      "ergonomics": 43,
+      "recoil": 127,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "sig-mcx-spear-68x51-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber68x51",
+      "ergonomics": 46,
+      "recoil": 143,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "sig-mpx-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 40,
+      "recoil": 51,
+      "fire_rate": 850,
+      "effective_distance": 500
+    },
+    "sig-p226r-9x19-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 80,
+      "recoil": 383,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "soyuz-tm-stm-9-gen2-9x19-carbine": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 50,
+      "recoil": 45,
+      "fire_rate": 800,
+      "effective_distance": 500
+    },
+    "springfield-armory-m1a-762x51-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber762x51",
+      "ergonomics": 28,
+      "recoil": 214,
+      "fire_rate": 700,
+      "effective_distance": 700
+    },
+    "sr-2m-veresk-9x21-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x21",
+      "ergonomics": 59,
+      "recoil": 54,
+      "fire_rate": 950,
+      "effective_distance": 200
+    },
+    "sr-3m-9x39-compact-assault-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber9x39",
+      "ergonomics": 45,
+      "recoil": 74,
+      "fire_rate": 900,
+      "effective_distance": 400
+    },
+    "stechkin-apb-9x18pm-silenced-machine-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 80,
+      "recoil": 328,
+      "fire_rate": 750,
+      "effective_distance": 50
+    },
+    "stechkin-aps-9x18pm-machine-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x18PM",
+      "ergonomics": 70,
+      "recoil": 328,
+      "fire_rate": 750,
+      "effective_distance": 50
+    },
+    "steyr-aug-a1-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 95,
+      "recoil": 90,
+      "fire_rate": 715,
+      "effective_distance": 500
+    },
+    "steyr-aug-a3-556x45-assault-rifle": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 95,
+      "recoil": 87,
+      "fire_rate": 715,
+      "effective_distance": 500
+    },
+    "steyr-aug-a3-556x45-assault-rifle-black": {
+      "weapon_class": "assault-rifle",
+      "caliber": "Caliber556x45NATO",
+      "ergonomics": 95,
+      "recoil": 87,
+      "fire_rate": 715,
+      "effective_distance": 500
+    },
+    "sv-98-762x54r-bolt-action-sniper-rifle": {
+      "weapon_class": "bolt-action",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 28,
+      "recoil": 250,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "svds-762x54r-sniper-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 47,
+      "recoil": 220,
+      "fire_rate": 700,
+      "effective_distance": 900
+    },
+    "sword-international-mk-18-338-lm-marksman-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber86x70",
+      "ergonomics": 34,
+      "recoil": 577,
+      "fire_rate": 30,
+      "effective_distance": 900
+    },
+    "tdi-kriss-vector-gen2-45-acp-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber1143x23ACP",
+      "ergonomics": 65,
+      "recoil": 59,
+      "fire_rate": 1100,
+      "effective_distance": 200
+    },
+    "tdi-kriss-vector-gen2-9x19-submachine-gun": {
+      "weapon_class": "smg",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 65,
+      "recoil": 48,
+      "fire_rate": 950,
+      "effective_distance": 200
+    },
+    "theakguy-ak-50-50-bmg-anti-materiel-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber127x99",
+      "ergonomics": 66,
+      "recoil": 624,
+      "fire_rate": 30,
+      "effective_distance": 1000
+    },
+    "tkpd-93x64-carbine": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber93x64",
+      "ergonomics": 40,
+      "recoil": 493,
+      "fire_rate": 25,
+      "effective_distance": 900
+    },
+    "tokarev-avt-40-762x54r-automatic-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 20,
+      "recoil": 175,
+      "fire_rate": 750,
+      "effective_distance": 400
+    },
+    "tokarev-svt-40-762x54r-rifle": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x54R",
+      "ergonomics": 20,
+      "recoil": 175,
+      "fire_rate": 50,
+      "effective_distance": 400
+    },
+    "tokarev-tt-33-762x25-tt-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber762x25TT",
+      "ergonomics": 70,
+      "recoil": 553,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "tokarev-tt-33-762x25-tt-pistol-golden": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber762x25TT",
+      "ergonomics": 70,
+      "recoil": 553,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "toz-106-20ga-bolt-action-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber20g",
+      "ergonomics": 60,
+      "recoil": 663,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "toz-ks-23m-23x75mm-pump-action-shotgun": {
+      "weapon_class": "shotgun",
+      "caliber": "Caliber23x75",
+      "ergonomics": 38,
+      "recoil": 467,
+      "fire_rate": 30,
+      "effective_distance": 70
+    },
+    "toz-simonov-sks-762x39-carbine": {
+      "weapon_class": "carbine",
+      "caliber": "Caliber762x39",
+      "ergonomics": 40,
+      "recoil": 155,
+      "fire_rate": 40,
+      "effective_distance": 400
+    },
+    "us-ordnance-m60e4-762x51-light-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x51",
+      "ergonomics": 45,
+      "recoil": 107,
+      "fire_rate": 550,
+      "effective_distance": 800
+    },
+    "us-ordnance-m60e6-762x51-light-machine-gun": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x51",
+      "ergonomics": 45,
+      "recoil": 107,
+      "fire_rate": 550,
+      "effective_distance": 800
+    },
+    "us-ordnance-m60e6-762x51-light-machine-gun-fde": {
+      "weapon_class": "machine-gun",
+      "caliber": "Caliber762x51",
+      "ergonomics": 45,
+      "recoil": 107,
+      "fire_rate": 550,
+      "effective_distance": 800
+    },
+    "vss-vintorez-9x39-special-sniper-rifle": {
+      "weapon_class": "marksman",
+      "caliber": "Caliber9x39",
+      "ergonomics": 43,
+      "recoil": 80,
+      "fire_rate": 900,
+      "effective_distance": 400
+    },
+    "yarygin-mp-443-grach-9x19-pistol": {
+      "weapon_class": "pistol",
+      "caliber": "Caliber9x19PARA",
+      "ergonomics": 75,
+      "recoil": 425,
+      "fire_rate": 30,
+      "effective_distance": 50
+    },
+    "zid-sp-81-26x75-signal-pistol": {
+      "weapon_class": "special",
+      "caliber": "Caliber26x75",
+      "ergonomics": 51,
+      "recoil": 170,
+      "fire_rate": 30,
+      "effective_distance": 50
+    }
+  },
+  "ammo": {
+    "1270-525mm-buckshot": {
+      "caliber": "Caliber12g",
+      "damage": 37,
+      "penetration": 1,
+      "armor_damage": 15,
+      "projectiles": 8
+    },
+    "1270-65mm-express-buckshot": {
+      "caliber": "Caliber12g",
+      "damage": 35,
+      "penetration": 3,
+      "armor_damage": 26,
+      "projectiles": 9
+    },
+    "1270-7mm-buckshot": {
+      "caliber": "Caliber12g",
+      "damage": 39,
+      "penetration": 3,
+      "armor_damage": 26,
+      "projectiles": 8
+    },
+    "1270-85mm-magnum-buckshot": {
+      "caliber": "Caliber12g",
+      "damage": 50,
+      "penetration": 2,
+      "armor_damage": 26,
+      "projectiles": 8
+    },
+    "1270-ap-20-armor-piercing-slug": {
+      "caliber": "Caliber12g",
+      "damage": 164,
+      "penetration": 37,
+      "armor_damage": 65,
+      "projectiles": 1
+    },
+    "1270-copper-sabot-premier-hp-slug": {
+      "caliber": "Caliber12g",
+      "damage": 206,
+      "penetration": 14,
+      "armor_damage": 46,
+      "projectiles": 1
+    },
+    "1270-dual-sabot-slug": {
+      "caliber": "Caliber12g",
+      "damage": 85,
+      "penetration": 17,
+      "armor_damage": 65,
+      "projectiles": 2
+    },
+    "1270-flechette": {
+      "caliber": "Caliber12g",
+      "damage": 25,
+      "penetration": 31,
+      "armor_damage": 26,
+      "projectiles": 8
+    },
+    "1270-ftx-custom-lite-slug": {
+      "caliber": "Caliber12g",
+      "damage": 183,
+      "penetration": 20,
+      "armor_damage": 50,
+      "projectiles": 1
+    },
+    "1270-grizzly-40-slug": {
+      "caliber": "Caliber12g",
+      "damage": 190,
+      "penetration": 12,
+      "armor_damage": 48,
+      "projectiles": 1
+    },
+    "1270-lead-slug": {
+      "caliber": "Caliber12g",
+      "damage": 167,
+      "penetration": 15,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "1270-makeshift-50-bmg-slug": {
+      "caliber": "Caliber12g",
+      "damage": 197,
+      "penetration": 26,
+      "armor_damage": 57,
+      "projectiles": 1
+    },
+    "1270-piranha": {
+      "caliber": "Caliber12g",
+      "damage": 25,
+      "penetration": 24,
+      "armor_damage": 22,
+      "projectiles": 10
+    },
+    "1270-poleva-3-slug": {
+      "caliber": "Caliber12g",
+      "damage": 140,
+      "penetration": 17,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "1270-poleva-6u-slug": {
+      "caliber": "Caliber12g",
+      "damage": 150,
+      "penetration": 20,
+      "armor_damage": 50,
+      "projectiles": 1
+    },
+    "1270-rip": {
+      "caliber": "Caliber12g",
+      "damage": 265,
+      "penetration": 2,
+      "armor_damage": 11,
+      "projectiles": 1
+    },
+    "1270-superformance-hp-slug": {
+      "caliber": "Caliber12g",
+      "damage": 220,
+      "penetration": 5,
+      "armor_damage": 12,
+      "projectiles": 1
+    },
+    "127x55mm-ps12": {
+      "caliber": "Caliber127x55",
+      "damage": 115,
+      "penetration": 28,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "127x55mm-ps12a": {
+      "caliber": "Caliber127x55",
+      "damage": 165,
+      "penetration": 10,
+      "armor_damage": 22,
+      "projectiles": 1
+    },
+    "127x55mm-ps12b": {
+      "caliber": "Caliber127x55",
+      "damage": 102,
+      "penetration": 46,
+      "armor_damage": 57,
+      "projectiles": 1
+    },
+    "2070-56mm-buckshot": {
+      "caliber": "Caliber20g",
+      "damage": 26,
+      "penetration": 1,
+      "armor_damage": 12,
+      "projectiles": 8
+    },
+    "2070-62mm-buckshot": {
+      "caliber": "Caliber20g",
+      "damage": 22,
+      "penetration": 2,
+      "armor_damage": 13,
+      "projectiles": 8
+    },
+    "2070-73mm-buckshot": {
+      "caliber": "Caliber20g",
+      "damage": 23,
+      "penetration": 3,
+      "armor_damage": 13,
+      "projectiles": 9
+    },
+    "2070-75mm-buckshot": {
+      "caliber": "Caliber20g",
+      "damage": 25,
+      "penetration": 3,
+      "armor_damage": 14,
+      "projectiles": 8
+    },
+    "2070-dangerous-game-slug": {
+      "caliber": "Caliber20g",
+      "damage": 143,
+      "penetration": 25,
+      "armor_damage": 47,
+      "projectiles": 1
+    },
+    "2070-devastator-slug": {
+      "caliber": "Caliber20g",
+      "damage": 198,
+      "penetration": 5,
+      "armor_damage": 13,
+      "projectiles": 1
+    },
+    "2070-flechette": {
+      "caliber": "Caliber20g",
+      "damage": 20,
+      "penetration": 24,
+      "armor_damage": 24,
+      "projectiles": 8
+    },
+    "2070-poleva-3-slug": {
+      "caliber": "Caliber20g",
+      "damage": 120,
+      "penetration": 14,
+      "armor_damage": 35,
+      "projectiles": 1
+    },
+    "2070-poleva-6u-slug": {
+      "caliber": "Caliber20g",
+      "damage": 135,
+      "penetration": 17,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "2070-star-slug": {
+      "caliber": "Caliber20g",
+      "damage": 154,
+      "penetration": 16,
+      "armor_damage": 42,
+      "projectiles": 1
+    },
+    "2070-tss-armor-piercing-slug": {
+      "caliber": "Caliber20g",
+      "damage": 155,
+      "penetration": 30,
+      "armor_damage": 54,
+      "projectiles": 1
+    },
+    "20x1mm-disk": {
+      "caliber": "Caliber20x1mm",
+      "damage": 1,
+      "penetration": 0,
+      "armor_damage": 0,
+      "projectiles": 1
+    },
+    "23x75mm-barrikada-slug": {
+      "caliber": "Caliber23x75",
+      "damage": 192,
+      "penetration": 39,
+      "armor_damage": 75,
+      "projectiles": 1
+    },
+    "23x75mm-shrapnel-10-buckshot": {
+      "caliber": "Caliber23x75",
+      "damage": 87,
+      "penetration": 11,
+      "armor_damage": 20,
+      "projectiles": 8
+    },
+    "23x75mm-shrapnel-25-buckshot": {
+      "caliber": "Caliber23x75",
+      "damage": 78,
+      "penetration": 10,
+      "armor_damage": 20,
+      "projectiles": 8
+    },
+    "23x75mm-zvezda-flashbang-round": {
+      "caliber": "Caliber23x75",
+      "damage": 0,
+      "penetration": 0,
+      "armor_damage": 0,
+      "projectiles": 1
+    },
+    "26x75mm-flare-cartridge-acid-green": {
+      "caliber": "Caliber26x75",
+      "damage": 37,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "26x75mm-flare-cartridge-green": {
+      "caliber": "Caliber26x75",
+      "damage": 37,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "26x75mm-flare-cartridge-red": {
+      "caliber": "Caliber26x75",
+      "damage": 37,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "26x75mm-flare-cartridge-white": {
+      "caliber": "Caliber26x75",
+      "damage": 37,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "26x75mm-flare-cartridge-yellow": {
+      "caliber": "Caliber26x75",
+      "damage": 37,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "300-blackout-ap": {
+      "caliber": "Caliber762x35",
+      "damage": 51,
+      "penetration": 48,
+      "armor_damage": 65,
+      "projectiles": 1
+    },
+    "300-blackout-bcp-fmj": {
+      "caliber": "Caliber762x35",
+      "damage": 60,
+      "penetration": 30,
+      "armor_damage": 36,
+      "projectiles": 1
+    },
+    "300-blackout-cbj": {
+      "caliber": "Caliber762x35",
+      "damage": 58,
+      "penetration": 43,
+      "armor_damage": 57,
+      "projectiles": 1
+    },
+    "300-blackout-m62-tracer": {
+      "caliber": "Caliber762x35",
+      "damage": 54,
+      "penetration": 36,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "300-blackout-v-max": {
+      "caliber": "Caliber762x35",
+      "damage": 72,
+      "penetration": 20,
+      "armor_damage": 25,
+      "projectiles": 1
+    },
+    "300-whisper": {
+      "caliber": "Caliber762x35",
+      "damage": 90,
+      "penetration": 14,
+      "armor_damage": 18,
+      "projectiles": 1
+    },
+    "308-me": {
+      "caliber": "Caliber784x49",
+      "damage": 80,
+      "penetration": 42,
+      "armor_damage": 78,
+      "projectiles": 1
+    },
+    "308-me-lokt": {
+      "caliber": "Caliber784x49",
+      "damage": 96,
+      "penetration": 24,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "338-lapua-magnum-ap": {
+      "caliber": "Caliber86x70",
+      "damage": 115,
+      "penetration": 79,
+      "armor_damage": 89,
+      "projectiles": 1
+    },
+    "338-lapua-magnum-fmj": {
+      "caliber": "Caliber86x70",
+      "damage": 122,
+      "penetration": 47,
+      "armor_damage": 83,
+      "projectiles": 1
+    },
+    "338-lapua-magnum-tac-x": {
+      "caliber": "Caliber86x70",
+      "damage": 196,
+      "penetration": 18,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "338-lapua-magnum-ucw": {
+      "caliber": "Caliber86x70",
+      "damage": 142,
+      "penetration": 32,
+      "armor_damage": 70,
+      "projectiles": 1
+    },
+    "357-magnum-fmj": {
+      "caliber": "Caliber9x33R",
+      "damage": 70,
+      "penetration": 35,
+      "armor_damage": 43,
+      "projectiles": 1
+    },
+    "357-magnum-hp": {
+      "caliber": "Caliber9x33R",
+      "damage": 99,
+      "penetration": 18,
+      "armor_damage": 20,
+      "projectiles": 1
+    },
+    "357-magnum-jhp": {
+      "caliber": "Caliber9x33R",
+      "damage": 88,
+      "penetration": 24,
+      "armor_damage": 28,
+      "projectiles": 1
+    },
+    "357-magnum-sp": {
+      "caliber": "Caliber9x33R",
+      "damage": 108,
+      "penetration": 12,
+      "armor_damage": 15,
+      "projectiles": 1
+    },
+    "366-tkm-ap-m": {
+      "caliber": "Caliber366TKM",
+      "damage": 90,
+      "penetration": 42,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "366-tkm-eko": {
+      "caliber": "Caliber366TKM",
+      "damage": 73,
+      "penetration": 30,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "366-tkm-fmj": {
+      "caliber": "Caliber366TKM",
+      "damage": 98,
+      "penetration": 23,
+      "armor_damage": 48,
+      "projectiles": 1
+    },
+    "366-tkm-geksa": {
+      "caliber": "Caliber366TKM",
+      "damage": 110,
+      "penetration": 14,
+      "armor_damage": 38,
+      "projectiles": 1
+    },
+    "40mm-vog-25-grenade": {
+      "caliber": "Caliber40mmRU",
+      "damage": 199,
+      "penetration": 0,
+      "armor_damage": 68,
+      "projectiles": 1
+    },
+    "40x46mm-m381-he-grenade": {
+      "caliber": "Caliber40x46",
+      "damage": 199,
+      "penetration": 1,
+      "armor_damage": 95,
+      "projectiles": 1
+    },
+    "40x46mm-m386-he-grenade": {
+      "caliber": "Caliber40x46",
+      "damage": 199,
+      "penetration": 1,
+      "armor_damage": 95,
+      "projectiles": 1
+    },
+    "40x46mm-m406-he-grenade": {
+      "caliber": "Caliber40x46",
+      "damage": 199,
+      "penetration": 1,
+      "armor_damage": 95,
+      "projectiles": 1
+    },
+    "40x46mm-m433-hedp-grenade": {
+      "caliber": "Caliber40x46",
+      "damage": 199,
+      "penetration": 1,
+      "armor_damage": 95,
+      "projectiles": 1
+    },
+    "40x46mm-m441-he-grenade": {
+      "caliber": "Caliber40x46",
+      "damage": 199,
+      "penetration": 1,
+      "armor_damage": 95,
+      "projectiles": 1
+    },
+    "40x46mm-m576-mp-apers-grenade": {
+      "caliber": "Caliber40x46",
+      "damage": 160,
+      "penetration": 5,
+      "armor_damage": 95,
+      "projectiles": 15
+    },
+    "45-acp-ap": {
+      "caliber": "Caliber1143x23ACP",
+      "damage": 66,
+      "penetration": 38,
+      "armor_damage": 48,
+      "projectiles": 1
+    },
+    "45-acp-hydra-shok": {
+      "caliber": "Caliber1143x23ACP",
+      "damage": 100,
+      "penetration": 13,
+      "armor_damage": 30,
+      "projectiles": 1
+    },
+    "45-acp-lasermatch-fmj": {
+      "caliber": "Caliber1143x23ACP",
+      "damage": 76,
+      "penetration": 19,
+      "armor_damage": 37,
+      "projectiles": 1
+    },
+    "45-acp-match-fmj": {
+      "caliber": "Caliber1143x23ACP",
+      "damage": 72,
+      "penetration": 25,
+      "armor_damage": 36,
+      "projectiles": 1
+    },
+    "45-acp-rip": {
+      "caliber": "Caliber1143x23ACP",
+      "damage": 130,
+      "penetration": 3,
+      "armor_damage": 12,
+      "projectiles": 1
+    },
+    "46x30mm-action-sx": {
+      "caliber": "Caliber46x30",
+      "damage": 65,
+      "penetration": 18,
+      "armor_damage": 28,
+      "projectiles": 1
+    },
+    "46x30mm-ap-sx": {
+      "caliber": "Caliber46x30",
+      "damage": 35,
+      "penetration": 53,
+      "armor_damage": 46,
+      "projectiles": 1
+    },
+    "46x30mm-fmj-sx": {
+      "caliber": "Caliber46x30",
+      "damage": 43,
+      "penetration": 40,
+      "armor_damage": 41,
+      "projectiles": 1
+    },
+    "46x30mm-jsp-sx": {
+      "caliber": "Caliber46x30",
+      "damage": 46,
+      "penetration": 32,
+      "armor_damage": 37,
+      "projectiles": 1
+    },
+    "46x30mm-subsonic-sx": {
+      "caliber": "Caliber46x30",
+      "damage": 52,
+      "penetration": 23,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "50-ae-copper-solid": {
+      "caliber": "Caliber127x33",
+      "damage": 94,
+      "penetration": 33,
+      "armor_damage": 56,
+      "projectiles": 1
+    },
+    "50-ae-fmj": {
+      "caliber": "Caliber127x33",
+      "damage": 85,
+      "penetration": 40,
+      "armor_damage": 50,
+      "projectiles": 1
+    },
+    "50-ae-fmj-bull": {
+      "caliber": "Caliber127x33",
+      "damage": 113,
+      "penetration": 57,
+      "armor_damage": 50,
+      "projectiles": 1
+    },
+    "50-ae-hawk-jsp": {
+      "caliber": "Caliber127x33",
+      "damage": 122,
+      "penetration": 26,
+      "armor_damage": 28,
+      "projectiles": 1
+    },
+    "50-ae-jhp": {
+      "caliber": "Caliber127x33",
+      "damage": 147,
+      "penetration": 12,
+      "armor_damage": 23,
+      "projectiles": 1
+    },
+    "50-bmg-hp": {
+      "caliber": "Caliber127x99",
+      "damage": 260,
+      "penetration": 34,
+      "armor_damage": 22,
+      "projectiles": 1
+    },
+    "50-bmg-m21": {
+      "caliber": "Caliber127x99",
+      "damage": 220,
+      "penetration": 45,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "50-bmg-m33": {
+      "caliber": "Caliber127x99",
+      "damage": 190,
+      "penetration": 56,
+      "armor_damage": 85,
+      "projectiles": 1
+    },
+    "50-bmg-m903-slap": {
+      "caliber": "Caliber127x99",
+      "damage": 160,
+      "penetration": 115,
+      "armor_damage": 90,
+      "projectiles": 1
+    },
+    "545x39mm-7n40": {
+      "caliber": "Caliber545x39",
+      "damage": 55,
+      "penetration": 42,
+      "armor_damage": 45,
+      "projectiles": 1
+    },
+    "545x39mm-bp-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 48,
+      "penetration": 45,
+      "armor_damage": 46,
+      "projectiles": 1
+    },
+    "545x39mm-bs-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 45,
+      "penetration": 54,
+      "armor_damage": 57,
+      "projectiles": 1
+    },
+    "545x39mm-bt-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 54,
+      "penetration": 37,
+      "armor_damage": 44,
+      "projectiles": 1
+    },
+    "545x39mm-fmj": {
+      "caliber": "Caliber545x39",
+      "damage": 55,
+      "penetration": 24,
+      "armor_damage": 38,
+      "projectiles": 1
+    },
+    "545x39mm-hp": {
+      "caliber": "Caliber545x39",
+      "damage": 76,
+      "penetration": 9,
+      "armor_damage": 15,
+      "projectiles": 1
+    },
+    "545x39mm-pp-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 51,
+      "penetration": 34,
+      "armor_damage": 42,
+      "projectiles": 1
+    },
+    "545x39mm-ppbs-gs-igolnik": {
+      "caliber": "Caliber545x39",
+      "damage": 37,
+      "penetration": 62,
+      "armor_damage": 59,
+      "projectiles": 1
+    },
+    "545x39mm-prs-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 70,
+      "penetration": 13,
+      "armor_damage": 24,
+      "projectiles": 1
+    },
+    "545x39mm-ps-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 56,
+      "penetration": 28,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "545x39mm-sp": {
+      "caliber": "Caliber545x39",
+      "damage": 67,
+      "penetration": 15,
+      "armor_damage": 31,
+      "projectiles": 1
+    },
+    "545x39mm-t-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 59,
+      "penetration": 20,
+      "armor_damage": 36,
+      "projectiles": 1
+    },
+    "545x39mm-us-gs": {
+      "caliber": "Caliber545x39",
+      "damage": 65,
+      "penetration": 17,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "556x45mm-fmj": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 57,
+      "penetration": 23,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "556x45mm-hp": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 79,
+      "penetration": 7,
+      "armor_damage": 22,
+      "projectiles": 1
+    },
+    "556x45mm-m855": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 54,
+      "penetration": 31,
+      "armor_damage": 37,
+      "projectiles": 1
+    },
+    "556x45mm-m855a1": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 49,
+      "penetration": 44,
+      "armor_damage": 47,
+      "projectiles": 1
+    },
+    "556x45mm-m856": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 60,
+      "penetration": 18,
+      "armor_damage": 26,
+      "projectiles": 1
+    },
+    "556x45mm-m856a1": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 52,
+      "penetration": 38,
+      "armor_damage": 44,
+      "projectiles": 1
+    },
+    "556x45mm-m995": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 42,
+      "penetration": 53,
+      "armor_damage": 52,
+      "projectiles": 1
+    },
+    "556x45mm-mk-255-mod-0-rrlp": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 72,
+      "penetration": 11,
+      "armor_damage": 24,
+      "projectiles": 1
+    },
+    "556x45mm-mk-318-mod-0-sost": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 53,
+      "penetration": 33,
+      "armor_damage": 39,
+      "projectiles": 1
+    },
+    "556x45mm-ssa-ap": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 38,
+      "penetration": 57,
+      "armor_damage": 58,
+      "projectiles": 1
+    },
+    "556x45mm-warmageddon": {
+      "caliber": "Caliber556x45NATO",
+      "damage": 88,
+      "penetration": 3,
+      "armor_damage": 11,
+      "projectiles": 1
+    },
+    "57x28mm-l191": {
+      "caliber": "Caliber57x28",
+      "damage": 53,
+      "penetration": 33,
+      "armor_damage": 41,
+      "projectiles": 1
+    },
+    "57x28mm-r37f": {
+      "caliber": "Caliber57x28",
+      "damage": 98,
+      "penetration": 8,
+      "armor_damage": 7,
+      "projectiles": 1
+    },
+    "57x28mm-r37x": {
+      "caliber": "Caliber57x28",
+      "damage": 81,
+      "penetration": 11,
+      "armor_damage": 9,
+      "projectiles": 1
+    },
+    "57x28mm-sb193": {
+      "caliber": "Caliber57x28",
+      "damage": 59,
+      "penetration": 27,
+      "armor_damage": 37,
+      "projectiles": 1
+    },
+    "57x28mm-ss190": {
+      "caliber": "Caliber57x28",
+      "damage": 49,
+      "penetration": 37,
+      "armor_damage": 43,
+      "projectiles": 1
+    },
+    "57x28mm-ss197sr": {
+      "caliber": "Caliber57x28",
+      "damage": 62,
+      "penetration": 25,
+      "armor_damage": 22,
+      "projectiles": 1
+    },
+    "57x28mm-ss198lf": {
+      "caliber": "Caliber57x28",
+      "damage": 70,
+      "penetration": 17,
+      "armor_damage": 19,
+      "projectiles": 1
+    },
+    "58x42mm-dbp191": {
+      "caliber": "Caliber58x42",
+      "damage": 53,
+      "penetration": 39,
+      "armor_damage": 43,
+      "projectiles": 1
+    },
+    "58x42mm-dbx95": {
+      "caliber": "Caliber58x42",
+      "damage": 57,
+      "penetration": 33,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "58x42mm-dvc12": {
+      "caliber": "Caliber58x42",
+      "damage": 46,
+      "penetration": 52,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "58x42mm-dvx12": {
+      "caliber": "Caliber58x42",
+      "damage": 48,
+      "penetration": 47,
+      "armor_damage": 54,
+      "projectiles": 1
+    },
+    "68x51mm-sig-fmj": {
+      "caliber": "Caliber68x51",
+      "damage": 80,
+      "penetration": 36,
+      "armor_damage": 49,
+      "projectiles": 1
+    },
+    "68x51mm-sig-hybrid": {
+      "caliber": "Caliber68x51",
+      "damage": 72,
+      "penetration": 47,
+      "armor_damage": 58,
+      "projectiles": 1
+    },
+    "762x25mm-tt-akbs": {
+      "caliber": "Caliber762x25TT",
+      "damage": 58,
+      "penetration": 12,
+      "armor_damage": 32,
+      "projectiles": 1
+    },
+    "762x25mm-tt-fmj43": {
+      "caliber": "Caliber762x25TT",
+      "damage": 60,
+      "penetration": 11,
+      "armor_damage": 29,
+      "projectiles": 1
+    },
+    "762x25mm-tt-lrn": {
+      "caliber": "Caliber762x25TT",
+      "damage": 64,
+      "penetration": 8,
+      "armor_damage": 28,
+      "projectiles": 1
+    },
+    "762x25mm-tt-lrnpc": {
+      "caliber": "Caliber762x25TT",
+      "damage": 66,
+      "penetration": 7,
+      "armor_damage": 27,
+      "projectiles": 1
+    },
+    "762x25mm-tt-m855a1": {
+      "caliber": "Caliber762x25TT",
+      "damage": 34,
+      "penetration": 31,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "762x25mm-tt-m856a1": {
+      "caliber": "Caliber762x25TT",
+      "damage": 36,
+      "penetration": 27,
+      "armor_damage": 31,
+      "projectiles": 1
+    },
+    "762x25mm-tt-m995": {
+      "caliber": "Caliber762x25TT",
+      "damage": 32,
+      "penetration": 37,
+      "armor_damage": 36,
+      "projectiles": 1
+    },
+    "762x25mm-tt-p-gl": {
+      "caliber": "Caliber762x25TT",
+      "damage": 58,
+      "penetration": 14,
+      "armor_damage": 32,
+      "projectiles": 1
+    },
+    "762x25mm-tt-pst-gzh": {
+      "caliber": "Caliber762x25TT",
+      "damage": 50,
+      "penetration": 25,
+      "armor_damage": 36,
+      "projectiles": 1
+    },
+    "762x25mm-tt-pt-gzh": {
+      "caliber": "Caliber762x25TT",
+      "damage": 55,
+      "penetration": 18,
+      "armor_damage": 34,
+      "projectiles": 1
+    },
+    "762x39mm-bp-gzh": {
+      "caliber": "Caliber762x39",
+      "damage": 58,
+      "penetration": 47,
+      "armor_damage": 63,
+      "projectiles": 1
+    },
+    "762x39mm-fmj": {
+      "caliber": "Caliber762x39",
+      "damage": 63,
+      "penetration": 26,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "762x39mm-hp": {
+      "caliber": "Caliber762x39",
+      "damage": 80,
+      "penetration": 15,
+      "armor_damage": 20,
+      "projectiles": 1
+    },
+    "762x39mm-mai-ap": {
+      "caliber": "Caliber762x39",
+      "damage": 53,
+      "penetration": 58,
+      "armor_damage": 76,
+      "projectiles": 1
+    },
+    "762x39mm-pp-gzh": {
+      "caliber": "Caliber762x39",
+      "damage": 59,
+      "penetration": 41,
+      "armor_damage": 57,
+      "projectiles": 1
+    },
+    "762x39mm-ps-gzh": {
+      "caliber": "Caliber762x39",
+      "damage": 61,
+      "penetration": 35,
+      "armor_damage": 52,
+      "projectiles": 1
+    },
+    "762x39mm-sp": {
+      "caliber": "Caliber762x39",
+      "damage": 68,
+      "penetration": 20,
+      "armor_damage": 27,
+      "projectiles": 1
+    },
+    "762x39mm-t-45m1-gzh": {
+      "caliber": "Caliber762x39",
+      "damage": 65,
+      "penetration": 30,
+      "armor_damage": 46,
+      "projectiles": 1
+    },
+    "762x39mm-us-gzh": {
+      "caliber": "Caliber762x39",
+      "damage": 56,
+      "penetration": 29,
+      "armor_damage": 42,
+      "projectiles": 1
+    },
+    "762x51mm-bcp-fmj": {
+      "caliber": "Caliber762x51",
+      "damage": 83,
+      "penetration": 37,
+      "armor_damage": 56,
+      "projectiles": 1
+    },
+    "762x51mm-m61": {
+      "caliber": "Caliber762x51",
+      "damage": 73,
+      "penetration": 60,
+      "armor_damage": 79,
+      "projectiles": 1
+    },
+    "762x51mm-m62-tracer": {
+      "caliber": "Caliber762x51",
+      "damage": 82,
+      "penetration": 42,
+      "armor_damage": 65,
+      "projectiles": 1
+    },
+    "762x51mm-m80": {
+      "caliber": "Caliber762x51",
+      "damage": 80,
+      "penetration": 43,
+      "armor_damage": 67,
+      "projectiles": 1
+    },
+    "762x51mm-m80a1": {
+      "caliber": "Caliber762x51",
+      "damage": 75,
+      "penetration": 55,
+      "armor_damage": 74,
+      "projectiles": 1
+    },
+    "762x51mm-m993": {
+      "caliber": "Caliber762x51",
+      "damage": 70,
+      "penetration": 65,
+      "armor_damage": 85,
+      "projectiles": 1
+    },
+    "762x51mm-tcw-sp": {
+      "caliber": "Caliber762x51",
+      "damage": 85,
+      "penetration": 30,
+      "armor_damage": 25,
+      "projectiles": 1
+    },
+    "762x51mm-ultra-nosler": {
+      "caliber": "Caliber762x51",
+      "damage": 105,
+      "penetration": 15,
+      "armor_damage": 40,
+      "projectiles": 1
+    },
+    "762x54mm-r-bs-gs": {
+      "caliber": "Caliber762x54R",
+      "damage": 72,
+      "penetration": 70,
+      "armor_damage": 88,
+      "projectiles": 1
+    },
+    "762x54mm-r-bt-gzh": {
+      "caliber": "Caliber762x54R",
+      "damage": 78,
+      "penetration": 55,
+      "armor_damage": 87,
+      "projectiles": 1
+    },
+    "762x54mm-r-fmj": {
+      "caliber": "Caliber762x54R",
+      "damage": 84,
+      "penetration": 36,
+      "armor_damage": 63,
+      "projectiles": 1
+    },
+    "762x54mm-r-hp-bt": {
+      "caliber": "Caliber762x54R",
+      "damage": 102,
+      "penetration": 26,
+      "armor_damage": 37,
+      "projectiles": 1
+    },
+    "762x54mm-r-lps-gzh": {
+      "caliber": "Caliber762x54R",
+      "damage": 81,
+      "penetration": 42,
+      "armor_damage": 78,
+      "projectiles": 1
+    },
+    "762x54mm-r-ps-gzh": {
+      "caliber": "Caliber762x54R",
+      "damage": 84,
+      "penetration": 45,
+      "armor_damage": 84,
+      "projectiles": 1
+    },
+    "762x54mm-r-snb-gzh": {
+      "caliber": "Caliber762x54R",
+      "damage": 75,
+      "penetration": 62,
+      "armor_damage": 87,
+      "projectiles": 1
+    },
+    "762x54mm-r-sp-bt": {
+      "caliber": "Caliber762x54R",
+      "damage": 92,
+      "penetration": 31,
+      "armor_damage": 56,
+      "projectiles": 1
+    },
+    "762x54mm-r-t-46m-gzh": {
+      "caliber": "Caliber762x54R",
+      "damage": 82,
+      "penetration": 41,
+      "armor_damage": 83,
+      "projectiles": 1
+    },
+    "93x64mm-7n33": {
+      "caliber": "Caliber93x64",
+      "damage": 108,
+      "penetration": 56,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "93x64mm-fmj": {
+      "caliber": "Caliber93x64",
+      "damage": 115,
+      "penetration": 44,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "93x64mm-sp": {
+      "caliber": "Caliber93x64",
+      "damage": 129,
+      "penetration": 37,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "9x18mm-pm-bzht-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 53,
+      "penetration": 18,
+      "armor_damage": 28,
+      "projectiles": 1
+    },
+    "9x18mm-pm-p-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 50,
+      "penetration": 5,
+      "armor_damage": 16,
+      "projectiles": 1
+    },
+    "9x18mm-pm-pbm-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 40,
+      "penetration": 28,
+      "armor_damage": 30,
+      "projectiles": 1
+    },
+    "9x18mm-pm-ppe-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 61,
+      "penetration": 7,
+      "armor_damage": 15,
+      "projectiles": 1
+    },
+    "9x18mm-pm-ppt-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 59,
+      "penetration": 8,
+      "armor_damage": 22,
+      "projectiles": 1
+    },
+    "9x18mm-pm-prs-gs": {
+      "caliber": "Caliber9x18PM",
+      "damage": 58,
+      "penetration": 6,
+      "armor_damage": 16,
+      "projectiles": 1
+    },
+    "9x18mm-pm-ps-gs-ppo": {
+      "caliber": "Caliber9x18PM",
+      "damage": 55,
+      "penetration": 6,
+      "armor_damage": 16,
+      "projectiles": 1
+    },
+    "9x18mm-pm-pso-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 54,
+      "penetration": 5,
+      "armor_damage": 13,
+      "projectiles": 1
+    },
+    "9x18mm-pm-pst-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 50,
+      "penetration": 12,
+      "armor_damage": 26,
+      "projectiles": 1
+    },
+    "9x18mm-pm-psv": {
+      "caliber": "Caliber9x18PM",
+      "damage": 69,
+      "penetration": 3,
+      "armor_damage": 5,
+      "projectiles": 1
+    },
+    "9x18mm-pm-rg028-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 65,
+      "penetration": 13,
+      "armor_damage": 26,
+      "projectiles": 1
+    },
+    "9x18mm-pm-sp7-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 77,
+      "penetration": 2,
+      "armor_damage": 5,
+      "projectiles": 1
+    },
+    "9x18mm-pm-sp8-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 67,
+      "penetration": 1,
+      "armor_damage": 2,
+      "projectiles": 1
+    },
+    "9x18mm-pmm-pstm-gzh": {
+      "caliber": "Caliber9x18PM",
+      "damage": 58,
+      "penetration": 24,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "9x19mm-ap-63": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 52,
+      "penetration": 30,
+      "armor_damage": 48,
+      "projectiles": 1
+    },
+    "9x19mm-fmj-m882": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 56,
+      "penetration": 18,
+      "armor_damage": 35,
+      "projectiles": 1
+    },
+    "9x19mm-green-tracer": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 58,
+      "penetration": 14,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "9x19mm-luger-cci": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 70,
+      "penetration": 10,
+      "armor_damage": 38,
+      "projectiles": 1
+    },
+    "9x19mm-pbp-gzh": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 44,
+      "penetration": 39,
+      "armor_damage": 55,
+      "projectiles": 1
+    },
+    "9x19mm-pso-gzh": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 59,
+      "penetration": 10,
+      "armor_damage": 32,
+      "projectiles": 1
+    },
+    "9x19mm-pst-gzh": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 54,
+      "penetration": 20,
+      "armor_damage": 33,
+      "projectiles": 1
+    },
+    "9x19mm-quakemaker": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 85,
+      "penetration": 8,
+      "armor_damage": 22,
+      "projectiles": 1
+    },
+    "9x19mm-rip": {
+      "caliber": "Caliber9x19PARA",
+      "damage": 102,
+      "penetration": 2,
+      "armor_damage": 11,
+      "projectiles": 1
+    },
+    "9x21mm-7n42-zubilo": {
+      "caliber": "Caliber9x21",
+      "damage": 49,
+      "penetration": 38,
+      "armor_damage": 47,
+      "projectiles": 1
+    },
+    "9x21mm-7u4": {
+      "caliber": "Caliber9x21",
+      "damage": 53,
+      "penetration": 27,
+      "armor_damage": 44,
+      "projectiles": 1
+    },
+    "9x21mm-bt-gzh": {
+      "caliber": "Caliber9x21",
+      "damage": 52,
+      "penetration": 32,
+      "armor_damage": 42,
+      "projectiles": 1
+    },
+    "9x21mm-p-gzh": {
+      "caliber": "Caliber9x21",
+      "damage": 65,
+      "penetration": 18,
+      "armor_damage": 44,
+      "projectiles": 1
+    },
+    "9x21mm-pe-gzh": {
+      "caliber": "Caliber9x21",
+      "damage": 80,
+      "penetration": 15,
+      "armor_damage": 63,
+      "projectiles": 1
+    },
+    "9x21mm-ps-gzh": {
+      "caliber": "Caliber9x21",
+      "damage": 59,
+      "penetration": 22,
+      "armor_damage": 39,
+      "projectiles": 1
+    },
+    "9x39mm-bp-gs": {
+      "caliber": "Caliber9x39",
+      "damage": 58,
+      "penetration": 54,
+      "armor_damage": 69,
+      "projectiles": 1
+    },
+    "9x39mm-fmj": {
+      "caliber": "Caliber9x39",
+      "damage": 75,
+      "penetration": 17,
+      "armor_damage": 28,
+      "projectiles": 1
+    },
+    "9x39mm-pab-9-gs": {
+      "caliber": "Caliber9x39",
+      "damage": 62,
+      "penetration": 43,
+      "armor_damage": 57,
+      "projectiles": 1
+    },
+    "9x39mm-sp-5-gs": {
+      "caliber": "Caliber9x39",
+      "damage": 71,
+      "penetration": 28,
+      "armor_damage": 39,
+      "projectiles": 1
+    },
+    "9x39mm-sp-6-gs": {
+      "caliber": "Caliber9x39",
+      "damage": 60,
+      "penetration": 48,
+      "armor_damage": 64,
+      "projectiles": 1
+    },
+    "9x39mm-spp-gs": {
+      "caliber": "Caliber9x39",
+      "damage": 68,
+      "penetration": 35,
+      "armor_damage": 48,
+      "projectiles": 1
+    },
+    "signal-flare-blue": {
+      "caliber": "Caliber26x75",
+      "damage": 40,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    },
+    "signal-flare-new-year": {
+      "caliber": "Caliber26x75",
+      "damage": 40,
+      "penetration": 0,
+      "armor_damage": 60,
+      "projectiles": 1
+    }
+  },
+  "equipment": {
+    "3v-gear-paratus-3-day-operators-tactical-backpack-foliage-grey": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "511-tactical-hexgrid-plate-carrier": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 100,
+      "capacity": 0
+    },
+    "511-tactical-rush-100-backpack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 45
+    },
+    "511-tactical-tactec-plate-carrier-ranger-green": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 170,
+      "capacity": 18
+    },
+    "511-tactical-tactec-plate-carrier-storm": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 170,
+      "capacity": 18
+    },
+    "6b13-assault-armor-emr": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 203,
+      "capacity": 0
+    },
+    "6b13-assault-armor-flora": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 203,
+      "capacity": 0
+    },
+    "6b13-m-assault-armor-christmas-edition": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 249,
+      "capacity": 0
+    },
+    "6b13-m-assault-armor-killa-edition": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 249,
+      "capacity": 0
+    },
+    "6b2-body-armor-flora": {
+      "slot": "armor",
+      "armor_class": 2,
+      "durability": 128,
+      "capacity": 0
+    },
+    "6b23-1-body-armor-emr": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 206,
+      "capacity": 0
+    },
+    "6b23-2-body-armor-mountain-flora": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 246,
+      "capacity": 0
+    },
+    "6b3tm-01-armored-rig-khaki": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 86,
+      "capacity": 12
+    },
+    "6b43-zabralo-sh-body-armor-emr": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 510,
+      "capacity": 0
+    },
+    "6b45-armored-rig-assault-emr": {
+      "slot": "rig",
+      "armor_class": 6,
+      "durability": 414,
+      "capacity": 19
+    },
+    "6b45-armored-rig-general-purpose-emr": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 364,
+      "capacity": 16
+    },
+    "6b45-armored-rig-medic-emr": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 364,
+      "capacity": 16
+    },
+    "6b45-body-armor-emr": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 374,
+      "capacity": 0
+    },
+    "6b47-ratnik-bsh-helmet-emr-arctic-cover": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 45,
+      "capacity": 0
+    },
+    "6b47-ratnik-bsh-helmet-emr-cover": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 45,
+      "capacity": 0
+    },
+    "6b47-ratnik-bsh-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 45,
+      "capacity": 0
+    },
+    "6b5-15-zh-86-uley-armored-rig-flora": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 110,
+      "capacity": 10
+    },
+    "6b5-16-zh-86-uley-armored-rig-khaki": {
+      "slot": "rig",
+      "armor_class": 3,
+      "durability": 160,
+      "capacity": 10
+    },
+    "6sh118-raid-backpack-emr": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 48
+    },
+    "altyn-bulletproof-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 81,
+      "capacity": 0
+    },
+    "ana-tactical-alpha-chest-rig-a-tacs-au": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "ana-tactical-alpha-chest-rig-multicam": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "ana-tactical-alpha-chest-rig-olive-drab": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "ana-tactical-beta-2-battle-backpack-olive-drab": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "ana-tactical-m1-plate-carrier-od-green": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 194,
+      "capacity": 20
+    },
+    "ana-tactical-m2-plate-carrier-multicam-alpine": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 206,
+      "capacity": 18
+    },
+    "ana-tactical-m2-plate-carrier-od-green": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 206,
+      "capacity": 18
+    },
+    "ars-arma-a18-skanda-plate-carrier-multicam": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 186,
+      "capacity": 25
+    },
+    "ars-arma-cpc-mod1-plate-carrier-a-tacs-fg": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 240,
+      "capacity": 23
+    },
+    "atlant-armour-titan-aramid-helmet-multicam": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "atlant-armour-titan-aramid-helmet-od-green": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "atlant-armour-titan-aramid-helmet-rudiarius": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 78,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-black": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-blasted-ice": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-crash-tested": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-demon": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-demonic-face": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-el-dia-de-muertos": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-loui-peeton": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-loui-peeton-1": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-ping": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-scars": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-skull": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-smile": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-stop-me": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-target": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "atomic-defense-cqcm-ballistic-mask-toxic": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 35,
+      "capacity": 0
+    },
+    "azimut-ss-khamelion-chest-harness-olive": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 12
+    },
+    "azimut-ss-zhuk-chest-harness-black": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "azimut-ss-zhuk-chest-harness-surpat": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "ballistic-armor-co-bastion-helmet-armor-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 50,
+      "capacity": 0
+    },
+    "ballistic-armor-co-bastion-helmet-multicam": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 50,
+      "capacity": 0
+    },
+    "ballistic-armor-co-bastion-helmet-od-green": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 50,
+      "capacity": 0
+    },
+    "blackhawk-commando-chest-harness-black": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "blackhawk-commando-chest-harness-desert-tan": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "blackrock-chest-rig-gray": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "blackrock-chest-rig-khaki": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "bnti-gzhel-k-body-armor": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 259,
+      "capacity": 0
+    },
+    "bnti-kirasa-n-body-armor": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 240,
+      "capacity": 0
+    },
+    "bnti-kirasa-n-body-armor-green": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 240,
+      "capacity": 0
+    },
+    "bnti-lshz-2dtm-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 99,
+      "capacity": 0
+    },
+    "bnti-module-3m-body-armor": {
+      "slot": "armor",
+      "armor_class": 2,
+      "durability": 80,
+      "capacity": 0
+    },
+    "bnti-zhuk-body-armor-emr": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 305,
+      "capacity": 0
+    },
+    "bnti-zhuk-body-armor-press": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 185,
+      "capacity": 0
+    },
+    "bomber-beanie": {
+      "slot": "helmet",
+      "armor_class": 1,
+      "durability": 150,
+      "capacity": 0
+    },
+    "camelbak-tri-zip-assault-backpack-foliage": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "camelbak-tri-zip-assault-backpack-multicam": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "champions-helmet": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 100,
+      "capacity": 0
+    },
+    "cqc-osprey-mk4a-plate-carrier-assault-mtp": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 222,
+      "capacity": 25
+    },
+    "cqc-osprey-mk4a-plate-carrier-protection-mtp": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 272,
+      "capacity": 24
+    },
+    "crye-precision-airframe-helmet-mesh-green": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-helmet-od-green": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-helmet-old-school": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-helmet-shark": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-helmet-tan": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-helmet-tan-1": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-m-lok-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-airframe-m-lok-helmet-bull": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "crye-precision-avs-plate-carrier-multicam": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 212,
+      "capacity": 23
+    },
+    "crye-precision-avs-plate-carrier-ranger-green": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 212,
+      "capacity": 23
+    },
+    "crye-precision-avs-plate-carrier-tagilla-edition": {
+      "slot": "rig",
+      "armor_class": 6,
+      "durability": 170,
+      "capacity": 12
+    },
+    "crye-precision-cpc-plate-carrier-goons-edition": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 230,
+      "capacity": 18
+    },
+    "crye-precision-jpc-plate-carrier-multicam": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 110,
+      "capacity": 24
+    },
+    "csa-chest-rig-black": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 10
+    },
+    "death-knight-mask": {
+      "slot": "helmet",
+      "armor_class": 1,
+      "durability": 55,
+      "capacity": 0
+    },
+    "devtac-ronin-ballistic-helmet": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 180,
+      "capacity": 0
+    },
+    "devtac-ronin-respirator": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 180,
+      "capacity": 0
+    },
+    "devtac-ronin-respirator-beast": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 180,
+      "capacity": 0
+    },
+    "devtac-ronin-respirator-eternal-green": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 180,
+      "capacity": 0
+    },
+    "diamond-age-bastion-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "diamond-age-neosteel-high-cut-helmet-aces": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 72,
+      "capacity": 0
+    },
+    "diamond-age-neosteel-high-cut-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 72,
+      "capacity": 0
+    },
+    "diamond-age-neosteel-high-cut-helmet-orange-stains": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 72,
+      "capacity": 0
+    },
+    "direct-action-dragon-egg-mark-ii-backpack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "direct-action-thunderbolt-compact-chest-rig-ranger-green": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "direct-action-thunderbolt-compact-chest-rig-shadow-grey": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "diy-idea-chest-rig": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 8
+    },
+    "drd-body-armor": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 120,
+      "capacity": 0
+    },
+    "duffle-bag": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 12
+    },
+    "dynaforce-triton-m43-a-chest-harness-black": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "eagle-allied-industries-mbss-plate-carrier-coyote-brown": {
+      "slot": "rig",
+      "armor_class": 3,
+      "durability": 70,
+      "capacity": 12
+    },
+    "eagle-industries-mmac-plate-carrier-ranger-green": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 144,
+      "capacity": 14
+    },
+    "eberlestock-f4-terminator-load-bearing-backpack-tiger-stripe": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 40
+    },
+    "eberlestock-f5-switchblade-backpack-dry-earth": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "eberlestock-g2-gunslinger-ii-backpack-dry-earth": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "eclipse-rbav-af-plate-carrier-ranger-green": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 218,
+      "capacity": 19
+    },
+    "ferro-concepts-fcpc-v5-plate-carrier-black-division": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 198,
+      "capacity": 14
+    },
+    "first-spear-siege-r-optimized-mass-plate-carrier-black-division": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 350,
+      "capacity": 25
+    },
+    "first-spear-strandhogg-plate-carrier-abupat": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 17
+    },
+    "first-spear-strandhogg-plate-carrier-multicam-black": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 17
+    },
+    "first-spear-strandhogg-plate-carrier-ranger-green": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 17
+    },
+    "flyye-mbss-backpack-ucp": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "fort-defender-2-body-armor": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 320,
+      "capacity": 0
+    },
+    "fort-defender-2-body-armor-flecktarn": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 320,
+      "capacity": 0
+    },
+    "fort-gladiator-s-plate-carrier-death-is-inevitable": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 440,
+      "capacity": 12
+    },
+    "fort-gladiator-s-plate-carrier-gray": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 345,
+      "capacity": 0
+    },
+    "fort-gladiator-s-plate-carrier-lightweight-multicam": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 270,
+      "capacity": 16
+    },
+    "fort-gladiator-s-plate-carrier-multicam": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 345,
+      "capacity": 22
+    },
+    "fort-gladiator-s-plate-carrier-viking": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 282,
+      "capacity": 20
+    },
+    "fort-kiver-m-bulletproof-helmet": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 63,
+      "capacity": 0
+    },
+    "fort-redut-m-body-armor": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 358,
+      "capacity": 0
+    },
+    "fort-redut-m-body-armor-black": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 358,
+      "capacity": 0
+    },
+    "fort-redut-m-body-armor-prisoner-of-the-arena": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 358,
+      "capacity": 0
+    },
+    "fort-redut-m-body-armor-sk-woodland": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 358,
+      "capacity": 0
+    },
+    "fort-redut-t5-body-armor-smog": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 504,
+      "capacity": 0
+    },
+    "galvion-caiman-hybrid-helmet-grey": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 60,
+      "capacity": 0
+    },
+    "galvion-caiman-hybrid-helmet-multicam": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 60,
+      "capacity": 0
+    },
+    "galvion-caiman-hybrid-helmet-multicam-alpine": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 60,
+      "capacity": 0
+    },
+    "galvion-caiman-hybrid-helmet-mutualist": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 60,
+      "capacity": 0
+    },
+    "gear-craft-gc-bss-mk1-chest-rig-a-tacs-fg": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "gruppa-99-t20-backpack-multicam": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "gruppa-99-t20-backpack-umber-brown": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "gruppa-99-t30-backpack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "gruppa-99-t30-backpack-multicam": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "haley-strategic-d3crx-chest-harness-black": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "haley-strategic-d3crx-chest-harness-ranger-green": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "hazard-4-drawbridge-backpack-coyote-tan": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "hazard-4-pillbox-backpack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "hazard-4-takedown-sling-backpack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 24
+    },
+    "hazard-4-takedown-sling-backpack-multicam": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 24
+    },
+    "hexatac-hpc-plate-carrier-multicam": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 90,
+      "capacity": 0
+    },
+    "hexatac-hpc-plate-carrier-multicam-black": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 90,
+      "capacity": 0
+    },
+    "highcom-striker-achhc-iiia-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 36,
+      "capacity": 0
+    },
+    "highcom-striker-achhc-iiia-helmet-coyote-brown": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 36,
+      "capacity": 0
+    },
+    "highcom-striker-achhc-iiia-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 36,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-coyote-stripes": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-desert-tan": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-green-stripes": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-mesh-spray": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-sand": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-striker-ulach-iiia-helmet-winter-mesh-spray": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 66,
+      "capacity": 0
+    },
+    "highcom-trooper-tfo-body-armor-coyote": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 180,
+      "capacity": 0
+    },
+    "highcom-trooper-tfo-body-armor-multicam": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 180,
+      "capacity": 0
+    },
+    "interceptor-otv-body-armor-ucp": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 222,
+      "capacity": 0
+    },
+    "interceptor-otv-body-armor-woodland": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 222,
+      "capacity": 0
+    },
+    "iotv-gen4-body-armor-assault-kit-multicam": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 362,
+      "capacity": 0
+    },
+    "iotv-gen4-body-armor-full-protection-kit-multicam": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 398,
+      "capacity": 0
+    },
+    "iotv-gen4-body-armor-high-mobility-kit-multicam": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 320,
+      "capacity": 0
+    },
+    "jack-o-lantern-tactical-pumpkin-helmet": {
+      "slot": "helmet",
+      "armor_class": 2,
+      "durability": 40,
+      "capacity": 0
+    },
+    "kolpak-1s-riot-helmet": {
+      "slot": "helmet",
+      "armor_class": 2,
+      "durability": 45,
+      "capacity": 0
+    },
+    "lbt-1476a-3day-pack-multicam-alpine": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "lbt-1476a-3day-pack-woodland": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "lbt-1961a-load-bearing-chest-rig-aor1": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "lbt-1961a-load-bearing-chest-rig-dnc": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "lbt-1961a-load-bearing-chest-rig-goons-edition": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "lbt-1961a-load-bearing-chest-rig-mas-grey": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "lbt-1961a-load-bearing-chest-rig-multicam": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "lbt-2670-slim-field-med-pack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 48
+    },
+    "lbt-6094a-slick-plate-carrier-black": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 200,
+      "capacity": 0
+    },
+    "lbt-6094a-slick-plate-carrier-coyote-tan": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 200,
+      "capacity": 0
+    },
+    "lbt-6094a-slick-plate-carrier-olive-drab": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 200,
+      "capacity": 0
+    },
+    "lbt-8005a-day-pack-backpack-multicam-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "lolkek-3f-transfer-tourist-backpack": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 12
+    },
+    "lshz-lightweight-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 36,
+      "capacity": 0
+    },
+    "maska-1sch-bulletproof-helmet-christmas-edition": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 108,
+      "capacity": 0
+    },
+    "maska-1sch-bulletproof-helmet-killa-edition": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 108,
+      "capacity": 0
+    },
+    "maska-1sch-bulletproof-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 108,
+      "capacity": 0
+    },
+    "maska-1sch-bulletproof-helmet-vida-edition": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 108,
+      "capacity": 0
+    },
+    "mf-untar-body-armor": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 100,
+      "capacity": 0
+    },
+    "msa-ach-tc-2001-mich-series-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 30,
+      "capacity": 0
+    },
+    "msa-ach-tc-2002-mich-series-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 32,
+      "capacity": 0
+    },
+    "msa-gallet-tc-800-high-cut-combat-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 36,
+      "capacity": 0
+    },
+    "mtek-flux-ballistic-helmet-multicam-alpine": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 50,
+      "capacity": 0
+    },
+    "mtek-flux-ballistic-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 50,
+      "capacity": 0
+    },
+    "mtek-strike-ballistic-helmet-coyote": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 40,
+      "capacity": 0
+    },
+    "mtek-strike-ballistic-helmet-coyotemulticam-arid": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 40,
+      "capacity": 0
+    },
+    "mystery-ranch-2-day-assault-pack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "mystery-ranch-blackjack-50-backpack-multicam": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 42
+    },
+    "mystery-ranch-nice-comm-3-bvs-frame-system-coyote": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 14
+    },
+    "mystery-ranch-nice-frame-load-sling": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "mystery-ranch-satl-bridger-assault-pack-foliage": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 36
+    },
+    "mystery-ranch-terraframe-backpack-christmas-edition": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "mystery-ranch-terraframe-backpack-olive-drab": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 30
+    },
+    "nfm-hjelm-helmet-hellhound-grey": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 78,
+      "capacity": 0
+    },
+    "nfm-thor-concealable-reinforced-vest-body-armor": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 170,
+      "capacity": 0
+    },
+    "nfm-thor-concealable-reinforced-vest-body-armor-head-eyes": {
+      "slot": "armor",
+      "armor_class": 4,
+      "durability": 170,
+      "capacity": 0
+    },
+    "nfm-thor-integrated-carrier-body-armor": {
+      "slot": "armor",
+      "armor_class": 6,
+      "durability": 466,
+      "capacity": 0
+    },
+    "npp-klass-bagariy-plate-carrier-emr": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 232,
+      "capacity": 25
+    },
+    "npp-klass-kora-kulon-body-armor-black": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 128,
+      "capacity": 0
+    },
+    "npp-klass-kora-kulon-body-armor-emr": {
+      "slot": "armor",
+      "armor_class": 3,
+      "durability": 128,
+      "capacity": 0
+    },
+    "npp-klass-korund-vm-body-armor-black": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 310,
+      "capacity": 0
+    },
+    "npp-klass-korund-vm-body-armor-kamysh": {
+      "slot": "armor",
+      "armor_class": 5,
+      "durability": 310,
+      "capacity": 0
+    },
+    "npp-klass-tor-2-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 81,
+      "capacity": 0
+    },
+    "oakley-mechanism-heavy-duty-backpack-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 32
+    },
+    "ops-core-fast-mt-super-high-cut-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "ops-core-fast-mt-super-high-cut-helmet-urban-tan": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 48,
+      "capacity": 0
+    },
+    "paca-soft-armor": {
+      "slot": "armor",
+      "armor_class": 2,
+      "durability": 100,
+      "capacity": 0
+    },
+    "paca-soft-armor-rivals-edition": {
+      "slot": "armor",
+      "armor_class": 2,
+      "durability": 100,
+      "capacity": 0
+    },
+    "partisans-bag": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "pilgrim-tourist-backpack": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "poyas-a-poyas-b-gear-rig": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "psh-97-djeta-riot-helmet": {
+      "slot": "helmet",
+      "armor_class": 2,
+      "durability": 156,
+      "capacity": 0
+    },
+    "rys-t-bulletproof-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 90,
+      "capacity": 0
+    },
+    "sanitars-bag": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "santas-bag": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "scav-backpack": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "scav-vest": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 6
+    },
+    "security-vest": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 6
+    },
+    "shellback-tactical-banshee-plate-carrier-a-tacs-au": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 152,
+      "capacity": 16
+    },
+    "shield-absolute-cinema-hard-hat-orange": {
+      "slot": "helmet",
+      "armor_class": 2,
+      "durability": 96,
+      "capacity": 0
+    },
+    "shield-absolute-cinema-hard-hat-white": {
+      "slot": "helmet",
+      "armor_class": 2,
+      "durability": 96,
+      "capacity": 0
+    },
+    "shpm-firefighter-helmet": {
+      "slot": "helmet",
+      "armor_class": 2,
+      "durability": 96,
+      "capacity": 0
+    },
+    "soe-micro-rig-multicam": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 8
+    },
+    "spiritus-systems-bank-robber-chest-rig-multicam-alpine": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 8
+    },
+    "spiritus-systems-bank-robber-chest-rig-multicam-black": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 8
+    },
+    "spiritus-systems-lv-119-plate-carrier-black-division-v1": {
+      "slot": "rig",
+      "armor_class": 6,
+      "durability": 220,
+      "capacity": 24
+    },
+    "spiritus-systems-lv-119-plate-carrier-black-division-v2": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 198,
+      "capacity": 25
+    },
+    "spiritus-systems-lv-119-plate-carrier-multicam-black": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 198,
+      "capacity": 28
+    },
+    "splav-tarzan-m22-chest-rig-smog": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 14
+    },
+    "ss-precision-plateframe-plate-carrier-goons-edition": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 120,
+      "capacity": 10
+    },
+    "ssh-68-steel-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 54,
+      "capacity": 0
+    },
+    "sso-attack-2-raid-backpack-khaki": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "sssh-94-sfera-s-helmet": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 135,
+      "capacity": 0
+    },
+    "stich-profi-chest-rig-mk2-assault-a-tacs-fg": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "stich-profi-chest-rig-mk2-recon-a-tacs-fg": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "stich-profi-chest-rig-mk2-recon-emr": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 18
+    },
+    "stich-profi-plate-carrier-v2-a-tacs-fg": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 20
+    },
+    "stich-profi-plate-carrier-v2-black": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 20
+    },
+    "stich-profi-plate-carrier-v2-coyote": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 20
+    },
+    "stich-profi-plate-carrier-v2-marpat-woodland": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 198,
+      "capacity": 20
+    },
+    "stich-profi-stich-defense-mod2-plate-carrier-multicam": {
+      "slot": "rig",
+      "armor_class": 6,
+      "durability": 220,
+      "capacity": 14
+    },
+    "tac-kek-fast-mt-helmet-replica": {
+      "slot": "helmet",
+      "armor_class": 1,
+      "durability": 48,
+      "capacity": 0
+    },
+    "tac-kek-jaypc-plate-carrier-black": {
+      "slot": "rig",
+      "armor_class": 1,
+      "durability": 180,
+      "capacity": 13
+    },
+    "tac-kek-jaypc-plate-carrier-od-green": {
+      "slot": "rig",
+      "armor_class": 1,
+      "durability": 180,
+      "capacity": 15
+    },
+    "tactical-sling-bag-khaki": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 6
+    },
+    "tagillas-welding-mask-gorilla": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 40,
+      "capacity": 0
+    },
+    "tagillas-welding-mask-ubey": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 40,
+      "capacity": 0
+    },
+    "tagillas-welding-mask-zabey": {
+      "slot": "helmet",
+      "armor_class": 6,
+      "durability": 100,
+      "capacity": 0
+    },
+    "tasmanian-tiger-modular-pack-45-plus-multicam-black": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 40
+    },
+    "tasmanian-tiger-plate-carrier-mkiii-coyote-brown": {
+      "slot": "rig",
+      "armor_class": 5,
+      "durability": 110,
+      "capacity": 15
+    },
+    "tasmanian-tiger-sk-plate-carrier-multicam-black": {
+      "slot": "rig",
+      "armor_class": 6,
+      "durability": 110,
+      "capacity": 8
+    },
+    "tasmanian-tiger-trooper-35-backpack-khaki": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 35
+    },
+    "team-wendy-exfil-ballistic-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 54,
+      "capacity": 0
+    },
+    "team-wendy-exfil-ballistic-helmet-coyote-brown": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 54,
+      "capacity": 0
+    },
+    "team-wendy-exfil-ballistic-helmet-multicam": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 54,
+      "capacity": 0
+    },
+    "tehinkom-rk-pt-25-patrol-backpack-emr": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 25
+    },
+    "transformer-bag": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 9
+    },
+    "tsh-4m-l-soft-tank-crew-helmet": {
+      "slot": "helmet",
+      "armor_class": 1,
+      "durability": 105,
+      "capacity": 0
+    },
+    "type-56-chicom-chest-harness": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 10
+    },
+    "umka-m33-set1-hunter-vest-olive-drab": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "umtbs-6sh112-scout-sniper-chest-rig-emr": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 12
+    },
+    "untar-helmet": {
+      "slot": "helmet",
+      "armor_class": 3,
+      "durability": 45,
+      "capacity": 0
+    },
+    "velocity-systems-mppv-multi-purpose-patrol-vest-wolf-grey": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 24
+    },
+    "vertx-ready-pack-backpack-red": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 16
+    },
+    "vkbo-army-bag": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 8
+    },
+    "vulkan-5-lshz-5-bulletproof-helmet-black": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 75,
+      "capacity": 0
+    },
+    "vulkan-5-lshz-5-bulletproof-helmet-camouflage": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 75,
+      "capacity": 0
+    },
+    "vulkan-5-lshz-5-bulletproof-helmet-eight-ball": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 75,
+      "capacity": 0
+    },
+    "vulkan-5-lshz-5-bulletproof-helmet-flame": {
+      "slot": "helmet",
+      "armor_class": 5,
+      "durability": 75,
+      "capacity": 0
+    },
+    "wartech-berkut-bb-102-backpack-a-tacs-fg": {
+      "slot": "backpack",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "wartech-mk3-tv-104-chest-rig-moss": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "wartech-mk3-tv-104-chest-rig-multicam": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 20
+    },
+    "wartech-tv-109-tv-106-chest-rig-a-tacs-fg": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 10
+    },
+    "wartech-tv-110-plate-carrier-coyote": {
+      "slot": "rig",
+      "armor_class": 4,
+      "durability": 160,
+      "capacity": 23
+    },
+    "wartech-tv-115-plate-carrier-black": {
+      "slot": "rig",
+      "armor_class": 3,
+      "durability": 122,
+      "capacity": 13
+    },
+    "wartech-tv-115-plate-carrier-olive-drab": {
+      "slot": "rig",
+      "armor_class": 3,
+      "durability": 122,
+      "capacity": 13
+    },
+    "zsh-1-2m-helmet-black-cover": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 63,
+      "capacity": 0
+    },
+    "zsh-1-2m-helmet-olive-drab": {
+      "slot": "helmet",
+      "armor_class": 4,
+      "durability": 63,
+      "capacity": 0
+    },
+    "zulu-nylon-gear-m4-reduced-signature-chest-rig-ranger-green": {
+      "slot": "rig",
+      "armor_class": 0,
+      "durability": 0,
+      "capacity": 6
+    }
+  },
+  "meds": {
+    "afak-tactical-individual-first-aid-kit": {
+      "heal": 400,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "ai-2-medkit": {
+      "heal": 100,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "aluminum-splint": {
+      "heal": 0,
+      "uses": 3,
+      "stops_light_bleed": false,
+      "stops_heavy_bleed": false,
+      "treats_fracture": true
+    },
+    "army-bandage": {
+      "heal": 0,
+      "uses": 2,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "aseptic-bandage": {
+      "heal": 0,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "calok-b-hemostatic-applicator": {
+      "heal": 0,
+      "uses": 3,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": true,
+      "treats_fracture": false
+    },
+    "car-first-aid-kit": {
+      "heal": 220,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "cat-hemostatic-tourniquet": {
+      "heal": 0,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": true,
+      "treats_fracture": false
+    },
+    "cms-surgical-kit": {
+      "heal": 100,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": true,
+      "treats_fracture": true
+    },
+    "esmarch-tourniquet": {
+      "heal": 0,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": true,
+      "treats_fracture": false
+    },
+    "grizzly-medical-kit": {
+      "heal": 1800,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "ifak-individual-first-aid-kit": {
+      "heal": 300,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "immobilizing-splint": {
+      "heal": 0,
+      "uses": 1,
+      "stops_light_bleed": false,
+      "stops_heavy_bleed": false,
+      "treats_fracture": true
+    },
+    "salewa-first-aid-kit": {
+      "heal": 400,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": false,
+      "treats_fracture": false
+    },
+    "surv12-field-surgical-kit": {
+      "heal": 150,
+      "uses": 1,
+      "stops_light_bleed": true,
+      "stops_heavy_bleed": true,
+      "treats_fracture": true
+    },
+    "tigzresq-splint": {
+      "heal": 0,
+      "uses": 7,
+      "stops_light_bleed": false,
+      "stops_heavy_bleed": false,
+      "treats_fracture": true
+    }
+  },
+  "mobs": {
+    "ExUsec": {
+      "name": "Rogue",
+      "health": 775,
+      "armor_class": 5,
+      "penetration": 37,
+      "damage": 83,
+      "fire_rate": 1075
+    },
+    "PmcBot": {
+      "name": "Raider",
+      "health": 745,
+      "armor_class": 5,
+      "penetration": 37,
+      "damage": 83,
+      "fire_rate": 900
+    },
+    "Sentry": {
+      "name": "AF",
+      "health": 675,
+      "armor_class": 6,
+      "penetration": 55,
+      "damage": 78,
+      "fire_rate": 700
+    },
+    "blackDivision": {
+      "name": "Black Div.",
+      "health": 790,
+      "armor_class": 6,
+      "penetration": 65,
+      "damage": 70,
+      "fire_rate": 1100
+    },
+    "bossBoar": {
+      "name": "Kaban",
+      "health": 1300,
+      "armor_class": 0,
+      "penetration": 70,
+      "damage": 72,
+      "fire_rate": 750
+    },
+    "bossBoarSniper": {
+      "name": "Kaban Guard (Sniper)",
+      "health": 710,
+      "armor_class": 4,
+      "penetration": 62,
+      "damage": 75,
+      "fire_rate": 750
+    },
+    "bossBully": {
+      "name": "Reshala",
+      "health": 752,
+      "armor_class": 0,
+      "penetration": 45,
+      "damage": 48,
+      "fire_rate": 1075
+    },
+    "bossBullyBlackDiv": {
+      "name": "Black Div. Boss",
+      "health": 790,
+      "armor_class": 5,
+      "penetration": 53,
+      "damage": 42,
+      "fire_rate": 900
+    },
+    "bossGluhar": {
+      "name": "Glukhar",
+      "health": 1010,
+      "armor_class": 4,
+      "penetration": 65,
+      "damage": 70,
+      "fire_rate": 900
+    },
+    "bossKilla": {
+      "name": "Killa",
+      "health": 890,
+      "armor_class": 6,
+      "penetration": 62,
+      "damage": 37,
+      "fire_rate": 650
+    },
+    "bossKillaAgro": {
+      "name": "Vengeful Killa",
+      "health": 960,
+      "armor_class": 6,
+      "penetration": 62,
+      "damage": 37,
+      "fire_rate": 650
+    },
+    "bossKnight": {
+      "name": "Knight",
+      "health": 1120,
+      "armor_class": 5,
+      "penetration": 60,
+      "damage": 73,
+      "fire_rate": 1200
+    },
+    "bossKojaniy": {
+      "name": "Shturman",
+      "health": 812,
+      "armor_class": 0,
+      "penetration": 62,
+      "damage": 75,
+      "fire_rate": 700
+    },
+    "bossKolontay": {
+      "name": "Kollontay",
+      "health": 1055,
+      "armor_class": 2,
+      "penetration": 41,
+      "damage": 59,
+      "fire_rate": 1000
+    },
+    "bossPartisan": {
+      "name": "Partisan",
+      "health": 950,
+      "armor_class": 0,
+      "penetration": 62,
+      "damage": 75,
+      "fire_rate": 900
+    },
+    "bossSanitar": {
+      "name": "Sanitar",
+      "health": 1270,
+      "armor_class": 0,
+      "penetration": 48,
+      "damage": 60,
+      "fire_rate": 900
+    },
+    "bossTagilla": {
+      "name": "Tagilla",
+      "health": 1220,
+      "armor_class": 6,
+      "penetration": 34,
+      "damage": 51,
+      "fire_rate": 650
+    },
+    "bossTagillaAgro": {
+      "name": "Shadow of Tagilla",
+      "health": 1305,
+      "armor_class": 6,
+      "penetration": 62,
+      "damage": 37,
+      "fire_rate": 700
+    },
+    "bossWedge": {
+      "name": "The Wedge",
+      "health": 880,
+      "armor_class": 5,
+      "penetration": 65,
+      "damage": 70,
+      "fire_rate": 950
+    },
+    "bossWedgeLab": {
+      "name": "The Wedge (Labs)",
+      "health": 880,
+      "armor_class": 5,
+      "penetration": 53,
+      "damage": 35,
+      "fire_rate": 950
+    },
+    "bossZryachiy": {
+      "name": "Zryachiy",
+      "health": 1655,
+      "armor_class": 0,
+      "penetration": 70,
+      "damage": 72,
+      "fire_rate": 700
+    },
+    "followerBigPipe": {
+      "name": "Big Pipe",
+      "health": 910,
+      "armor_class": 5,
+      "penetration": 60,
+      "damage": 73,
+      "fire_rate": 950
+    },
+    "followerBirdEye": {
+      "name": "Birdeye",
+      "health": 795,
+      "armor_class": 4,
+      "penetration": 60,
+      "damage": 73,
+      "fire_rate": 800
+    },
+    "followerBoar": {
+      "name": "Kaban Guard",
+      "health": 725,
+      "armor_class": 5,
+      "penetration": 53,
+      "damage": 42,
+      "fire_rate": 1000
+    },
+    "followerBoarClose1": {
+      "name": "Basmach",
+      "health": 1030,
+      "armor_class": 0,
+      "penetration": 39,
+      "damage": 192,
+      "fire_rate": 1000
+    },
+    "followerBoarClose2": {
+      "name": "Gus",
+      "health": 1030,
+      "armor_class": 0,
+      "penetration": 45,
+      "damage": 48,
+      "fire_rate": 950
+    },
+    "followerBully": {
+      "name": "Reshala Guard",
+      "health": 630,
+      "armor_class": 5,
+      "penetration": 54,
+      "damage": 58,
+      "fire_rate": 950
+    },
+    "followerBullyBlackDiv": {
+      "name": "Black Div. Boss Guard",
+      "health": 790,
+      "armor_class": 5,
+      "penetration": 44,
+      "damage": 49,
+      "fire_rate": 1100
+    },
+    "followerGluharAssault": {
+      "name": "Glukhar Guard (Assault)",
+      "health": 760,
+      "armor_class": 5,
+      "penetration": 43,
+      "damage": 80,
+      "fire_rate": 900
+    },
+    "followerGluharScout": {
+      "name": "Glukhar Guard (Scout)",
+      "health": 580,
+      "armor_class": 4,
+      "penetration": 37,
+      "damage": 54,
+      "fire_rate": 800
+    },
+    "followerGluharSecurity": {
+      "name": "Glukhar Guard (Security)",
+      "health": 806,
+      "armor_class": 5,
+      "penetration": 39,
+      "damage": 192,
+      "fire_rate": 900
+    },
+    "followerKojaniy": {
+      "name": "Shturman Guard",
+      "health": 740,
+      "armor_class": 4,
+      "penetration": 48,
+      "damage": 60,
+      "fire_rate": 900
+    },
+    "followerKolontayAssault": {
+      "name": "Kollontay Guard (Assault)",
+      "health": 790,
+      "armor_class": 5,
+      "penetration": 45,
+      "damage": 48,
+      "fire_rate": 900
+    },
+    "followerKolontaySecurity": {
+      "name": "Kollontay Guard (Security)",
+      "health": 825,
+      "armor_class": 5,
+      "penetration": 45,
+      "damage": 48,
+      "fire_rate": 1000
+    },
+    "followerSanitar": {
+      "name": "Sanitar Guard",
+      "health": 1055,
+      "armor_class": 5,
+      "penetration": 62,
+      "damage": 37,
+      "fire_rate": 650
+    },
+    "followerWedgeLab": {
+      "name": "The Wedge (Labs) Guard",
+      "health": 880,
+      "armor_class": 5,
+      "penetration": 57,
+      "damage": 38,
+      "fire_rate": 850
+    },
+    "pmcBotBlackDiv": {
+      "name": "Black Div. Raider",
+      "health": 790,
+      "armor_class": 5,
+      "penetration": 53,
+      "damage": 42,
+      "fire_rate": 900
+    },
+    "sectantPriest": {
+      "name": "Cultist Priest",
+      "health": 850,
+      "armor_class": 0,
+      "penetration": 62,
+      "damage": 37,
+      "fire_rate": 900
+    },
+    "sectantWarrior": {
+      "name": "Cultist Warrior",
+      "health": 850,
+      "armor_class": 6,
+      "penetration": 62,
+      "damage": 75,
+      "fire_rate": 900
+    },
+    "vsRF": {
+      "name": "AF",
+      "health": 710,
+      "armor_class": 6,
+      "penetration": 30,
+      "damage": 65,
+      "fire_rate": 700
+    },
+    "vsRFSniper": {
+      "name": "AF",
+      "health": 675,
+      "armor_class": 6,
+      "penetration": 56,
+      "damage": 108,
+      "fire_rate": 700
+    }
+  }
+}

@@ -17,14 +17,43 @@ Assets/_Project/
                   Calls into Core; never contains game rules itself.
         Editor/   Editor-only tooling (data import from the Tarkov snapshot, build scripts).
                   Anything in a folder named exactly "Editor" is excluded from player builds.
-    Data/         Actual data assets (imported from data/*.json in the Python project, or
-                  ScriptableObject instances built from them).
+    Data/         ScriptableObject instances, once any exist. The raw rule data does NOT live
+                  here - see Assets/StreamingAssets/data below.
     Prefabs/
     Scenes/
+Assets/StreamingAssets/
+    data/         The rule data itself: items, traders, maps, gear, containers, combat,
+                  raid_nodes, maps_overrides - copied straight from the Python project's data/.
 Assets/Tests/
     EditMode/     Unity Test Framework tests for Scripts/Core (the equivalent of tests/*.py).
     PlayMode/     Tests that need a running scene (UI flows, screen wiring).
 ```
+
+## Where the data lives, and why
+
+`Assets/StreamingAssets/data/*.json` are byte-for-byte copies of the Python project's `data/*.json`.
+StreamingAssets ships them next to the built game as plain files you can open and edit, which is
+exactly how the Python build works. `Resources/` would bake them into the player and take that away,
+and a plain folder under `Assets/` can't be loaded by path at runtime at all.
+
+Only the four hand-tuned files (`containers`, `combat`, `raid_nodes`, `maps_overrides`) are edited
+here. `items`, `traders`, `maps` and `gear` stay generated: `tools/import_tarkov.py` in the Python
+repo remains the one generator, and its output is copied over. Regenerating in two places would let
+the two projects drift apart, and item ids must stay stable or existing saves stop opening.
+
+`Scripts/Data/GameDataLoader.cs` locates, reads and version-checks those documents - the C#
+counterpart of the Python `storage.prepare_environment`. It deliberately stops there: turning JSON
+into typed rules belongs to each module as it gets ported.
+
+## Tests
+
+```
+"C:\Program Files\Unity\Hub\Editor\6000.2.5f1\Editor\Unity.exe" -batchmode -nographics ^
+  -projectPath "C:\Users\User\Desktop\Safehouse" -runTests -testPlatform EditMode ^
+  -testResults "Logs\editmode-results.xml" -logFile "Logs\editmode.log"
+```
+
+Exit code 0 means every test passed; the XML lists them individually.
 
 Tests live in their own top-level `Assets/Tests/`, not under `_Project/`, so a later asmdef split
 keeps the test assembly from being pulled into anything that references `_Project` as a whole.
@@ -40,8 +69,9 @@ input to Core.
 
 ## Not done yet
 
-- No asmdef files yet (Core/Data/UI/Tests aren't split into separate assemblies). Add these once
-  real code exists, so Tests can reference Core without pulling in UI/Editor code.
-- No git repo initialized for this project yet.
-- Game art/icons are not bundled here either, same reasoning as the Python project's `icon_cache/`
+- `Scripts/Core`, `Scripts/UI` and `Scripts/Editor` are still empty and have no asmdef. Add one to
+  each as soon as it gets code; only `Safehouse.Data` and `Safehouse.Tests.EditMode` exist so far.
+- No game rules ported yet - only the data loader. Combat, expeditions, inventory placement and the
+  injury system are all still Python-only.
+- Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).

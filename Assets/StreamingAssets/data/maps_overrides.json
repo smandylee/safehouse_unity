@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "note": "Hand adjustments applied by tools/import_tarkov.py when it builds maps.json and gear.json. engagement_range decides which weapon classes do well: close favours shotguns and SMGs, long favours marksman and bolt-action rifles. zone_order forces which distance band becomes outer/center/deep (0 is nearest an exit); without it the bands are ordered by the average value of their loot. meds says which injury each medical item treats: the source feed has no field for this, so it is entirely our own call (a surgical kit even adds heal/uses outright, since the source feed leaves both empty for it).",
+  "maps": {
+    "factory": {"engagement_range": "close"},
+    "customs": {"engagement_range": "medium", "zones": {"outer": {"engagement_range": "long"}}},
+    "woods": {"engagement_range": "long", "zones": {"deep": {"engagement_range": "medium"}}},
+    "interchange": {"engagement_range": "close", "zones": {"outer": {"engagement_range": "medium"}}},
+    "shoreline": {"engagement_range": "long", "zones": {"deep": {"engagement_range": "close"}}},
+    "reserve": {"engagement_range": "medium", "zones": {"deep": {"engagement_range": "close"}}},
+    "lighthouse": {"engagement_range": "long", "zones": {"center": {"engagement_range": "medium"}}},
+    "streets-of-tarkov": {"engagement_range": "close", "zones": {"outer": {"engagement_range": "medium"}}},
+    "ground-zero": {"engagement_range": "medium"}
+  },
+  "meds": {
+    "aseptic-bandage": {"stops_light_bleed": true},
+    "army-bandage": {"stops_light_bleed": true},
+    "cat-hemostatic-tourniquet": {"stops_light_bleed": true, "stops_heavy_bleed": true},
+    "esmarch-tourniquet": {"stops_light_bleed": true, "stops_heavy_bleed": true},
+    "calok-b-hemostatic-applicator": {"stops_light_bleed": true, "stops_heavy_bleed": true},
+    "immobilizing-splint": {"treats_fracture": true},
+    "aluminum-splint": {"treats_fracture": true},
+    "tigzresq-splint": {"treats_fracture": true},
+    "afak-tactical-individual-first-aid-kit": {"stops_light_bleed": true},
+    "ai-2-medkit": {"stops_light_bleed": true},
+    "car-first-aid-kit": {"stops_light_bleed": true},
+    "grizzly-medical-kit": {"stops_light_bleed": true},
+    "ifak-individual-first-aid-kit": {"stops_light_bleed": true},
+    "salewa-first-aid-kit": {"stops_light_bleed": true},
+    "cms-surgical-kit": {"heal": 100, "uses": 1, "stops_light_bleed": true, "stops_heavy_bleed": true, "treats_fracture": true},
+    "surv12-field-surgical-kit": {"heal": 150, "uses": 1, "stops_light_bleed": true, "stops_heavy_bleed": true, "treats_fracture": true}
+  }
+}

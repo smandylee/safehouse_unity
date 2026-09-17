@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "note": "Our own tuning. The gear numbers in gear.json come from the game; how they turn into a fight is decided here. Percentages are whole numbers where 100 means unchanged.",
+  "weapon": {
+    "fire_rate_reference": 600,
+    "fire_rate_min_percent": 60,
+    "fire_rate_max_percent": 170,
+    "recoil_reference": 120,
+    "recoil_min_percent": 70,
+    "recoil_max_percent": 130,
+    "ergonomics_reference": 50,
+    "ergonomics_min_percent": 80,
+    "ergonomics_max_percent": 120
+  },
+  "practical_rate": {
+    "assault-rifle": 0, "carbine": 300, "smg": 0, "shotgun": 70, "marksman": 150,
+    "bolt-action": 35, "machine-gun": 0, "pistol": 150, "special": 60
+  },
+  "limits": {"max_seconds": 120},
+  "engagement": {
+    "close": {"shotgun": 140, "smg": 135, "pistol": 120, "carbine": 110, "assault-rifle": 100,
+              "machine-gun": 95, "special": 90, "marksman": 75, "bolt-action": 65},
+    "medium": {"assault-rifle": 115, "carbine": 110, "machine-gun": 105, "marksman": 105, "bolt-action": 95,
+               "smg": 90, "special": 90, "shotgun": 85, "pistol": 80},
+    "long": {"bolt-action": 140, "marksman": 135, "machine-gun": 110, "assault-rifle": 100, "carbine": 95,
+             "special": 90, "smg": 65, "shotgun": 55, "pistol": 55}
+  },
+  "armor": {
+    "points_per_class": 10,
+    "min_penetration_percent": 20,
+    "blunt_percent": 25
+  },
+  "encounters": {
+    "outer": [0, 1],
+    "center": [0, 2],
+    "deep": [1, 2],
+    "night_percent": 130,
+    "boss_damage_percent": 50,
+    "boss_chance_percent": 5
+  },
+  "scav": {
+    "name": "Scav",
+    "health": 300,
+    "armor_class": 2,
+    "penetration": 20,
+    "damage": 50,
+    "fire_rate": 550
+  },
+  "fire": {"shots_land_percent": 20},
+  "incoming": {"enemy_skill_percent": 5},
+  "party": {"extra_member_percent": 70},
+  "swing": {"low_percent": 70, "high_percent": 130},
+  "unarmed": {"damage": 12, "penetration": 0, "fire_rate": 120},
+  "meds": {"use_below_percent": 60},
+  "hit_location": {
+    "close": {"head": 5, "thorax": 25, "stomach": 15, "left_arm": 15, "right_arm": 15, "left_leg": 12, "right_leg": 13},
+    "medium": {"head": 10, "thorax": 30, "stomach": 15, "left_arm": 12, "right_arm": 12, "left_leg": 10, "right_leg": 11},
+    "long": {"head": 18, "thorax": 35, "stomach": 12, "left_arm": 8, "right_arm": 8, "left_leg": 9, "right_leg": 10}
+  },
+  "injury": {
+    "light_bleed_chance_percent": {"head": 0, "thorax": 25, "stomach": 25, "left_arm": 35, "right_arm": 35, "left_leg": 30, "right_leg": 30},
+    "heavy_bleed_chance_percent": {"head": 0, "thorax": 10, "stomach": 10, "left_arm": 8, "right_arm": 8, "left_leg": 10, "right_leg": 10},
+    "fracture_chance_percent": {"left_arm": 20, "right_arm": 20, "left_leg": 25, "right_leg": 25},
+    "untreated_bleed_damage": {"light_bleed": 15, "heavy_bleed": 35},
+    "fracture_firepower_penalty_percent": 30
+  }
+}

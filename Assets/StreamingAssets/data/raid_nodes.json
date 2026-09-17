@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "note": "Our own rules for direct-play node maps. Not from the game: item/box/boss placement still comes from maps.json and containers.json, only the map shape, event text and choice odds below are invented.",
+  "nodes_per_zone": {"outer": 8, "center": 10, "deep": 12},
+  "patrol_percent": {"outer": 8, "center": 12, "deep": 16, "night_bonus_percent": 50},
+  "kinds": {
+    "start": {
+      "zone_weight": {"outer": 0, "center": 0, "deep": 0},
+      "title": "Entry point",
+      "text": "This is where the party enters the zone.",
+      "choices": []
+    },
+    "container": {
+      "zone_weight": {"outer": 35, "center": 35, "deep": 30},
+      "title": "A {container}",
+      "text": "There is a {container} here, closed but reachable.",
+      "choices": [
+        {"label": "Pry it open (loud)", "loot_rolls": 2, "enemy_percent": 30, "night_enemy_bonus_percent": 50},
+        {"label": "Search it quietly", "loot_rolls": 1, "enemy_percent": 10, "night_enemy_bonus_percent": 25},
+        {"label": "Leave it", "loot_rolls": 0, "enemy_percent": 0, "night_enemy_bonus_percent": 0}
+      ]
+    },
+    "loose": {
+      "zone_weight": {"outer": 30, "center": 25, "deep": 20},
+      "title": "Scattered loot",
+      "text": "Loose items are scattered across the floor here.",
+      "choices": [
+        {"label": "Sweep the room", "loot_rolls": 3, "enemy_percent": 15, "night_enemy_bonus_percent": 40},
+        {"label": "Grab what's in sight", "loot_rolls": 1, "enemy_percent": 5, "night_enemy_bonus_percent": 15},
+        {"label": "Leave it", "loot_rolls": 0, "enemy_percent": 0, "night_enemy_bonus_percent": 0}
+      ]
+    },
+    "corpse": {
+      "zone_weight": {"outer": 15, "center": 15, "deep": 15},
+      "title": "A body",
+      "text": "Someone did not make it out of here. Their gear is still on them.",
+      "choices": [
+        {"label": "Search the body", "loot_rolls": 2, "enemy_percent": 35, "night_enemy_bonus_percent": 40},
+        {"label": "Leave it", "loot_rolls": 0, "enemy_percent": 0, "night_enemy_bonus_percent": 0}
+      ]
+    },
+    "noise": {
+      "zone_weight": {"outer": 15, "center": 20, "deep": 25},
+      "title": "Gunfire nearby",
+      "text": "Gunfire and voices carry from close by.",
+      "choices": [
+        {"label": "Investigate", "loot_rolls": 2, "enemy_percent": 65, "night_enemy_bonus_percent": 30},
+        {"label": "Avoid it", "loot_rolls": 0, "enemy_percent": 5, "night_enemy_bonus_percent": 20}
+      ]
+    },
+    "boss_lair": {
+      "zone_weight": {"outer": 0, "center": 0, "deep": 0},
+      "title": "{boss}'s territory",
+      "text": "This is {boss}'s ground, and it shows.",
+      "choices": [
+        {"label": "Engage", "loot_rolls": 4, "enemy_percent": 100, "night_enemy_bonus_percent": 0},
+        {"label": "Keep away", "loot_rolls": 0, "enemy_percent": 10, "night_enemy_bonus_percent": 20}
+      ]
+    },
+    "exit": {
+      "zone_weight": {"outer": 0, "center": 0, "deep": 0},
+      "title": "Zone boundary",
+      "text": "The route out of this zone is ahead.",
+      "choices": [
+        {"label": "Go deeper", "loot_rolls": 0, "enemy_percent": 0, "night_enemy_bonus_percent": 0, "action": "deeper"},
+        {"label": "Extract", "loot_rolls": 0, "enemy_percent": 0, "night_enemy_bonus_percent": 0, "action": "extract"}
+      ]
+    }
+  }
+}
