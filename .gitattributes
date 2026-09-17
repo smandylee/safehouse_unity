@@ -1,0 +1,21 @@
+# Normalize line endings so the same file doesn't look changed on another machine.
+* text=auto
+
+# Unity serializes scenes/prefabs/assets as YAML text; merging them line-by-line
+# produces broken assets, so let Unity's own Smart Merge handle them instead.
+*.unity      merge=unityyamlmerge eol=lf
+*.prefab     merge=unityyamlmerge eol=lf
+*.asset      merge=unityyamlmerge eol=lf
+*.meta       merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+
+# Binary formats - never try to diff or merge these as text.
+*.png  binary
+*.jpg  binary
+*.psd  binary
+*.fbx  binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary
+*.dll  binary
+*.gz   binary
