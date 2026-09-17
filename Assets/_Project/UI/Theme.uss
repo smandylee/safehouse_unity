@@ -16,7 +16,21 @@
     background-color: rgb(11, 13, 12);
     color: rgb(230, 233, 236);
     font-size: 13px;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Regular.ttf");
 }
+
+/*
+ * Font weight: UI Toolkit has no font-weight property - a distinct weight is a distinct font FILE,
+ * picked with -unity-font-definition. -unity-font-style: bold only fakes a bold (skews/thickens the
+ * regular face) rather than loading a real bold design, so it stays reserved for small accents
+ * (monogram placeholders, inline numbers) where a dedicated weight isn't worth a separate class.
+ * Oswald and JetBrains Mono are both SIL Open Font License - free to ship in the built game, unlike
+ * the Tarkov icon/text assets in icon_cache/.
+ */
+.font-oswald-medium { -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf"); -unity-font-style: normal; }
+.font-oswald-semibold { -unity-font-definition: url("Fonts/Oswald/Oswald-SemiBold.ttf"); -unity-font-style: normal; }
+.font-mono { -unity-font-definition: url("Fonts/JetBrainsMono/JetBrainsMono-Regular.ttf"); -unity-font-style: normal; }
+.font-mono-medium { -unity-font-definition: url("Fonts/JetBrainsMono/JetBrainsMono-Medium.ttf"); -unity-font-style: normal; }
 
 /* ---- bars ---- */
 
@@ -62,7 +76,8 @@
 .navtab-active {
     color: rgb(230, 233, 236);
     border-bottom-color: rgb(217, 164, 65);
-    -unity-font-style: bold;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+    -unity-font-style: normal;
 }
 .navtab-disabled { color: rgb(74, 83, 92); }
 
@@ -86,7 +101,8 @@
     background-color: rgb(217, 164, 65);
     border-width: 0;
     color: rgb(20, 23, 26);
-    -unity-font-style: bold;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-SemiBold.ttf");
+    -unity-font-style: normal;
 }
 .btn-primary:hover { background-color: rgb(224, 178, 94); }
 
@@ -137,10 +153,26 @@
 
 /* ---- typography ---- */
 
-.text-heading { font-size: 15px; -unity-font-style: bold; letter-spacing: 3px; color: rgb(217, 164, 65); }
-.text-section { font-size: 12px; -unity-font-style: bold; letter-spacing: 2.4px; color: rgb(230, 233, 236); }
+.text-heading {
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: rgb(217, 164, 65);
+    -unity-font-definition: url("Fonts/Oswald/Oswald-SemiBold.ttf");
+    -unity-font-style: normal;
+}
+.text-section {
+    font-size: 12px;
+    letter-spacing: 2.4px;
+    color: rgb(230, 233, 236);
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+    -unity-font-style: normal;
+}
 .text-label { font-size: 10px; letter-spacing: 1.2px; color: rgb(120, 132, 143); }
-.text-mono { font-size: 13px; }
+.text-mono {
+    font-size: 13px;
+    -unity-font-definition: url("Fonts/JetBrainsMono/JetBrainsMono-Regular.ttf");
+    -unity-font-style: normal;
+}
 .text-accent { color: rgb(217, 164, 65); }
 .text-muted { color: rgb(120, 132, 143); }
 .text-good { color: rgb(111, 158, 92); }

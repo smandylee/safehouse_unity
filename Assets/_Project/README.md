@@ -111,6 +111,27 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
   `GameObject` (no scene needed) and drives selection through `GearScreenController.SelectItem()`
   rather than simulating a pointer event, for the same coverage with far less machinery.
 
+### Fonts (`UI/Fonts/`)
+
+Oswald (labels/headings) and JetBrains Mono (numbers, so digit columns line up regardless of value)
+are the two fonts the artboard was designed around. Both are SIL Open Font License - free to bundle
+in the built game, unlike the Tarkov icon/text assets in `icon_cache/`. Only the weights `Theme.uss`
+actually uses are checked in (Oswald Regular/Medium/SemiBold/Bold, JetBrains Mono Regular/Medium/Bold),
+each with its `OFL.txt` alongside it.
+
+UI Toolkit has no `font-weight` property - a distinct weight is a distinct font *file*, picked with
+`-unity-font-definition: url(...)` per USS class (see `Theme.uss`'s `.font-oswald-*`/`.font-mono*`
+classes and the classes that use them directly, like `.text-heading`). `-unity-font-style: bold`
+still appears in a few small spots (the placeholder item-icon monograms, inline ability numbers) -
+that only fakes a bold by skewing the regular face, which is fine for tiny accents but not worth a
+dedicated class for every single one.
+
+The project's `data/*.json` items and character bios can contain Korean text (character names, bios),
+which neither Oswald nor JetBrains Mono can render (they're Latin-only) - **Noto Serif KR** covers
+that and is the same license, but isn't wired in yet since nothing on screen needs it today. Bring it
+in the same way (copy the weights you need into `UI/Fonts/NotoSerifKR/`, add a `.font-*` class) once
+a screen has to render Korean text.
+
 ## Not done yet
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
@@ -121,7 +142,6 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
   Gundog Revised combat/ability rules being settled.
 - The save system (`storage.py`, `models.Profile`, `migrations.py`) is not ported. Its shape depends
   on how abilities end up working.
-- No real fonts yet (Oswald / JetBrains Mono in the artboard) - the screen currently renders with
-  Unity's default UI Toolkit font. Needs the font files added and wired into `Theme.uss`.
+- Korean text (character bios, names) has no font yet - see "Fonts" above.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).
