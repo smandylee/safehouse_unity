@@ -44,6 +44,13 @@ namespace Safehouse.UI
             _stash = SampleStash.Build(_catalog);
 
             var root = GetComponent<UIDocument>().rootVisualElement;
+
+            // The panel scales the 1440x900 design to fit the window but keeps its proportions, so
+            // a window of a different aspect ratio leaves a strip of empty space on one axis.
+            // Centre the design in it rather than letting the whole strip pile up on one side.
+            root.style.alignItems = Align.Center;
+            root.style.justifyContent = Justify.Center;
+
             _stashGrid = root.Q<VisualElement>("stash-grid");
             _labelStashCells = root.Q<Label>("label-stash-cells");
             _labelStashValue = root.Q<Label>("label-stash-value");

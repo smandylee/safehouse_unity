@@ -29,12 +29,25 @@ namespace Safehouse.Editor
                 AssetDatabase.CreateAsset(panelSettings, PanelSettingsPath);
             }
 
-            // Fixed pixel scale: every size in GearScreen.uxml is authored in exact pixels to match
-            // the artboard mock-up, so scaling with the screen would throw that off. No
-            // themeStyleSheet - every visual property this screen needs is set explicitly in
+            // GearScreen.uxml is authored in exact pixels against a 1440x900 artboard, so the panel
+            // scales that whole design uniformly to whatever the window actually is. The two
+            // alternatives are both wrong here and both were tried: ConstantPixelSize renders it at
+            // a literal 1440x900 and simply cuts off whatever doesn't fit in a smaller window, and
+            // leaving gear-root to stretch (no fixed size at all) squashes the design out of
+            // proportion and makes fixed-height cards overlap their own contents.
+            //
+            // Expand, not Shrink: both names describe what happens to the PANEL AREA measured in
+            // reference units, not to the design drawn inside it. Shrink picks the larger scale, so
+            // the panel area ends up smaller than 1440x900 on one axis and that axis gets cut off -
+            // measured here, it cropped the bottom bar off a 1280x820 window. Expand picks the
+            // smaller scale, so the panel area covers the whole window and the design stays fully
+            // on screen, letterboxed on whichever axis the aspect ratio doesn't match.
+            //
+            // No themeStyleSheet - every visual property this screen needs is set explicitly in
             // Theme.uss and the custom Chrome controls, so Unity's default control skin is unused.
-            panelSettings.scaleMode = PanelScaleMode.ConstantPixelSize;
+            panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
             panelSettings.referenceResolution = new Vector2Int(1440, 900);
+            panelSettings.screenMatchMode = PanelScreenMatchMode.Expand;
             EditorUtility.SetDirty(panelSettings);
 
             var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath);

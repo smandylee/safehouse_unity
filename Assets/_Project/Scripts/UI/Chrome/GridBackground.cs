@@ -23,15 +23,16 @@ namespace Safehouse.UI.Chrome
 
         private void OnGenerateVisualContent(MeshGenerationContext mgc)
         {
-            var rect = contentRect;
-            if (rect.width <= 0 || rect.height <= 0 || Pitch <= 0)
+            // layout.width/height rather than contentRect, for the same reason as FacetedPanel:
+            // contentRect is inset by padding, so the drawn well would not line up with the box.
+            var w = layout.width;
+            var h = layout.height;
+            if (w <= 0 || h <= 0 || Pitch <= 0)
             {
                 return;
             }
 
             var painter = mgc.painter2D;
-            var w = rect.width;
-            var h = rect.height;
 
             painter.BeginPath();
             painter.MoveTo(Vector2.zero);

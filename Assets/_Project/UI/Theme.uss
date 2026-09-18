@@ -19,8 +19,9 @@
  * whatever the Game view happens to be - a 1339x804 view compresses this whole tree by about 11%
  * on each axis, and everything inside that's laid out with fixed pixel heights (the equipment
  * slot cards, in particular) gets squeezed along with it, which is what made their contents
- * overlap. PanelSettings' ConstantPixelSize scale mode is what makes "pin it and let the Game view
- * clip or letterbox around it" the correct behaviour here, instead of scaling to fit.
+ * overlap. Fitting this fixed size to the window is the panel's job, not this tree's:
+ * GearSceneBuilder sets ScaleWithScreenSize + Shrink against the same 1440x900, so the whole design
+ * scales uniformly and stays fully on screen instead of being squashed or cut off at the edges.
  */
 .gear-root {
     width: 1440px;

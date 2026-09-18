@@ -27,18 +27,27 @@ namespace Safehouse.UI.Chrome
             generateVisualContent += OnGenerateVisualContent;
         }
 
+        /// <summary>
+        /// The box the frame is drawn around, in this element's own coordinates: its whole size,
+        /// padding included - NOT <see cref="VisualElement.contentRect"/>, which is what is left
+        /// over after padding. Drawing to contentRect put the frame at the element's top-left but
+        /// sized it two paddings too small, so children - which sit inside the padding - hung out
+        /// past its right and bottom edges while the left and top still looked correctly inset.
+        /// Exposed so a test can pin that down; see FacetedPanelTests.
+        /// </summary>
+        public Rect FrameRect => new Rect(0, 0, layout.width, layout.height);
+
         private void OnGenerateVisualContent(MeshGenerationContext mgc)
         {
-            var rect = contentRect;
-            if (rect.width <= 0 || rect.height <= 0)
+            var w = FrameRect.width;
+            var h = FrameRect.height;
+            if (w <= 0 || h <= 0)
             {
                 return;
             }
 
             // Clamp so a panel narrower/shorter than twice the cut never produces a bowtie shape.
-            var cut = Mathf.Min(CutSize, rect.width / 2f, rect.height / 2f);
-            var w = rect.width;
-            var h = rect.height;
+            var cut = Mathf.Min(CutSize, w / 2f, h / 2f);
 
             var painter = mgc.painter2D;
 
