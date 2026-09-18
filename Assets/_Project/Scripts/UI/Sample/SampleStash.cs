@@ -32,12 +32,20 @@ namespace Safehouse.UI.Sample
         };
 
         public static StashGrid Build(IReadOnlyDictionary<string, ItemDefinition> catalog,
-            int width = 10, int height = 12)
+            int width = 10, int height = 12) =>
+            Fill(catalog, ItemIds, width, height, firstInstanceNumber: 0);
+
+        /// <summary>
+        /// Places <paramref name="itemIds"/> with first-fit. Instance ids count up from
+        /// <paramref name="firstInstanceNumber"/>, so several grids built for one screen can be given
+        /// disjoint ranges - an instance id has to be unique across all of them.
+        /// </summary>
+        public static StashGrid Fill(IReadOnlyDictionary<string, ItemDefinition> catalog,
+            IEnumerable<string> itemIds, int width, int height, int firstInstanceNumber)
         {
-            var grid = new StashGrid(width, height);
             var placed = new List<ItemInstance>();
 
-            foreach (var itemId in ItemIds)
+            foreach (var itemId in itemIds)
             {
                 if (!catalog.ContainsKey(itemId))
                 {
@@ -53,7 +61,7 @@ namespace Safehouse.UI.Sample
                     continue;
                 }
 
-                placed.Add(ItemInstance.Create(NewInstanceId(placed.Count), itemId,
+                placed.Add(ItemInstance.Create(NewInstanceId(firstInstanceNumber + placed.Count), itemId,
                     spot.Value.X, spot.Value.Y, spot.Value.Rotation));
             }
 

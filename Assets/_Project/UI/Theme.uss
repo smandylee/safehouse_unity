@@ -160,6 +160,24 @@
 .cell:hover { translate: 0 -1px; border-color: rgb(139, 150, 162); }
 .cell-selected { border-color: rgb(217, 164, 65); border-width: 2px; }
 
+/* Drag & drop: the cell being dragged, the landing-spot preview under it, and the flash when a drop
+   or turn is refused. Rejection uses the background because each cell's border colour is set inline
+   from its rarity, which a class could not override. */
+.cell-dragging { opacity: 0.3; }
+.cell-proxy { opacity: 0.9; }
+.cell-rejected { background-color: rgb(120, 40, 36); }
+
+.cell-ghost {
+    position: absolute;
+    background-color: rgba(88, 166, 92, 0.22);
+    border-width: 1px;
+    border-color: rgba(88, 166, 92, 0.8);
+}
+.cell-ghost-bad {
+    background-color: rgba(200, 70, 60, 0.22);
+    border-color: rgba(200, 70, 60, 0.8);
+}
+
 .cell-label {
     font-size: 8px;
     color: rgb(154, 165, 177);

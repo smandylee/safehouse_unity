@@ -248,5 +248,125 @@ namespace Safehouse.Tests
             Assert.IsNull(PlacementRules.ItemAt(grid, Catalog, 0, 0));
             Assert.DoesNotThrow(() => PlacementRules.ValidateGrid(grid, Catalog));
         }
+
+        [Test]
+        public void MovingAnItemChangesOnlyThatItemAndKeepsListOrder()
+        {
+            var bandage = At("bandage", 0, 0);
+            var rifle = At("rifle", 0, 2);
+            var grid = Grid(6, 6, bandage, rifle);
+
+            var moved = PlacementRules.Move(grid, Catalog, bandage.InstanceId, 5, 5, 0);
+
+            Assert.AreEqual(bandage.InstanceId, moved.Stash[0].InstanceId);
+            Assert.AreEqual((5, 5), (moved.Stash[0].X, moved.Stash[0].Y));
+            Assert.AreEqual((0, 2), (moved.Stash[1].X, moved.Stash[1].Y));
+            Assert.AreEqual((0, 0), (grid.Stash[0].X, grid.Stash[0].Y), "the original grid must not change");
+        }
+
+        [Test]
+        public void AnItemMayMoveOntoCellsItAlreadyOccupies()
+        {
+            var rifle = At("rifle", 0, 0);
+            var grid = Grid(6, 6, rifle);
+
+            var moved = PlacementRules.Move(grid, Catalog, rifle.InstanceId, 1, 0, 0);
+
+            Assert.AreEqual(1, moved.Stash[0].X);
+        }
+
+        [Test]
+        public void MovingOntoAnotherItemOrOffTheEdgeIsRefused()
+        {
+            var bandage = At("bandage", 0, 0);
+            var rifle = At("rifle", 0, 2);
+            var grid = Grid(4, 4, bandage, rifle);
+
+            var onto = Assert.Throws<ValidationException>(
+                () => PlacementRules.Move(grid, Catalog, bandage.InstanceId, 2, 2, 0));
+            StringAssert.Contains("occupied", onto.Message);
+
+            var off = Assert.Throws<ValidationException>(
+                () => PlacementRules.Move(grid, Catalog, rifle.InstanceId, 1, 2, 0));
+            StringAssert.Contains("outside the stash", off.Message);
+        }
+
+        [Test]
+        public void TurningAnItemInPlaceIsRefusedWhenTheTurnedShapeDoesNotFit()
+        {
+            var rifle = At("rifle", 0, 0);
+            var grid = Grid(4, 2, rifle);
+
+            Assert.Throws<ValidationException>(
+                () => PlacementRules.Move(grid, Catalog, rifle.InstanceId, 0, 0, 90));
+        }
+
+        [Test]
+        public void TransferMovesAnItemBetweenGridsWithoutTouchingTheOriginals()
+        {
+            var bandage = At("bandage", 0, 0);
+            var rifle = At("rifle", 0, 2);
+            var stash = Grid(6, 6, bandage, rifle);
+            var pack = Grid(4, 4);
+
+            var (from, to) = PlacementRules.Transfer(stash, pack, Catalog, bandage.InstanceId, 3, 3, 0);
+
+            Assert.AreEqual(1, from.Stash.Count);
+            Assert.AreEqual(rifle.InstanceId, from.Stash[0].InstanceId);
+            Assert.AreEqual(1, to.Stash.Count);
+            Assert.AreEqual((3, 3), (to.Stash[0].X, to.Stash[0].Y));
+            Assert.AreEqual(2, stash.Stash.Count, "the source grid must not change");
+            Assert.AreEqual(0, pack.Stash.Count, "the target grid must not change");
+        }
+
+        [Test]
+        public void ARefusedTransferLosesAndDuplicatesNothing()
+        {
+            var rifle = At("rifle", 0, 0);
+            var stash = Grid(6, 6, rifle);
+            var pack = Grid(3, 3); // too small for a 4-wide rifle, in either orientation
+
+            var error = Assert.Throws<ValidationException>(
+                () => PlacementRules.Transfer(stash, pack, Catalog, rifle.InstanceId, 0, 0, 0));
+
+            StringAssert.Contains("outside", error.Message);
+            Assert.AreEqual(1, stash.Stash.Count);
+            Assert.AreEqual(0, pack.Stash.Count);
+        }
+
+        [Test]
+        public void TransferIntoAnOccupiedSpaceIsRefused()
+        {
+            var bandage = At("bandage", 0, 0);
+            var stash = Grid(4, 4, bandage);
+            var pack = Grid(4, 4, At("case", 0, 0));
+
+            var error = Assert.Throws<ValidationException>(
+                () => PlacementRules.Transfer(stash, pack, Catalog, bandage.InstanceId, 1, 1, 0));
+
+            StringAssert.Contains("occupied", error.Message);
+        }
+
+        [Test]
+        public void TransferWithinTheSameGridIsAnOrdinaryMove()
+        {
+            var bandage = At("bandage", 0, 0);
+            var stash = Grid(4, 4, bandage);
+
+            var (from, to) = PlacementRules.Transfer(stash, stash, Catalog, bandage.InstanceId, 2, 2, 0);
+
+            Assert.AreSame(from, to);
+            Assert.AreEqual(1, from.Stash.Count);
+            Assert.AreEqual((2, 2), (from.Stash[0].X, from.Stash[0].Y));
+        }
+
+        [Test]
+        public void MovingAnUnknownInstanceIsRefused()
+        {
+            var grid = Grid(4, 4, At("bandage", 0, 0));
+
+            Assert.Throws<ValidationException>(
+                () => PlacementRules.Move(grid, Catalog, NewInstanceId(), 1, 1, 0));
+        }
     }
 }

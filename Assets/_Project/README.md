@@ -85,12 +85,17 @@ language worked out in the design artboard at
 https://claude.ai/artifact/Y8ycmAv5F6yfN76Mr4LbDB - open that link and `UI/Theme.uss` side by side
 if a colour or spacing value ever needs to change; keep them in sync by eye.
 
-- `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. LOADOUT and CARRIED show
-  one hand-written illustrative loadout (the same simplification the artboard made); only the STASH
-  panel is wired to real data.
+- `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. LOADOUT is one
+  hand-written illustrative loadout (the same simplification the artboard made); the STASH panel and
+  CARRIED's RIG / BACKPACK grids are wired to real data (still sample contents, see below).
 - `Scripts/UI/GearScreenController.cs` - loads the shipped catalog (`CatalogLoader`), builds a demo
   stash (`Scripts/UI/Sample/SampleStash.cs`) by running real items through `PlacementRules.FirstFit`,
   and renders one cell per placed item. Clicking a cell (`Button.clicked`) updates the detail panel.
+  Cells can be dragged to a new spot, in the same grid or into another (stash, rig, backpack): a green/red ghost shows where a drop would land, **R** turns
+  the item (while dragging, or in place when just selected), **Esc** cancels a drag, and a refused
+  drop or turn snaps back and flashes the cell red. The rule is `PlacementRules.Move` in Core; the
+  controller only forwards pointer input to it (`TryMoveItem` / `TryRotateItem`, which tests call
+  directly). Moves live in memory only - there is no save to write them to yet.
   This is the first place `Safehouse.Core`/`Safehouse.Data` actually drive a screen, not just a test.
 - `Scripts/UI/Chrome/FacetedPanel.cs`, `GridBackground.cs` - USS has no `clip-path` and no repeating
   gradients, so the artboard's cut-corner panels and the stash's faint grid lines are drawn directly
@@ -136,8 +141,10 @@ a screen has to render Korean text.
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
   there as it's needed (data import from the Tarkov snapshot, build scripts).
-- LOADOUT and CARRIED on the GEAR screen are static mock data, not a real character's loadout -
-  that needs the save system (below) ported first.
+- LOADOUT on the GEAR screen is static mock data, and the stash / rig / backpack hold sample items
+  (`Sample/SampleStash.cs`, `Sample/SampleLoadout.cs`) rather than a real character's - that needs
+  the save system (below) ported first. Items can already be dragged between the three grids
+  (`PlacementRules.Transfer`), but nothing is persisted.
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
 - The save system (`storage.py`, `models.Profile`, `migrations.py`) is not ported. Its shape depends

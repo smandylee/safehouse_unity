@@ -93,6 +93,70 @@ namespace Safehouse.Core
             PlacementError(grid, catalog, itemId, x, y, rotation, ignoreInstanceId) == null;
 
         /// <summary>
+        /// A copy of <paramref name="grid"/> with one item moved (and possibly turned). The item keeps
+        /// its position in the list, so draw order - and therefore <see cref="ItemAt"/> - is stable.
+        /// Throws <see cref="ValidationException"/> with the same reason <see cref="PlacementError"/>
+        /// gives; the original grid is never modified, so a refused move leaves nothing half-done.
+        /// </summary>
+        public static StashGrid Move(StashGrid grid, IReadOnlyDictionary<string, ItemDefinition> catalog,
+            string instanceId, int x, int y, int rotation)
+        {
+            var index = IndexOf(grid, instanceId);
+            var current = grid.Stash[index];
+            var error = PlacementError(grid, catalog, current.ItemId, x, y, rotation, instanceId);
+            if (error != null)
+            {
+                throw new ValidationException(error);
+            }
+
+            var moved = new List<ItemInstance>(grid.Stash);
+            moved[index] = current.MovedTo(x, y, rotation);
+            return grid.With(moved);
+        }
+
+        /// <summary>
+        /// Takes an item out of <paramref name="from"/> and puts it into <paramref name="to"/> at x,y -
+        /// stash to backpack, rig to stash, and so on. Both grids come back as copies; if the item
+        /// does not fit, this throws and neither grid has changed, so an item can never be lost or
+        /// duplicated by a refused transfer. When both arguments are the same grid it is a plain move.
+        /// </summary>
+        public static (StashGrid From, StashGrid To) Transfer(StashGrid from, StashGrid to,
+            IReadOnlyDictionary<string, ItemDefinition> catalog, string instanceId, int x, int y, int rotation)
+        {
+            if (ReferenceEquals(from, to))
+            {
+                var same = Move(from, catalog, instanceId, x, y, rotation);
+                return (same, same);
+            }
+
+            var index = IndexOf(from, instanceId);
+            var current = from.Stash[index];
+            var error = PlacementError(to, catalog, current.ItemId, x, y, rotation);
+            if (error != null)
+            {
+                throw new ValidationException(error);
+            }
+
+            var remaining = new List<ItemInstance>(from.Stash);
+            remaining.RemoveAt(index);
+            var added = new List<ItemInstance>(to.Stash) { current.MovedTo(x, y, rotation) };
+            return (from.With(remaining), to.With(added));
+        }
+
+        private static int IndexOf(StashGrid grid, string instanceId)
+        {
+            for (var i = 0; i < grid.Stash.Count; i++)
+            {
+                if (grid.Stash[i].InstanceId == instanceId)
+                {
+                    return i;
+                }
+            }
+
+            throw new ValidationException($"No item with instance ID {instanceId} in the stash.");
+        }
+
+        /// <summary>
         /// Mark occupied cells once, so a bulk check scales with the number of cells rather than
         /// with every pair of items.
         /// </summary>

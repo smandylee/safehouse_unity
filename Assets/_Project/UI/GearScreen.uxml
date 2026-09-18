@@ -211,28 +211,7 @@
                         <ui:Label text="RIG — SPIRITUS LV-119" class="text-label" style="letter-spacing: 1.6px;" />
                         <ui:Label text="6 × 4" class="text-mono text-muted" style="font-size: 10px;" />
                     </ui:VisualElement>
-                    <sh:GridBackground pitch="48" style="width: 288px; height: 192px;">
-                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 2px; width: 94px; height: 46px; padding: 3px 5px; border-color: rgb(95, 140, 110); justify-content: space-between;">
-                            <ui:Label text="MAG" style="align-self: center; color: rgb(95, 140, 110); font-size: 10px; -unity-font-style: bold;" />
-                            <ui:Label text="AK-12 6L31 MAG" class="cell-label" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 98px; top: 2px; width: 94px; height: 46px; padding: 3px 5px; border-color: rgb(95, 140, 110); justify-content: space-between;">
-                            <ui:Label text="MAG" style="align-self: center; color: rgb(95, 140, 110); font-size: 10px; -unity-font-style: bold;" />
-                            <ui:Label text="AK-12 6L31 MAG" class="cell-label" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 194px; top: 2px; width: 46px; height: 46px; border-color: rgb(200, 80, 60); align-items: center; justify-content: center;">
-                            <ui:Label text="MED" style="font-size: 14px; color: rgb(200, 80, 60); -unity-font-style: bold;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 242px; top: 2px; width: 44px; height: 46px; border-color: rgb(200, 80, 60); align-items: center; justify-content: center;">
-                            <ui:Label text="MED" style="font-size: 14px; color: rgb(200, 80, 60); -unity-font-style: bold;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 50px; width: 46px; height: 94px; border-color: rgb(95, 140, 110); align-items: center; justify-content: center;">
-                            <ui:Label text="AID" style="color: rgb(95, 140, 110); -unity-font-style: bold;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 50px; top: 50px; width: 46px; height: 46px; border-color: rgb(107, 118, 132); align-items: center; justify-content: center;">
-                            <ui:Label text="TL" style="color: rgb(139, 150, 162); -unity-font-style: bold;" />
-                        </ui:VisualElement>
-                    </sh:GridBackground>
+                    <sh:GridBackground name="rig-grid" pitch="48" style="width: 288px; height: 192px;" />
                 </ui:VisualElement>
 
                 <ui:VisualElement>
@@ -240,30 +219,7 @@
                         <ui:Label text="BACKPACK — 6SH118 RAID" class="text-label" style="letter-spacing: 1.6px;" />
                         <ui:Label text="6 × 8" class="text-mono text-muted" style="font-size: 10px;" />
                     </ui:VisualElement>
-                    <sh:GridBackground pitch="48" style="width: 288px; height: 384px;">
-                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 2px; width: 94px; height: 94px; padding: 5px 6px; border-color: rgb(138, 107, 168); justify-content: space-between;">
-                            <ui:Label text="CASE" style="align-self: center; font-size: 14px; color: rgb(138, 107, 168); -unity-font-style: bold;" />
-                            <ui:Label text="SICC CASE" class="cell-label" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 98px; top: 2px; width: 142px; height: 46px; padding: 3px 6px; border-color: rgb(78, 122, 158); flex-direction: row; align-items: center;">
-                            <ui:Label text="GFX" style="font-size: 14px; color: rgb(78, 122, 158); -unity-font-style: bold; margin-right: 8px;" />
-                            <ui:Label text="GRAPHICS CARD" class="cell-label" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 242px; top: 2px; width: 44px; height: 46px; border-color: rgb(192, 138, 62); align-items: center; justify-content: center;">
-                            <ui:Label text="BTC" style="font-size: 14px; color: rgb(217, 164, 65); -unity-font-style: bold;" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 98px; top: 50px; width: 94px; height: 94px; padding: 5px 6px; border-color: rgb(95, 140, 110); justify-content: space-between;">
-                            <ui:Label text="TOOL" style="align-self: center; font-size: 14px; color: rgb(95, 140, 110); -unity-font-style: bold;" />
-                            <ui:Label text="TOOLSET" class="cell-label" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 2px; top: 98px; width: 94px; height: 46px; padding: 3px 5px; border-color: rgb(95, 140, 110); justify-content: space-between;">
-                            <ui:Label text="AID" style="align-self: center; font-size: 14px; color: rgb(95, 140, 110); -unity-font-style: bold;" />
-                            <ui:Label text="CAR FIRST AID KIT" class="cell-label" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="card" style="position: absolute; left: 194px; top: 50px; width: 46px; height: 46px; border-color: rgb(107, 118, 132); align-items: center; justify-content: center;">
-                            <ui:Label text="PSU" style="font-size: 14px; color: rgb(139, 150, 162); -unity-font-style: bold;" />
-                        </ui:VisualElement>
-                    </sh:GridBackground>
+                    <sh:GridBackground name="backpack-grid" pitch="48" style="width: 288px; height: 384px;" />
                 </ui:VisualElement>
             </sh:FacetedPanel>
 
