@@ -29,6 +29,14 @@ namespace Safehouse.UI.Sample
             "duct-tape",
             "power-supply-unit",
             "golden-neck-chain",
+            // Gear to try the LOADOUT slots with: a helmet and armor to swap, ammo that fits the worn
+            // rifle, a rifle of another caliber (equipping it unloads the worn ammo), and a med kit.
+            "altyn-bulletproof-helmet-olive-drab",
+            "6b13-assault-armor-emr",
+            "545x39mm-ps-gs",
+            "545x39mm-hp",
+            "colt-m4a1-556x45-assault-rifle",
+            "afak-tactical-individual-first-aid-kit",
         };
 
         public static StashGrid Build(IReadOnlyDictionary<string, ItemDefinition> catalog,

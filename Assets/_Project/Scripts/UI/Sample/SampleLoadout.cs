@@ -32,6 +32,32 @@ namespace Safehouse.UI.Sample
             "dogtag-case",
         };
 
+        // What the character wears: the same gear the artboard's LOADOUT panel showed, as real items.
+        private static readonly (string Slot, string ItemId)[] Worn =
+        {
+            (LoadoutSlots.Primary, "kalashnikov-ak-12-545x39-assault-rifle"),
+            (LoadoutSlots.Ammo, "545x39mm-bp-gs"),
+            (LoadoutSlots.Helmet, "rys-t-bulletproof-helmet-black"),
+            (LoadoutSlots.Armor, "6b45-body-armor-emr"),
+            (LoadoutSlots.Rig, "spiritus-systems-lv-119-plate-carrier-black-division-v1"),
+            (LoadoutSlots.Backpack, "6sh118-raid-backpack-emr"),
+            (LoadoutSlots.Meds, "calok-b-hemostatic-applicator"),
+        };
+
+        public static Loadout BuildEquipped(IReadOnlyDictionary<string, ItemDefinition> catalog)
+        {
+            var worn = new List<EquippedItem>();
+            foreach (var (slot, itemId) in Worn)
+            {
+                if (catalog.ContainsKey(itemId))
+                {
+                    worn.Add(EquippedItem.Create(slot, (3000 + worn.Count).ToString("x32"), itemId));
+                }
+            }
+
+            return new Loadout(worn);
+        }
+
         public static StashGrid BuildRig(IReadOnlyDictionary<string, ItemDefinition> catalog) =>
             SampleStash.Fill(catalog, RigItemIds, RigWidth, RigHeight, firstInstanceNumber: 1000);
 

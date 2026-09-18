@@ -264,6 +264,157 @@ namespace Safehouse.Tests
             Assert.AreSame(root.Q<VisualElement>("stash-grid"), cell.parent);
         }
 
+        private const string Rifle = "kalashnikov-ak-12-545x39-assault-rifle";
+        private const string OtherRifle = "colt-m4a1-556x45-assault-rifle";
+        private const string WornHelmet = "rys-t-bulletproof-helmet-black";
+        private const string SpareHelmet = "altyn-bulletproof-helmet-olive-drab";
+        private const string FittingAmmo = "545x39mm-bp-gs";
+
+        [UnityTest]
+        public IEnumerator TheLoadoutSlotsShowWhatTheCharacterWears()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+
+            Assert.AreEqual(Rifle, controller.EquippedItemIn("primary"));
+            Assert.AreEqual(WornHelmet, controller.EquippedItemIn("helmet"));
+            Assert.AreNotEqual("Empty", root.Q<Label>("slot-helmet-name").text);
+            Assert.AreEqual("545x39", root.Q<Label>("slot-primary-stat").text);
+            Assert.AreEqual("24", root.Q<Label>("slot-rig-stat").text, "the LV-119 carries 24 cells");
+            Assert.AreEqual("48", root.Q<Label>("slot-backpack-stat").text);
+            Assert.AreEqual("3 USES", root.Q<Label>("slot-meds-stat").text);
+        }
+
+        [UnityTest]
+        public IEnumerator EquippingFromTheStashSwapsTheOldPieceBackIn()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var spare = controller.FirstInstanceOf(SpareHelmet);
+            Assume.That(spare, Is.Not.Null, "the sample stash should hold a spare helmet");
+            var oldInstance = controller.EquippedInstanceIn("helmet");
+
+            Assert.IsNull(controller.TryEquipItem(spare, "helmet"));
+
+            Assert.AreEqual(SpareHelmet, controller.EquippedItemIn("helmet"));
+            Assert.AreEqual("stash", controller.GridOf(oldInstance), "the old helmet goes back to the stash");
+            Assert.IsNull(controller.GridOf(spare), "the new one is worn, not in a grid");
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            StringAssert.Contains("Altyn", root.Q<Label>("slot-helmet-name").text);
+        }
+
+        [UnityTest]
+        public IEnumerator AnItemOnlyGoesInItsOwnSlot()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var spare = controller.FirstInstanceOf(SpareHelmet);
+            Assume.That(spare, Is.Not.Null);
+
+            StringAssert.Contains("helmet", controller.TryEquipItem(spare, "armor"));
+            Assert.AreEqual("stash", controller.GridOf(spare));
+            Assert.AreEqual(WornHelmet, controller.EquippedItemIn("helmet"));
+        }
+
+        [UnityTest]
+        public IEnumerator EquippingARifleOfAnotherCaliberUnloadsTheWornAmmo()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var other = controller.FirstInstanceOf(OtherRifle);
+            Assume.That(other, Is.Not.Null, "the sample stash should hold a rifle of another caliber");
+            var ammo = controller.EquippedInstanceIn("ammo");
+            Assume.That(controller.EquippedItemIn("ammo"), Is.EqualTo(FittingAmmo));
+
+            Assert.IsNull(controller.TryEquipItem(other, "primary"));
+
+            Assert.IsNull(controller.EquippedItemIn("ammo"));
+            Assert.AreEqual("stash", controller.GridOf(ammo));
+        }
+
+        [UnityTest]
+        public IEnumerator AmmoOfTheWrongCaliberCannotBeLoaded()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var other = controller.FirstInstanceOf(OtherRifle);
+            Assume.That(other, Is.Not.Null);
+            Assert.IsNull(controller.TryEquipItem(other, "primary")); // now an M4 with no ammo
+
+            var fitting = controller.FirstInstanceOf(FittingAmmo);
+            Assume.That(fitting, Is.Not.Null);
+
+            StringAssert.Contains("does not fit", controller.TryEquipItem(fitting, "ammo"));
+        }
+
+        [UnityTest]
+        public IEnumerator TakingGearOffPutsItInTheChosenGrid()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var helmet = controller.EquippedInstanceIn("helmet");
+
+            Assert.IsNull(controller.TryUnequipItem(helmet, "backpack", 4, 6, 0));
+
+            Assert.IsNull(controller.EquippedItemIn("helmet"));
+            Assert.AreEqual("backpack", controller.GridOf(helmet));
+        }
+
+        [UnityTest]
+        public IEnumerator DraggingAStashItemOntoItsSlotWearsIt()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var spare = controller.FirstInstanceOf(SpareHelmet);
+            Assume.That(spare, Is.Not.Null);
+            var cell = root.Q<VisualElement>("cell-" + spare);
+            var helmetCard = root.Q<VisualElement>("slot-helmet");
+            var press = cell.worldBound.center;
+            var over = helmetCard.worldBound.center;
+
+            Send(cell, PointerDownEvent.GetPooled(MakeTouch(TouchPhase.Began, press)));
+            Send(cell, PointerMoveEvent.GetPooled(MakeTouch(TouchPhase.Moved, over)));
+            Assert.IsTrue(helmetCard.ClassListContains("slot-drop-ok"), "a helmet may go in the helmet slot");
+
+            Send(cell, PointerUpEvent.GetPooled(MakeTouch(TouchPhase.Ended, over)));
+
+            Assert.AreEqual(SpareHelmet, controller.EquippedItemIn("helmet"));
+            Assert.IsFalse(helmetCard.ClassListContains("slot-drop-ok"), "the highlight should clear on drop");
+        }
+
+        [UnityTest]
+        public IEnumerator HoveringTheWrongSlotShowsItAsRefused()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var spare = controller.FirstInstanceOf(SpareHelmet);
+            Assume.That(spare, Is.Not.Null);
+            var cell = root.Q<VisualElement>("cell-" + spare);
+            var armorCard = root.Q<VisualElement>("slot-armor");
+            var press = cell.worldBound.center;
+            var over = armorCard.worldBound.center;
+
+            Send(cell, PointerDownEvent.GetPooled(MakeTouch(TouchPhase.Began, press)));
+            Send(cell, PointerMoveEvent.GetPooled(MakeTouch(TouchPhase.Moved, over)));
+            Assert.IsTrue(armorCard.ClassListContains("slot-drop-bad"));
+
+            Send(cell, PointerUpEvent.GetPooled(MakeTouch(TouchPhase.Ended, over)));
+            Assert.AreEqual(WornHelmet, controller.EquippedItemIn("helmet"), "a refused drop changes nothing");
+        }
+
         /// <summary>A 1x1 item's cell in the stash: 48px pitch minus the 2px gap is 46.</summary>
         private static VisualElement SmallStashCell(VisualElement root)
         {

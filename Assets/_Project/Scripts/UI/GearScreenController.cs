@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,11 +11,11 @@ using UnityEngine.UIElements;
 namespace Safehouse.UI
 {
     /// <summary>
-    /// Wires the GEAR screen's UXML to real game data. The STASH panel and the RIG / BACKPACK grids in
-    /// CARRIED are data-driven: real catalog items placed by the real placement rules, and items can be
-    /// dragged between any of the three grids. LOADOUT still shows one illustrative, hand-written
-    /// loadout, and the contents of all three grids are sample data (<see cref="SampleStash"/>,
-    /// <see cref="SampleLoadout"/>) until Profile/save loading is ported (see the Unity project README).
+    /// Wires the GEAR screen's UXML to real game data: the STASH, the RIG / BACKPACK grids in CARRIED
+    /// and the seven LOADOUT slots are real catalog items under the real placement and equip rules.
+    /// Items drag between the three grids and onto (or off) the slot cards. The contents are sample
+    /// data (<see cref="SampleStash"/>, <see cref="SampleLoadout"/>) until Profile/save loading is
+    /// ported, and the health / abilities panels are still hand-written (see the Unity project README).
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public sealed class GearScreenController : MonoBehaviour
@@ -34,9 +35,24 @@ namespace Safehouse.UI
             public StashGrid Grid;
         }
 
+        /// <summary>One LOADOUT slot card and the labels that show what is in it.</summary>
+        private sealed class SlotView
+        {
+            public string Slot;
+            public VisualElement Card;
+            public Label Stat;
+            public Label Icon;   // null for the primary-weapon row, which has no monogram
+            public Label Name;
+            public Label Erg;    // primary weapon only
+            public Label Rcl;
+        }
+
         private Dictionary<string, ItemDefinition> _catalog;
+        private GearData _gear;
+        private Loadout _loadout;
         private VisualElement _root;
         private readonly List<GridView> _views = new List<GridView>();
+        private readonly List<SlotView> _slots = new List<SlotView>();
         private readonly Dictionary<string, Button> _cellsByInstanceId = new Dictionary<string, Button>();
         private string _selectedInstanceId;
 
@@ -57,6 +73,8 @@ namespace Safehouse.UI
         private void OnEnable()
         {
             _catalog = CatalogLoader.Load();
+            _gear = GearLoader.Load(_catalog);
+            _loadout = SampleLoadout.BuildEquipped(_catalog);
 
             _root = GetComponent<UIDocument>().rootVisualElement;
 
@@ -83,6 +101,23 @@ namespace Safehouse.UI
                 Grid = SampleLoadout.BuildBackpack(_catalog),
             });
 
+            _slots.Clear();
+            foreach (var slot in LoadoutSlots.All)
+            {
+                var view = new SlotView
+                {
+                    Slot = slot,
+                    Card = _root.Q<VisualElement>("slot-" + slot),
+                    Stat = _root.Q<Label>("slot-" + slot + "-stat"),
+                    Icon = _root.Q<Label>("slot-" + slot + "-icon"),
+                    Name = _root.Q<Label>("slot-" + slot + "-name"),
+                    Erg = _root.Q<Label>("slot-" + slot + "-erg"),
+                    Rcl = _root.Q<Label>("slot-" + slot + "-rcl"),
+                };
+                _slots.Add(view);
+                RegisterDrag(view.Card, () => _loadout.Get(view.Slot)?.InstanceId);
+            }
+
             _labelStashCells = _root.Q<Label>("label-stash-cells");
             _labelStashValue = _root.Q<Label>("label-stash-value");
             _labelCarried = _root.Q<Label>("label-carried");
@@ -96,6 +131,7 @@ namespace Safehouse.UI
             _labelSelectedPerCell = _root.Q<Label>("label-selected-percell");
 
             BuildCells();
+            RenderSlots();
             UpdateHeaders();
 
             var highestValueId = StashView.Grid.Stash
@@ -107,6 +143,8 @@ namespace Safehouse.UI
                 SelectItem(highestValueId);
             }
         }
+
+        // ---- building the screen from the current state ----
 
         private void BuildCells()
         {
@@ -146,7 +184,7 @@ namespace Safehouse.UI
 
             var instanceId = instance.InstanceId;
             cell.clicked += () => SelectItem(instanceId);
-            RegisterDrag(cell, instanceId);
+            RegisterDrag(cell, () => instanceId);
             return cell;
         }
 
@@ -169,11 +207,80 @@ namespace Safehouse.UI
             cell.style.height = height * Pitch - 2;
         }
 
-        private GridView ViewOf(string instanceId) =>
-            _views.First(view => view.Grid.Stash.Any(candidate => candidate.InstanceId == instanceId));
+        /// <summary>Fills each slot card from the loadout: the item's name and the one number that matters for it.</summary>
+        private void RenderSlots()
+        {
+            foreach (var view in _slots)
+            {
+                view.Card.RemoveFromClassList("slot-selected");
+                var worn = _loadout.Get(view.Slot);
+                if (worn == null)
+                {
+                    view.Name.text = "Empty";
+                    view.Stat.text = "";
+                    if (view.Icon != null) { view.Icon.text = ""; }
+                    if (view.Erg != null) { view.Erg.text = ""; }
+                    if (view.Rcl != null) { view.Rcl.text = ""; }
+                    continue;
+                }
 
-        private ItemInstance Find(string instanceId) =>
-            ViewOf(instanceId).Grid.Stash.First(candidate => candidate.InstanceId == instanceId);
+                var item = _catalog[worn.ItemId];
+                view.Name.text = item.Name;
+                if (view.Icon != null)
+                {
+                    view.Icon.text = Monogram(item.Category);
+                    view.Icon.style.color = RarityPalette.For(item.Rarity);
+                }
+
+                view.Stat.text = SlotStat(view.Slot, worn.ItemId);
+                if (view.Erg != null)
+                {
+                    _gear.Weapons.TryGetValue(worn.ItemId, out var weapon);
+                    view.Erg.text = weapon == null ? "" : $"ERG {weapon.Ergonomics}";
+                    view.Rcl.text = weapon == null ? "" : $"RCL {weapon.Recoil}";
+                }
+            }
+
+            if (_selectedInstanceId != null && _loadout.FindByInstance(_selectedInstanceId) != null)
+            {
+                SlotViewFor(_loadout.FindByInstance(_selectedInstanceId).Slot).Card.AddToClassList("slot-selected");
+            }
+        }
+
+        private string SlotStat(string slot, string itemId)
+        {
+            switch (slot)
+            {
+                case LoadoutSlots.Primary:
+                    return _gear.Weapons.TryGetValue(itemId, out var weapon)
+                        ? weapon.Caliber.Replace("Caliber", "") : "";
+                case LoadoutSlots.Ammo:
+                    return _gear.Ammo.TryGetValue(itemId, out var round) ? round.Damage.ToString(CultureInfo.InvariantCulture) : "";
+                case LoadoutSlots.Meds:
+                    return _gear.Meds.TryGetValue(itemId, out var med) ? $"{med.Uses} USES" : "";
+                case LoadoutSlots.Rig:
+                case LoadoutSlots.Backpack:
+                    return _gear.Equipment.TryGetValue(itemId, out var carrier)
+                        ? carrier.Capacity.ToString(CultureInfo.InvariantCulture) : "";
+                default: // helmet, armor
+                    return _gear.Equipment.TryGetValue(itemId, out var armor)
+                        ? armor.ArmorClass.ToString(CultureInfo.InvariantCulture) : "";
+            }
+        }
+
+        private SlotView SlotViewFor(string slot) => _slots.First(view => view.Slot == slot);
+
+        /// <summary>Redraws everything that depends on which items are where, keeping the selection.</summary>
+        private void RefreshAll()
+        {
+            BuildCells();
+            RenderSlots();
+            UpdateHeaders();
+            if (_selectedInstanceId != null && ItemIdOf(_selectedInstanceId) != null)
+            {
+                SelectItem(_selectedInstanceId);
+            }
+        }
 
         private void UpdateHeaders()
         {
@@ -193,26 +300,74 @@ namespace Safehouse.UI
             _labelCarried.text = $"{carried} / {capacity}";
         }
 
+        // ---- looking items up: an item is in exactly one grid, or worn ----
+
+        private GridView TryViewOf(string instanceId) =>
+            _views.FirstOrDefault(view => view.Grid.Stash.Any(candidate => candidate.InstanceId == instanceId));
+
+        private GridView ViewOf(string instanceId) =>
+            TryViewOf(instanceId) ?? throw new ValidationException($"{instanceId} is not in a grid.");
+
+        /// <summary>The item type of an instance wherever it is, or null if there is no such instance.</summary>
+        private string ItemIdOf(string instanceId)
+        {
+            var view = TryViewOf(instanceId);
+            if (view != null)
+            {
+                return view.Grid.Stash.First(candidate => candidate.InstanceId == instanceId).ItemId;
+            }
+
+            return _loadout.FindByInstance(instanceId)?.ItemId;
+        }
+
+        /// <summary>How an item in a grid is turned; a worn item has no orientation, so 0.</summary>
+        private int RotationOf(string instanceId) =>
+            TryViewOf(instanceId)?.Grid.Stash.First(candidate => candidate.InstanceId == instanceId).Rotation ?? 0;
+
+        /// <summary>Which grid ("stash", "rig" or "backpack") holds this item; null if it is worn.</summary>
+        public string GridOf(string instanceId) => TryViewOf(instanceId)?.Name;
+
+        /// <summary>Which loadout slot this item is worn in; null if it is in a grid.</summary>
+        public string SlotOf(string instanceId) => _loadout.FindByInstance(instanceId)?.Slot;
+
+        /// <summary>The item type worn in a slot, or null when the slot is empty.</summary>
+        public string EquippedItemIn(string slot) => _loadout.Get(slot)?.ItemId;
+
+        /// <summary>The instance id of what is worn in a slot, or null when it is empty.</summary>
+        public string EquippedInstanceIn(string slot) => _loadout.Get(slot)?.InstanceId;
+
+        /// <summary>The instance id of the first item of this type sitting in any grid, or null. For callers
+        /// (tests, mostly) that know what they want by item type rather than by instance.</summary>
+        public string FirstInstanceOf(string itemId) =>
+            _views.SelectMany(view => view.Grid.Stash).FirstOrDefault(instance => instance.ItemId == itemId)?.InstanceId;
+
+        // ---- changing things ----
+
         /// <summary>
         /// Moves (and optionally turns) an item within the grid it is already in. Returns why the move
         /// was refused, or null on success - the same contract as <see cref="PlacementRules.PlacementError"/>.
         /// Public so tests can drive a move without simulating a pointer drag.
         /// </summary>
-        public string TryMoveItem(string instanceId, int x, int y, int rotation) =>
-            TryTransfer(instanceId, ViewOf(instanceId), x, y, rotation);
+        public string TryMoveItem(string instanceId, int x, int y, int rotation)
+        {
+            var view = TryViewOf(instanceId);
+            return view == null ? "That item is worn, not in a grid." : TryTransfer(instanceId, view, x, y, rotation);
+        }
 
         /// <summary>Moves an item into the named grid ("stash", "rig" or "backpack") at x,y. Same
         /// contract as <see cref="TryMoveItem"/>; nothing changes when it is refused.</summary>
         public string TryTransferItem(string instanceId, string gridName, int x, int y, int rotation)
         {
             var target = _views.FirstOrDefault(view => view.Name == gridName);
-            return target == null
-                ? $"Unknown grid: {gridName}."
+            if (target == null)
+            {
+                return $"Unknown grid: {gridName}.";
+            }
+
+            return TryViewOf(instanceId) == null
+                ? "That item is worn: take it off first."
                 : TryTransfer(instanceId, target, x, y, rotation);
         }
-
-        /// <summary>Which grid ("stash", "rig" or "backpack") currently holds this item.</summary>
-        public string GridOf(string instanceId) => ViewOf(instanceId).Name;
 
         private string TryTransfer(string instanceId, GridView target, int x, int y, int rotation)
         {
@@ -232,7 +387,7 @@ namespace Safehouse.UI
             source.Grid = newSource;
             target.Grid = newTarget;
 
-            var moved = Find(instanceId);
+            var moved = target.Grid.Stash.First(candidate => candidate.InstanceId == instanceId);
             PlacementRules.Footprint(_catalog[moved.ItemId], moved.Rotation, out var width, out var height);
             var cell = _cellsByInstanceId[instanceId];
             if (source != target)
@@ -251,10 +406,16 @@ namespace Safehouse.UI
         }
 
         /// <summary>Turns an item 90 degrees where it sits. Refused (returns the reason) if the turned
-        /// shape would not fit there; a square item has nothing to turn and is left alone.</summary>
+        /// shape would not fit there; a square item, or a worn one, has nothing to turn.</summary>
         public string TryRotateItem(string instanceId)
         {
-            var instance = Find(instanceId);
+            var view = TryViewOf(instanceId);
+            if (view == null)
+            {
+                return null;
+            }
+
+            var instance = view.Grid.Stash.First(candidate => candidate.InstanceId == instanceId);
             var item = _catalog[instance.ItemId];
             if (item.Width == item.Height)
             {
@@ -264,20 +425,104 @@ namespace Safehouse.UI
             return TryMoveItem(instanceId, instance.X, instance.Y, instance.Rotation == 0 ? 90 : 0);
         }
 
+        /// <summary>Why this item cannot be worn in this slot, or null when it can (or is already there).</summary>
+        private string SlotDropError(string instanceId, string slot)
+        {
+            var worn = _loadout.FindByInstance(instanceId);
+            if (worn != null)
+            {
+                return worn.Slot == slot ? null : $"That is worn in the {worn.Slot} slot already.";
+            }
+
+            var itemId = ItemIdOf(instanceId);
+            var expected = _gear.SlotOf(itemId);
+            if (expected == null)
+            {
+                return $"{_catalog[itemId].Name} cannot be equipped.";
+            }
+
+            if (expected != slot)
+            {
+                return $"{_catalog[itemId].Name} goes in the {expected} slot.";
+            }
+
+            var view = ViewOf(instanceId);
+            return LoadoutRules.EquipError(_gear, _catalog, _loadout, view.Grid, StashView.Grid, instanceId);
+        }
+
+        /// <summary>
+        /// Wears an item from whichever grid holds it. What the slot held goes back to the stash. Returns
+        /// why it was refused, or null; nothing changes when it is refused.
+        /// </summary>
+        public string TryEquipItem(string instanceId, string slot)
+        {
+            var error = SlotDropError(instanceId, slot);
+            if (error != null)
+            {
+                return error;
+            }
+
+            if (_loadout.FindByInstance(instanceId) != null)
+            {
+                return null; // already worn in that slot
+            }
+
+            var source = ViewOf(instanceId);
+            var result = LoadoutRules.Equip(_gear, _catalog, _loadout, source.Grid, StashView.Grid, instanceId);
+            _loadout = result.Loadout;
+            source.Grid = result.Source;
+            StashView.Grid = result.Stash;
+            RefreshAll();
+            return null;
+        }
+
+        /// <summary>Takes a worn item off into the named grid at x,y. Taking off a weapon also unloads
+        /// its ammunition into the same grid. Returns why it was refused, or null.</summary>
+        public string TryUnequipItem(string instanceId, string gridName, int x, int y, int rotation)
+        {
+            var worn = _loadout.FindByInstance(instanceId);
+            if (worn == null)
+            {
+                return "That item is not worn.";
+            }
+
+            var target = _views.FirstOrDefault(view => view.Name == gridName);
+            if (target == null)
+            {
+                return $"Unknown grid: {gridName}.";
+            }
+
+            try
+            {
+                var result = LoadoutRules.Unequip(_catalog, _loadout, worn.Slot, target.Grid, x, y, rotation);
+                _loadout = result.Loadout;
+                target.Grid = result.Target;
+            }
+            catch (ValidationException error)
+            {
+                return error.Message;
+            }
+
+            RefreshAll();
+            return null;
+        }
+
         // ---- dragging ----
 
         private sealed class Drag
         {
             public string InstanceId;
+            public string SourceSlot;      // the slot the item is worn in, or null when it is in a grid
             public int PointerId;
             public bool Active;
             public int Rotation;
             public Vector2 StartPointer;   // panel coordinates
             public Vector2 Pointer;        // panel coordinates, latest
-            public Vector2 Grab;           // pointer minus the cell's top-left, panel coordinates
-            public float MarginLeft;       // the cell's margin, so the drop lands where the ghost shows
+            public Vector2 Grab;           // pointer minus the dragged element's top-left, panel coordinates
+            public float MarginLeft;       // the element's margin, so the drop lands where the ghost shows
             public float MarginTop;
-            public GridView TargetView;    // null while the pointer is over no grid
+            public GridView TargetView;    // the grid under the pointer, if any
+            public SlotView TargetSlot;    // the slot card under the pointer, if any
             public int TargetX;
             public int TargetY;
         }
@@ -286,42 +531,46 @@ namespace Safehouse.UI
         private VisualElement _ghost;
         private VisualElement _proxy;
 
-        private void RegisterDrag(Button cell, string instanceId)
+        /// <summary>Makes a grid cell or a slot card draggable. <paramref name="instanceIdOf"/> says which
+        /// item it stands for right now - a slot card's item changes as gear is swapped, and it may be empty.</summary>
+        private void RegisterDrag(VisualElement element, Func<string> instanceIdOf)
         {
             // TrickleDown: a Button's built-in Clickable stops pointer events from reaching later
             // handlers on the same element, so a normal (bubble-phase) callback would never run.
-            cell.RegisterCallback<PointerDownEvent>(evt => OnPointerDown(cell, instanceId, evt), TrickleDown.TrickleDown);
-            cell.RegisterCallback<PointerMoveEvent>(evt => OnPointerMove(cell, evt), TrickleDown.TrickleDown);
-            cell.RegisterCallback<PointerUpEvent>(evt => OnPointerUp(cell, evt), TrickleDown.TrickleDown);
-            cell.RegisterCallback<PointerCaptureOutEvent>(_ => CancelDrag(cell));
-            cell.RegisterCallback<KeyDownEvent>(evt => OnKeyDown(cell, instanceId, evt), TrickleDown.TrickleDown);
+            element.RegisterCallback<PointerDownEvent>(evt => OnPointerDown(element, instanceIdOf, evt), TrickleDown.TrickleDown);
+            element.RegisterCallback<PointerMoveEvent>(evt => OnPointerMove(element, evt), TrickleDown.TrickleDown);
+            element.RegisterCallback<PointerUpEvent>(evt => OnPointerUp(element, evt), TrickleDown.TrickleDown);
+            element.RegisterCallback<PointerCaptureOutEvent>(_ => CancelDrag(element));
+            element.RegisterCallback<KeyDownEvent>(evt => OnKeyDown(element, instanceIdOf, evt), TrickleDown.TrickleDown);
         }
 
-        private void OnPointerDown(VisualElement cell, string instanceId, PointerDownEvent evt)
+        private void OnPointerDown(VisualElement element, Func<string> instanceIdOf, PointerDownEvent evt)
         {
-            if (evt.button != 0)
+            var instanceId = instanceIdOf();
+            if (evt.button != 0 || instanceId == null)
             {
-                return;
+                return; // an empty slot has nothing to pick up
             }
 
             SelectItem(instanceId);
-            cell.Focus(); // so R / Esc reach this cell
+            element.Focus(); // so R / Esc reach this element
 
             _drag = new Drag
             {
                 InstanceId = instanceId,
+                SourceSlot = SlotOf(instanceId),
                 PointerId = evt.pointerId,
-                Rotation = Find(instanceId).Rotation,
+                Rotation = RotationOf(instanceId),
                 StartPointer = evt.position,
                 Pointer = evt.position,
-                Grab = (Vector2)evt.position - cell.worldBound.min,
-                MarginLeft = cell.resolvedStyle.marginLeft,
-                MarginTop = cell.resolvedStyle.marginTop,
+                Grab = (Vector2)evt.position - element.worldBound.min,
+                MarginLeft = element.resolvedStyle.marginLeft,
+                MarginTop = element.resolvedStyle.marginTop,
             };
-            cell.CapturePointer(evt.pointerId);
+            element.CapturePointer(evt.pointerId);
         }
 
-        private void OnPointerMove(VisualElement cell, PointerMoveEvent evt)
+        private void OnPointerMove(VisualElement element, PointerMoveEvent evt)
         {
             if (_drag == null || _drag.PointerId != evt.pointerId)
             {
@@ -336,20 +585,20 @@ namespace Safehouse.UI
                     return; // still a click, not a drag
                 }
 
-                BeginDrag(cell);
+                BeginDrag(element);
             }
 
             RefreshDrag();
         }
 
-        private void BeginDrag(VisualElement cell)
+        private void BeginDrag(VisualElement element)
         {
             _drag.Active = true;
 
-            // The cell itself stays put (dimmed) and a copy follows the pointer. The copy lives at the
+            // The element itself stays put (dimmed) and a copy follows the pointer. The copy lives at the
             // top of the screen's tree, so it draws over every panel - a cell dragged inside its own
             // grid would be hidden behind the next panel the moment it crossed the border.
-            var item = _catalog[Find(_drag.InstanceId).ItemId];
+            var item = _catalog[ItemIdOf(_drag.InstanceId)];
             _proxy = new VisualElement { pickingMode = PickingMode.Ignore };
             _proxy.AddToClassList("cell");
             _proxy.AddToClassList("cell-proxy");
@@ -361,15 +610,29 @@ namespace Safehouse.UI
             _ghost = new VisualElement { pickingMode = PickingMode.Ignore };
             _ghost.AddToClassList("cell-ghost");
 
-            cell.AddToClassList("cell-dragging");
+            if (_drag.SourceSlot != null)
+            {
+                // A slot card is not the size of the item, so the point grabbed on it means nothing on
+                // the copy: hold the copy by its middle instead.
+                _drag.Grab = FootprintPixels(item, _drag.Rotation) / 2f;
+            }
+
+            element.AddToClassList("cell-dragging");
+        }
+
+        private static Vector2 FootprintPixels(ItemDefinition item, int rotation)
+        {
+            PlacementRules.Footprint(item, rotation, out var width, out var height);
+            return new Vector2(width * Pitch - 2, height * Pitch - 2);
         }
 
         /// <summary>Moves the copy with the pointer, and shows where a drop would land in green or red.</summary>
         private void RefreshDrag()
         {
             var drag = _drag;
-            var instance = Find(drag.InstanceId);
-            PlacementRules.Footprint(_catalog[instance.ItemId], drag.Rotation, out var width, out var height);
+            var itemId = ItemIdOf(drag.InstanceId);
+            var item = _catalog[itemId];
+            PlacementRules.Footprint(item, drag.Rotation, out var width, out var height);
 
             var topLeft = drag.Pointer - drag.Grab;
             var local = _root.WorldToLocal(topLeft);
@@ -377,6 +640,17 @@ namespace Safehouse.UI
             _proxy.style.top = local.y;
             _proxy.style.width = width * Pitch - 2;
             _proxy.style.height = height * Pitch - 2;
+
+            ClearSlotHighlights();
+            drag.TargetSlot = _slots.FirstOrDefault(view => view.Card.worldBound.Contains(drag.Pointer));
+            if (drag.TargetSlot != null)
+            {
+                drag.TargetView = null;
+                _ghost.RemoveFromHierarchy();
+                drag.TargetSlot.Card.AddToClassList(
+                    SlotDropError(drag.InstanceId, drag.TargetSlot.Slot) == null ? "slot-drop-ok" : "slot-drop-bad");
+                return;
+            }
 
             drag.TargetView = _views.FirstOrDefault(view => view.Element.worldBound.Contains(drag.Pointer));
             if (drag.TargetView == null)
@@ -395,12 +669,21 @@ namespace Safehouse.UI
             }
 
             PositionCell(_ghost, drag.TargetX, drag.TargetY, width, height);
-            var fits = PlacementRules.CanPlace(drag.TargetView.Grid, _catalog, instance.ItemId,
-                drag.TargetX, drag.TargetY, drag.Rotation, instance.InstanceId);
+            var fits = PlacementRules.CanPlace(drag.TargetView.Grid, _catalog, itemId,
+                drag.TargetX, drag.TargetY, drag.Rotation, drag.InstanceId);
             _ghost.EnableInClassList("cell-ghost-bad", !fits);
         }
 
-        private void OnPointerUp(VisualElement cell, PointerUpEvent evt)
+        private void ClearSlotHighlights()
+        {
+            foreach (var view in _slots)
+            {
+                view.Card.RemoveFromClassList("slot-drop-ok");
+                view.Card.RemoveFromClassList("slot-drop-bad");
+            }
+        }
+
+        private void OnPointerUp(VisualElement element, PointerUpEvent evt)
         {
             var drag = _drag;
             if (drag == null || drag.PointerId != evt.pointerId)
@@ -410,9 +693,9 @@ namespace Safehouse.UI
 
             // Clear first: releasing the capture raises PointerCaptureOut, which must not see a live drag.
             _drag = null;
-            if (cell.HasPointerCapture(evt.pointerId))
+            if (element.HasPointerCapture(evt.pointerId))
             {
-                cell.ReleasePointer(evt.pointerId);
+                element.ReleasePointer(evt.pointerId);
             }
 
             if (!drag.Active)
@@ -420,63 +703,83 @@ namespace Safehouse.UI
                 return;
             }
 
-            EndDrag(cell);
-            if (drag.TargetView == null)
+            EndDrag(element);
+
+            string error;
+            if (drag.TargetSlot != null)
+            {
+                error = TryEquipItem(drag.InstanceId, drag.TargetSlot.Slot);
+            }
+            else if (drag.TargetView == null)
             {
                 return; // dropped on empty screen: the item simply stays where it was
             }
-
-            if (TryTransfer(drag.InstanceId, drag.TargetView, drag.TargetX, drag.TargetY, drag.Rotation) != null)
+            else if (drag.SourceSlot != null)
             {
-                Reject(cell);
+                error = TryUnequipItem(drag.InstanceId, drag.TargetView.Name, drag.TargetX, drag.TargetY, drag.Rotation);
+            }
+            else
+            {
+                error = TryTransfer(drag.InstanceId, drag.TargetView, drag.TargetX, drag.TargetY, drag.Rotation);
+            }
+
+            if (error != null)
+            {
+                Reject(element);
             }
         }
 
-        private void CancelDrag(VisualElement cell)
+        private void CancelDrag(VisualElement element)
         {
             var drag = _drag;
             _drag = null;
             if (drag != null && drag.Active)
             {
-                EndDrag(cell);
+                EndDrag(element);
             }
         }
 
-        /// <summary>Removes the drag visuals; the cell was never moved, so there is nothing to snap back.</summary>
-        private void EndDrag(VisualElement cell)
+        /// <summary>Removes the drag visuals; the element was never moved, so there is nothing to snap back.</summary>
+        private void EndDrag(VisualElement element)
         {
             _proxy?.RemoveFromHierarchy();
             _proxy = null;
             _ghost?.RemoveFromHierarchy();
             _ghost = null;
-            cell.RemoveFromClassList("cell-dragging");
+            ClearSlotHighlights();
+            element.RemoveFromClassList("cell-dragging");
         }
 
-        private static void Reject(VisualElement cell)
+        private static void Reject(VisualElement element)
         {
-            cell.AddToClassList("cell-rejected");
-            cell.schedule.Execute(() => cell.RemoveFromClassList("cell-rejected")).StartingIn(350);
+            element.AddToClassList("cell-rejected");
+            element.schedule.Execute(() => element.RemoveFromClassList("cell-rejected")).StartingIn(350);
         }
 
-        private void OnKeyDown(VisualElement cell, string instanceId, KeyDownEvent evt)
+        private void OnKeyDown(VisualElement element, Func<string> instanceIdOf, KeyDownEvent evt)
         {
+            var instanceId = instanceIdOf();
+            if (instanceId == null)
+            {
+                return;
+            }
+
             if (evt.keyCode == KeyCode.R)
             {
                 if (_drag != null && _drag.Active)
                 {
-                    var item = _catalog[Find(instanceId).ItemId];
+                    var item = _catalog[ItemIdOf(instanceId)];
                     if (item.Width != item.Height)
                     {
                         _drag.Rotation = _drag.Rotation == 0 ? 90 : 0;
                         // Centre the copy on the pointer: the old grab point may now be off the shape.
-                        PlacementRules.Footprint(item, _drag.Rotation, out var width, out var height);
-                        _drag.Grab = new Vector2(width * Pitch - 2, height * Pitch - 2) / 2f;
+                        _drag.Grab = FootprintPixels(item, _drag.Rotation) / 2f;
                         RefreshDrag();
                     }
                 }
                 else if (TryRotateItem(instanceId) != null)
                 {
-                    Reject(cell);
+                    Reject(element);
                 }
 
                 evt.StopPropagation();
@@ -484,23 +787,30 @@ namespace Safehouse.UI
             else if (evt.keyCode == KeyCode.Escape && _drag != null && _drag.Active)
             {
                 var pointerId = _drag.PointerId;
-                CancelDrag(cell);
-                if (cell.HasPointerCapture(pointerId))
+                CancelDrag(element);
+                if (element.HasPointerCapture(pointerId))
                 {
-                    cell.ReleasePointer(pointerId);
+                    element.ReleasePointer(pointerId);
                 }
 
                 evt.StopPropagation();
             }
         }
 
-        /// <summary>Selects an item by instance id, in whichever grid it is. Public so tests can drive
-        /// it directly instead of simulating a pointer click on a specific screen position.</summary>
+        // ---- selection and the detail panel ----
+
+        /// <summary>Selects an item by instance id, wherever it is - a grid or a slot. Public so tests can
+        /// drive it directly instead of simulating a pointer click on a specific screen position.</summary>
         public void SelectItem(string instanceId)
         {
             if (_selectedInstanceId != null && _cellsByInstanceId.TryGetValue(_selectedInstanceId, out var previous))
             {
                 previous.RemoveFromClassList("cell-selected");
+            }
+
+            foreach (var view in _slots)
+            {
+                view.Card.RemoveFromClassList("slot-selected");
             }
 
             _selectedInstanceId = instanceId;
@@ -509,9 +819,14 @@ namespace Safehouse.UI
                 current.AddToClassList("cell-selected");
             }
 
-            var instance = Find(instanceId);
-            var item = _catalog[instance.ItemId];
-            PlacementRules.Footprint(item, instance.Rotation, out var width, out var height);
+            var worn = _loadout.FindByInstance(instanceId);
+            if (worn != null)
+            {
+                SlotViewFor(worn.Slot).Card.AddToClassList("slot-selected");
+            }
+
+            var item = _catalog[ItemIdOf(instanceId)];
+            PlacementRules.Footprint(item, RotationOf(instanceId), out var width, out var height);
             var color = RarityPalette.For(item.Rarity);
 
             _swatchSelected.style.borderTopColor = _swatchSelected.style.borderBottomColor =
@@ -534,6 +849,6 @@ namespace Safehouse.UI
         }
 
         private static string Spaced(double value) =>
-            System.Math.Round(value).ToString("N0", CultureInfo.InvariantCulture).Replace(",", " ");
+            Math.Round(value).ToString("N0", CultureInfo.InvariantCulture).Replace(",", " ");
     }
 }

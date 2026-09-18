@@ -143,7 +143,7 @@ namespace Safehouse.Core
             return (from.With(remaining), to.With(added));
         }
 
-        private static int IndexOf(StashGrid grid, string instanceId)
+        internal static int IndexOf(StashGrid grid, string instanceId)
         {
             for (var i = 0; i < grid.Stash.Count; i++)
             {

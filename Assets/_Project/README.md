@@ -74,6 +74,8 @@ input to Core.
 | `models.ItemDefinition`, `ItemInstance` | `Core/ItemDefinition.cs`, `Core/ItemInstance.cs` | Validation only; save parsing is not ported yet. |
 | `inventory.py` | `Core/Placement.cs` | Every rule, checked against the Python output for the same grids. |
 | `catalog.py` | `Data/CatalogLoader.cs` | JSON stays in Data so Core needs no dependencies. |
+| `gear.py` (slots, calibers, capacity) | `Core/GearData.cs`, `Data/GearLoader.cs` | Only what the loadout reads; combat-only numbers and enemies wait for the combat port. |
+| `session.equip` / `unequip`, `models.EquippedItem` | `Core/Loadout.cs`, `Core/LoadoutRules.cs` | Same rules: old piece returns to the stash, ammo must match the rifle, a refused change alters nothing. |
 
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
@@ -85,9 +87,9 @@ language worked out in the design artboard at
 https://claude.ai/artifact/Y8ycmAv5F6yfN76Mr4LbDB - open that link and `UI/Theme.uss` side by side
 if a colour or spacing value ever needs to change; keep them in sync by eye.
 
-- `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. LOADOUT is one
-  hand-written illustrative loadout (the same simplification the artboard made); the STASH panel and
-  CARRIED's RIG / BACKPACK grids are wired to real data (still sample contents, see below).
+- `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. The STASH panel, CARRIED's
+  RIG / BACKPACK grids and the seven LOADOUT slot cards are wired to real data (still sample
+  contents, see below); only the body-part health and ability panels are hand-written.
 - `Scripts/UI/GearScreenController.cs` - loads the shipped catalog (`CatalogLoader`), builds a demo
   stash (`Scripts/UI/Sample/SampleStash.cs`) by running real items through `PlacementRules.FirstFit`,
   and renders one cell per placed item. Clicking a cell (`Button.clicked`) updates the detail panel.
@@ -96,6 +98,9 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
   drop or turn snaps back and flashes the cell red. The rule is `PlacementRules.Move` in Core; the
   controller only forwards pointer input to it (`TryMoveItem` / `TryRotateItem`, which tests call
   directly). Moves live in memory only - there is no save to write them to yet.
+  Dropping a stash / rig / backpack item on its LOADOUT slot wears it (`LoadoutRules.Equip`: the slot
+  card turns green or red while hovering, the old piece goes back to the stash); dragging a slot card
+  onto a grid takes it off there (`LoadoutRules.Unequip`).
   This is the first place `Safehouse.Core`/`Safehouse.Data` actually drive a screen, not just a test.
 - `Scripts/UI/Chrome/FacetedPanel.cs`, `GridBackground.cs` - USS has no `clip-path` and no repeating
   gradients, so the artboard's cut-corner panels and the stash's faint grid lines are drawn directly
@@ -141,10 +146,13 @@ a screen has to render Korean text.
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
   there as it's needed (data import from the Tarkov snapshot, build scripts).
-- LOADOUT on the GEAR screen is static mock data, and the stash / rig / backpack hold sample items
-  (`Sample/SampleStash.cs`, `Sample/SampleLoadout.cs`) rather than a real character's - that needs
-  the save system (below) ported first. Items can already be dragged between the three grids
-  (`PlacementRules.Transfer`), but nothing is persisted.
+- The stash, rig, backpack and worn gear are sample items (`Sample/SampleStash.cs`,
+  `Sample/SampleLoadout.cs`) rather than a real character's, and nothing is persisted - that needs
+  the save system (below) ported first. The body-part health and abilities panels are still static.
+- The RIG / BACKPACK grids are a fixed 6x4 / 6x8, whatever rig and backpack are worn. In the data a
+  rig or backpack's `capacity` is its cell count (LV-119 = 24, 6Sh118 = 48), so the grids should
+  eventually be sized from the worn item; that also has to decide what happens to items in cells that
+  disappear when a smaller bag is put on.
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
 - The save system (`storage.py`, `models.Profile`, `migrations.py`) is not ported. Its shape depends

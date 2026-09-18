@@ -1,0 +1,153 @@
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Safehouse.Core
+{
+    /// <summary>What an equip produced. Each field is a fresh copy; the inputs are untouched.</summary>
+    public readonly struct EquipResult
+    {
+        public EquipResult(Loadout loadout, StashGrid source, StashGrid stash)
+        {
+            Loadout = loadout;
+            Source = source;
+            Stash = stash;
+        }
+
+        public Loadout Loadout { get; }
+
+        /// <summary>The grid the item came from. The same object as <see cref="Stash"/> when it came from the stash.</summary>
+        public StashGrid Source { get; }
+
+        /// <summary>The stash, which is where whatever was worn before goes back to.</summary>
+        public StashGrid Stash { get; }
+    }
+
+    /// <summary>
+    /// Wearing and taking off gear. The C# side of Python session.equip/unequip. Like the placement
+    /// rules these are pure: a refused change throws and nothing - grid, loadout - has been altered.
+    /// </summary>
+    public static class LoadoutRules
+    {
+        /// <summary>
+        /// Wears an item taken from <paramref name="source"/> (the stash, or a rig or backpack grid).
+        /// Whatever the slot held goes back to <paramref name="stash"/> by first fit, keeping its
+        /// instance id. Changing to a weapon of another caliber also takes off the loaded ammunition.
+        /// </summary>
+        public static EquipResult Equip(GearData gear, IReadOnlyDictionary<string, ItemDefinition> catalog,
+            Loadout loadout, StashGrid source, StashGrid stash, string instanceId)
+        {
+            var index = PlacementRules.IndexOf(source, instanceId);
+            var item = source.Stash[index];
+            var name = NameOf(catalog, item.ItemId);
+
+            var slot = gear.SlotOf(item.ItemId);
+            if (slot == null)
+            {
+                throw new ValidationException($"{name} cannot be equipped.");
+            }
+
+            var weapon = loadout.Get(LoadoutSlots.Primary);
+            if (slot == LoadoutSlots.Ammo && (weapon == null || !gear.Fits(weapon.ItemId, item.ItemId)))
+            {
+                throw new ValidationException($"{name} does not fit the weapon this character carries.");
+            }
+
+            var takenOff = loadout.Items.Where(worn => worn.Slot == slot).ToList();
+            var kept = loadout.Items.Where(worn => worn.Slot != slot).ToList();
+            if (slot == LoadoutSlots.Primary)
+            {
+                // Ammunition for the old weapon does not fit the new one.
+                var loaded = loadout.Get(LoadoutSlots.Ammo);
+                if (loaded != null && !gear.Fits(item.ItemId, loaded.ItemId))
+                {
+                    takenOff.Add(loaded);
+                    kept.Remove(loaded);
+                }
+            }
+
+            kept.Add(EquippedItem.Create(slot, item.InstanceId, item.ItemId));
+
+            var remaining = new List<ItemInstance>(source.Stash);
+            remaining.RemoveAt(index);
+            var sourceAfter = source.With(remaining);
+            var sameGrid = ReferenceEquals(source, stash);
+            var stashAfter = sameGrid ? sourceAfter : stash;
+
+            foreach (var worn in takenOff)
+            {
+                stashAfter = ReturnToGrid(stashAfter, catalog, worn);
+            }
+
+            return new EquipResult(new Loadout(kept), sameGrid ? stashAfter : sourceAfter, stashAfter);
+        }
+
+        /// <summary>The reason <see cref="Equip"/> would refuse, or null when it would succeed.</summary>
+        public static string EquipError(GearData gear, IReadOnlyDictionary<string, ItemDefinition> catalog,
+            Loadout loadout, StashGrid source, StashGrid stash, string instanceId)
+        {
+            try
+            {
+                Equip(gear, catalog, loadout, source, stash, instanceId);
+                return null;
+            }
+            catch (ValidationException error)
+            {
+                return error.Message;
+            }
+        }
+
+        /// <summary>
+        /// Takes the item in <paramref name="slot"/> off and puts it into <paramref name="target"/> at
+        /// x,y. Taking off a weapon also unloads its ammunition, which goes into the same grid by first
+        /// fit. Refused, changing nothing, when either does not fit.
+        /// </summary>
+        public static (Loadout Loadout, StashGrid Target) Unequip(IReadOnlyDictionary<string, ItemDefinition> catalog,
+            Loadout loadout, string slot, StashGrid target, int x, int y, int rotation = 0)
+        {
+            var worn = loadout.Get(slot)
+                ?? throw new ValidationException($"Nothing is equipped in the {slot} slot.");
+
+            var error = PlacementRules.PlacementError(target, catalog, worn.ItemId, x, y, rotation);
+            if (error != null)
+            {
+                throw new ValidationException(error);
+            }
+
+            var placed = new List<ItemInstance>(target.Stash)
+            {
+                ItemInstance.Create(worn.InstanceId, worn.ItemId, x, y, rotation),
+            };
+            var targetAfter = target.With(placed);
+
+            var removed = new List<string> { slot };
+            var loaded = loadout.Get(LoadoutSlots.Ammo);
+            if (slot == LoadoutSlots.Primary && loaded != null)
+            {
+                targetAfter = ReturnToGrid(targetAfter, catalog, loaded);
+                removed.Add(LoadoutSlots.Ammo);
+            }
+
+            return (new Loadout(loadout.Items.Where(item => !removed.Contains(item.Slot))), targetAfter);
+        }
+
+        private static StashGrid ReturnToGrid(StashGrid grid, IReadOnlyDictionary<string, ItemDefinition> catalog,
+            EquippedItem worn)
+        {
+            var spot = PlacementRules.FirstFit(grid, catalog, worn.ItemId);
+            if (spot == null)
+            {
+                throw new ValidationException(
+                    $"No space in the stash for {NameOf(catalog, worn.ItemId)}. Nothing was changed.");
+            }
+
+            var next = new List<ItemInstance>(grid.Stash)
+            {
+                ItemInstance.Create(worn.InstanceId, worn.ItemId, spot.Value.X, spot.Value.Y, spot.Value.Rotation),
+            };
+            return grid.With(next);
+        }
+
+        private static string NameOf(IReadOnlyDictionary<string, ItemDefinition> catalog, string itemId) =>
+            catalog.TryGetValue(itemId, out var item) ? item.Name : itemId;
+    }
+}

@@ -167,6 +167,11 @@
 .cell-proxy { opacity: 0.9; }
 .cell-rejected { background-color: rgb(120, 40, 36); }
 
+/* LOADOUT slot cards: which one is selected, and whether the dragged item can go in the one under it. */
+.slot-selected { border-color: rgb(217, 164, 65); }
+.slot-drop-ok { border-color: rgba(88, 166, 92, 0.9); background-color: rgba(88, 166, 92, 0.12); }
+.slot-drop-bad { border-color: rgba(200, 70, 60, 0.9); background-color: rgba(200, 70, 60, 0.12); }
+
 .cell-ghost {
     position: absolute;
     background-color: rgba(88, 166, 92, 0.22);
