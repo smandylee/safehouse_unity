@@ -57,5 +57,25 @@ namespace Safehouse.Editor
             AssetDatabase.SaveAssets();
             Debug.Log($"GearSceneBuilder: wrote {ScenePath} and {PanelSettingsPath}.");
         }
+
+        /// <summary>
+        /// Dev-only visual check: open Gear.unity, maximise the Game view so the whole Unity window
+        /// is the rendered screen (nothing else to crop out), and start Play. Meant to be driven from
+        /// outside the Editor (batchmode is graphics-less and can't render this) so a screenshot tool
+        /// can grab a real frame - the Unity equivalent of tools/capture_demo.py on the Python side.
+        /// </summary>
+        [MenuItem("Safehouse/Open Gear Scene And Play (dev)")]
+        public static void OpenAndPlay()
+        {
+            EditorSceneManager.OpenScene(ScenePath);
+
+            var gameViewType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
+            var gameView = EditorWindow.GetWindow(gameViewType);
+            gameView.Show();
+            gameView.maximized = true;
+            gameView.Focus();
+
+            EditorApplication.isPlaying = true;
+        }
     }
 }
