@@ -50,6 +50,7 @@
 /* ---- flat card: equipment slots, weapon row, ability box, search bar, tooltips ---- */
 
 .card {
+    flex-direction: column;
     background-color: rgb(25, 29, 35);
     border-width: 1px;
     border-color: rgb(38, 45, 54);
