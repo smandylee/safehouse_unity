@@ -47,6 +47,17 @@ namespace Safehouse.Editor
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
+            // UI Toolkit's Screen Space - Overlay panel (our PanelSettings mode) draws straight to
+            // the screen and needs no Camera to do it. But an empty scene has none at all, and the
+            // Game view always shows its "No cameras rendering" placeholder over the top when that's
+            // true - so this one exists purely to keep that placeholder from covering the UI. It
+            // renders nothing (culling mask "Nothing") and its clear colour never actually shows,
+            // since the UI fills the screen.
+            var camera = new GameObject("UI Camera (renders nothing, see comment)").AddComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.043f, 0.051f, 0.047f);
+            camera.cullingMask = 0;
+
             var host = new GameObject("GearScreen");
             var document = host.AddComponent<UIDocument>();
             document.panelSettings = panelSettings;

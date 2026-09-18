@@ -53,6 +53,7 @@
     background-color: rgb(25, 29, 35);
     border-width: 1px;
     border-color: rgb(38, 45, 54);
+    overflow: hidden;
 }
 
 /* ---- nav tabs ---- */
@@ -137,6 +138,7 @@
     border-color: rgb(107, 118, 132);
     padding: 3px 5px;
     justify-content: space-between;
+    overflow: hidden;
     transition-property: translate, border-color;
     transition-duration: 0.1s;
 }
@@ -149,6 +151,7 @@
     -unity-text-overflow-position: end;
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 /* ---- typography ---- */
