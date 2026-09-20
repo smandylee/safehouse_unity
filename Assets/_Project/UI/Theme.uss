@@ -172,6 +172,14 @@
 .slot-drop-ok { border-color: rgba(88, 166, 92, 0.9); background-color: rgba(88, 166, 92, 0.12); }
 .slot-drop-bad { border-color: rgba(200, 70, 60, 0.9); background-color: rgba(200, 70, 60, 0.12); }
 
+/* A slot card whose item has art shows only that art, filling the card like a stash cell (the text is
+   still there underneath, for items without art, but hidden). The art is a .cell, so the rarity border,
+   fill and selected / drop styles are the same as in the grids. */
+.slot-art { border-width: 0; }
+.slot-art > * { visibility: hidden; }
+.slot-art > .slot-art-image { visibility: visible; }
+.slot-art-image { left: 0; top: 0; right: 0; bottom: 0; padding: 0; }
+
 .cell-ghost {
     position: absolute;
     background-color: rgba(88, 166, 92, 0.22);

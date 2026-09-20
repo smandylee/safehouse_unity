@@ -45,11 +45,13 @@ namespace Safehouse.UI
             public Label Name;
             public Label Erg;    // primary weapon only
             public Label Rcl;
+            public VisualElement Art;   // the item's icon filling the card, when it has one; else null
         }
 
         private Dictionary<string, ItemDefinition> _catalog;
         private GearData _gear;
         private Loadout _loadout;
+        private IconLibrary _icons;
         private VisualElement _root;
         private readonly List<GridView> _views = new List<GridView>();
         private readonly List<SlotView> _slots = new List<SlotView>();
@@ -75,6 +77,7 @@ namespace Safehouse.UI
             _catalog = CatalogLoader.Load();
             _gear = GearLoader.Load(_catalog);
             _loadout = SampleLoadout.BuildEquipped(_catalog);
+            _icons = new IconLibrary();
 
             _root = GetComponent<UIDocument>().rootVisualElement;
 
@@ -173,13 +176,22 @@ namespace Safehouse.UI
             cell.style.borderTopColor = cell.style.borderBottomColor =
                 cell.style.borderLeftColor = cell.style.borderRightColor = RarityPalette.For(item.Rarity);
 
-            cell.Add(MonogramLabel(item));
-
-            if (width >= 2 || height >= 2)
+            var icon = _icons.Get(item.ItemId);
+            if (icon != null)
             {
-                var label = new Label(item.Name.ToUpperInvariant());
-                label.AddToClassList("cell-label");
-                cell.Add(label);
+                // The art stands in for the placeholder monogram and the name, as in the Python build.
+                cell.Add(IconImage(item, icon, instance.Rotation));
+            }
+            else
+            {
+                cell.Add(MonogramLabel(item));
+
+                if (width >= 2 || height >= 2)
+                {
+                    var label = new Label(item.Name.ToUpperInvariant());
+                    label.AddToClassList("cell-label");
+                    cell.Add(label);
+                }
             }
 
             var instanceId = instance.InstanceId;
@@ -199,6 +211,81 @@ namespace Safehouse.UI
                 },
             };
 
+        /// <summary>
+        /// The item's art filling a cell. Icons are drawn upright at the item's own size, so a turned item
+        /// gets the same image spun 90 degrees about the middle of its (swapped) cell rather than a
+        /// second, pre-rotated file. Sized to the area inside the cell's 1px border.
+        /// </summary>
+        private static Image IconImage(ItemDefinition item, Texture2D icon, int rotation)
+        {
+            PlacementRules.Footprint(item, rotation, out var cellsWide, out var cellsHigh);
+            float imageWidth = item.Width * Pitch - 4;
+            float imageHeight = item.Height * Pitch - 4;
+            float innerWidth = cellsWide * Pitch - 4;
+            float innerHeight = cellsHigh * Pitch - 4;
+
+            var image = new Image { image = icon, scaleMode = ScaleMode.StretchToFill, pickingMode = PickingMode.Ignore };
+            image.style.position = Position.Absolute;
+            image.style.width = imageWidth;
+            image.style.height = imageHeight;
+            image.style.left = (innerWidth - imageWidth) / 2f;
+            image.style.top = (innerHeight - imageHeight) / 2f;
+            if (rotation == 90)
+            {
+                image.style.rotate = new Rotate(new Angle(90, AngleUnit.Degree));
+            }
+
+            return image;
+        }
+
+        /// <summary>
+        /// A slot card's item shown the way the inventory shows it - rarity border, dark fill, the picture - but
+        /// filling the whole card instead of a grid cell. Nothing is ever cropped.
+        ///
+        /// Text-free art (<paramref name="textFree"/>) is scaled to fit whole at its own proportions: it has no
+        /// background box, so the card's dark fill around it looks like part of the slot, not like empty bars,
+        /// and every item gets the same margin. The fallback, the game's inventory icon, has its short name
+        /// baked in and a box of its own, so it is stretched to the card instead (the wide primary-weapon row,
+        /// <paramref name="stretchAlways"/> false, is fitted whole when the shapes differ a lot; see
+        /// <see cref="IconLibrary.FitInto"/>).
+        /// </summary>
+        private static VisualElement SlotArt(bool textFree, bool stretchAlways, ItemDefinition item, Texture2D picture)
+        {
+            var art = new VisualElement { pickingMode = PickingMode.Ignore };
+            art.AddToClassList("cell");
+            art.AddToClassList("slot-art-image");
+            art.style.borderTopColor = art.style.borderBottomColor =
+                art.style.borderLeftColor = art.style.borderRightColor = RarityPalette.For(item.Rarity);
+            var image = new Image
+            {
+                image = picture,
+                scaleMode = !textFree && stretchAlways ? ScaleMode.StretchToFill : ScaleMode.ScaleToFit,
+                pickingMode = PickingMode.Ignore,
+                style = { flexGrow = 1 },
+            };
+            art.Add(image);
+
+            if (textFree)
+            {
+                art.style.paddingTop = art.style.paddingBottom = 5;
+                art.style.paddingLeft = art.style.paddingRight = 5;
+            }
+            else if (!stretchAlways)
+            {
+                // That row's size is only known after layout, so choose the fit then (and if it resizes).
+                art.RegisterCallback<GeometryChangedEvent>(_ =>
+                {
+                    if (art.layout.width > 0 && art.layout.height > 0)
+                    {
+                        image.scaleMode = IconLibrary.FitInto(
+                            (float)picture.width / picture.height, art.layout.width / art.layout.height);
+                    }
+                });
+            }
+
+            return art;
+        }
+
         private static void PositionCell(VisualElement cell, int x, int y, int width, int height)
         {
             cell.style.left = x * Pitch + 2;
@@ -213,6 +300,9 @@ namespace Safehouse.UI
             foreach (var view in _slots)
             {
                 view.Card.RemoveFromClassList("slot-selected");
+                view.Card.RemoveFromClassList("slot-art");
+                view.Art?.RemoveFromHierarchy();
+                view.Art = null;
                 var worn = _loadout.Get(view.Slot);
                 if (worn == null)
                 {
@@ -232,6 +322,17 @@ namespace Safehouse.UI
                     view.Icon.style.color = RarityPalette.For(item.Rarity);
                 }
 
+                // With art the card shows only that (the text underneath is hidden by USS); the name
+                // and stats are on the detail panel once it is selected.
+                var textFree = _icons.GetArt(worn.ItemId);
+                var icon = textFree ?? _icons.Get(worn.ItemId);
+                if (icon != null)
+                {
+                    view.Art = SlotArt(textFree != null, view.Slot != LoadoutSlots.Primary, item, icon);
+                    view.Card.Add(view.Art);
+                    view.Card.AddToClassList("slot-art");
+                }
+
                 view.Stat.text = SlotStat(view.Slot, worn.ItemId);
                 if (view.Erg != null)
                 {
@@ -243,7 +344,7 @@ namespace Safehouse.UI
 
             if (_selectedInstanceId != null && _loadout.FindByInstance(_selectedInstanceId) != null)
             {
-                SlotViewFor(_loadout.FindByInstance(_selectedInstanceId).Slot).Card.AddToClassList("slot-selected");
+                MarkSlotSelected(SlotViewFor(_loadout.FindByInstance(_selectedInstanceId).Slot));
             }
         }
 
@@ -266,6 +367,12 @@ namespace Safehouse.UI
                     return _gear.Equipment.TryGetValue(itemId, out var armor)
                         ? armor.ArmorClass.ToString(CultureInfo.InvariantCulture) : "";
             }
+        }
+
+        private static void MarkSlotSelected(SlotView view)
+        {
+            view.Card.AddToClassList("slot-selected");
+            view.Art?.AddToClassList("cell-selected"); // same thicker border a selected stash cell gets
         }
 
         private SlotView SlotViewFor(string slot) => _slots.First(view => view.Slot == slot);
@@ -647,8 +754,9 @@ namespace Safehouse.UI
             {
                 drag.TargetView = null;
                 _ghost.RemoveFromHierarchy();
-                drag.TargetSlot.Card.AddToClassList(
-                    SlotDropError(drag.InstanceId, drag.TargetSlot.Slot) == null ? "slot-drop-ok" : "slot-drop-bad");
+                var hint = SlotDropError(drag.InstanceId, drag.TargetSlot.Slot) == null ? "slot-drop-ok" : "slot-drop-bad";
+                drag.TargetSlot.Card.AddToClassList(hint);
+                drag.TargetSlot.Art?.AddToClassList(hint); // the art covers the card, so it has to show the hint too
                 return;
             }
 
@@ -678,8 +786,11 @@ namespace Safehouse.UI
         {
             foreach (var view in _slots)
             {
-                view.Card.RemoveFromClassList("slot-drop-ok");
-                view.Card.RemoveFromClassList("slot-drop-bad");
+                foreach (var element in new[] { view.Card, view.Art })
+                {
+                    element?.RemoveFromClassList("slot-drop-ok");
+                    element?.RemoveFromClassList("slot-drop-bad");
+                }
             }
         }
 
@@ -811,6 +922,7 @@ namespace Safehouse.UI
             foreach (var view in _slots)
             {
                 view.Card.RemoveFromClassList("slot-selected");
+                view.Art?.RemoveFromClassList("cell-selected");
             }
 
             _selectedInstanceId = instanceId;
@@ -822,7 +934,7 @@ namespace Safehouse.UI
             var worn = _loadout.FindByInstance(instanceId);
             if (worn != null)
             {
-                SlotViewFor(worn.Slot).Card.AddToClassList("slot-selected");
+                MarkSlotSelected(SlotViewFor(worn.Slot));
             }
 
             var item = _catalog[ItemIdOf(instanceId)];
@@ -831,8 +943,19 @@ namespace Safehouse.UI
 
             _swatchSelected.style.borderTopColor = _swatchSelected.style.borderBottomColor =
                 _swatchSelected.style.borderLeftColor = _swatchSelected.style.borderRightColor = color;
-            _labelSelectedIcon.text = Monogram(item.Category);
+            var art = _icons.GetArt(item.ItemId) ?? _icons.Get(item.ItemId);
+            _labelSelectedIcon.text = art == null ? Monogram(item.Category) : "";
             _labelSelectedIcon.style.color = color;
+            if (art != null)
+            {
+                _swatchSelected.style.backgroundImage = Background.FromTexture2D(art);
+                _swatchSelected.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
+            }
+            else
+            {
+                _swatchSelected.style.backgroundImage = StyleKeyword.None;
+            }
+
             _labelSelectedName.text = item.Name;
             _labelSelectedRarity.text = item.Rarity.ToUpperInvariant();
             _labelSelectedRarity.style.color = color;

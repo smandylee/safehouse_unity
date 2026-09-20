@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Safehouse.UI;
@@ -22,6 +23,17 @@ namespace Safehouse.Tests
     {
         private GameObject _host;
 
+        private string _iconRoot;
+
+        [SetUp]
+        public void SetUp()
+        {
+            // Most tests are about layout and rules, not art: point icons at a folder that does not exist
+            // so they behave the same whether or not the developer has downloaded the real icons.
+            _iconRoot = Path.Combine(Path.GetTempPath(), "safehouse-test-icons-" + System.Guid.NewGuid().ToString("N"));
+            IconLibrary.DefaultFolder = _iconRoot;
+        }
+
         [TearDown]
         public void TearDown()
         {
@@ -29,6 +41,32 @@ namespace Safehouse.Tests
             {
                 Object.DestroyImmediate(_host);
             }
+
+            IconLibrary.DefaultFolder = null;
+            if (Directory.Exists(_iconRoot))
+            {
+                Directory.Delete(_iconRoot, recursive: true);
+            }
+        }
+
+        /// <summary>Puts synthetic text-free art for this item where the slot cards will look for it.</summary>
+        private void GiveArt(string itemId, int width, int height)
+        {
+            var folder = Path.Combine(_iconRoot, "art");
+            Directory.CreateDirectory(folder);
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            File.WriteAllBytes(Path.Combine(folder, itemId + ".png"), texture.EncodeToPNG());
+            Object.DestroyImmediate(texture);
+        }
+
+        /// <summary>Puts a synthetic icon for this item where the screen will look for it.</summary>
+        private void GiveIcon(string itemId, int width = 4, int height = 4)
+        {
+            var folder = Path.Combine(_iconRoot, IconLibrary.Size.ToString());
+            Directory.CreateDirectory(folder);
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            File.WriteAllBytes(Path.Combine(folder, itemId + ".png"), texture.EncodeToPNG());
+            Object.DestroyImmediate(texture);
         }
 
         [UnityTest]
@@ -413,6 +451,186 @@ namespace Safehouse.Tests
 
             Send(cell, PointerUpEvent.GetPooled(MakeTouch(TouchPhase.Ended, over)));
             Assert.AreEqual(WornHelmet, controller.EquippedItemIn("helmet"), "a refused drop changes nothing");
+        }
+
+        [UnityTest]
+        public IEnumerator AnItemWithAnIconShowsItsArtInsteadOfTheMonogram()
+        {
+            GiveIcon("graphics-card");
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var cell = root.Q<VisualElement>("cell-" + controller.FirstInstanceOf("graphics-card"));
+
+            Assert.IsNotNull(cell.Q<Image>(), "the cell should hold the item's art");
+            Assert.IsNull(cell.Q<Label>(), "the placeholder monogram and name should be gone");
+        }
+
+        [UnityTest]
+        public IEnumerator AnItemWithoutAnIconKeepsItsPlaceholder()
+        {
+            GiveIcon("graphics-card"); // some other item has art; this one does not
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var cell = root.Q<VisualElement>("cell-" + controller.FirstInstanceOf("toolset"));
+
+            Assert.IsNull(cell.Q<Image>());
+            Assert.IsNotNull(cell.Q<Label>());
+        }
+
+        [UnityTest]
+        public IEnumerator ATurnedItemsArtIsSpunAQuarterTurn()
+        {
+            GiveIcon("graphics-card");
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var id = controller.FirstInstanceOf("graphics-card"); // 2x1
+            var upright = root.Q<VisualElement>("cell-" + id).Q<Image>();
+            Assert.AreEqual(0f, upright.style.rotate.value.angle.value, 0.01f);
+
+            var turned = false;
+            for (var y = 0; y < 12 && !turned; y++)
+            {
+                for (var x = 0; x < 10 && !turned; x++)
+                {
+                    turned = controller.TryMoveItem(id, x, y, 90) == null;
+                }
+            }
+
+            Assume.That(turned, "the turned card should fit somewhere");
+            controller.SelectItem(id);
+            // A move only repositions the existing cell, so redraw by re-equipping nothing: the rotation
+            // shows on the next full redraw, which a swap of worn gear triggers.
+            var spare = controller.FirstInstanceOf("altyn-bulletproof-helmet-olive-drab");
+            Assume.That(spare, Is.Not.Null);
+            Assert.IsNull(controller.TryEquipItem(spare, "helmet"));
+
+            var image = root.Q<VisualElement>("cell-" + id).Q<Image>();
+            Assert.AreEqual(90f, image.style.rotate.value.angle.value, 0.01f);
+        }
+
+        [UnityTest]
+        public IEnumerator AWornItemWithArtFillsItsSlotCardWithJustTheArt()
+        {
+            GiveIcon("rys-t-bulletproof-helmet-black");
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var card = root.Q<VisualElement>("slot-helmet");
+
+            Assert.IsTrue(card.ClassListContains("slot-art"), "the card should switch to art-only");
+            var art = card.Q(className: "slot-art-image");
+            Assert.IsNotNull(art);
+            Assert.IsNotNull(art.Q<Image>().image);
+            Assert.AreNotEqual(ScaleMode.ScaleAndCrop, art.Q<Image>().scaleMode, "art is never cropped");
+            Assert.AreSame(card, art.parent);
+
+            // A slot whose item has no art keeps its text layout.
+            Assert.IsFalse(root.Q<VisualElement>("slot-armor").ClassListContains("slot-art"));
+            Assert.IsNull(root.Q<VisualElement>("slot-armor").Q(className: "slot-art-image"));
+        }
+
+        [UnityTest]
+        public IEnumerator ASlotCardKeepsItsSizeAndTheIconIsStretchedToFillIt()
+        {
+            // A 4x3 rig icon (192x144) is far from the 96x108 card's shape; the card must not change to suit
+            // it, the icon is stretched to the card instead.
+            GiveIcon("spiritus-systems-lv-119-plate-carrier-black-division-v1", 192, 144);
+            var controller = CreateGearScreen();
+            for (var frame = 0; frame < 4; frame++)
+            {
+                yield return null; // let layout run
+            }
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var card = root.Q<VisualElement>("slot-rig");
+
+            Assert.AreEqual(108f, card.resolvedStyle.height, 1f, "the card is not reshaped");
+            Assert.AreEqual(ScaleMode.StretchToFill, card.Q(className: "slot-art-image").Q<Image>().scaleMode);
+        }
+
+        [UnityTest]
+        public IEnumerator TextFreeArtIsFittedWholeAndTheCardIsNotReshaped()
+        {
+            // A wide rig render (4:3) in the 96x108 card: fitted at its own proportions, not stretched.
+            GiveArt("spiritus-systems-lv-119-plate-carrier-black-division-v1", 192, 144);
+            var controller = CreateGearScreen();
+            for (var frame = 0; frame < 4; frame++)
+            {
+                yield return null;
+            }
+
+            var card = controller.GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("slot-rig");
+
+            Assert.AreEqual(ScaleMode.ScaleToFit, card.Q(className: "slot-art-image").Q<Image>().scaleMode);
+            Assert.AreEqual(108f, card.resolvedStyle.height, 1f);
+        }
+
+        [UnityTest]
+        public IEnumerator TextFreeArtIsUsedInPreferenceToTheStashIcon()
+        {
+            GiveIcon("rys-t-bulletproof-helmet-black", 96, 96);
+            GiveArt("rys-t-bulletproof-helmet-black", 10, 10);
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var card = controller.GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("slot-helmet");
+
+            Assert.AreEqual(10, card.Q(className: "slot-art-image").Q<Image>().image.width,
+                "the text-free art, not the 96px inventory icon with its name in the corner");
+        }
+
+        [UnityTest]
+        public IEnumerator AnItemWithoutTextFreeArtFallsBackToTheStashIconStretched()
+        {
+            GiveIcon("rys-t-bulletproof-helmet-black", 96, 96);
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var card = controller.GetComponent<UIDocument>().rootVisualElement.Q<VisualElement>("slot-helmet");
+
+            Assert.AreEqual(96, card.Q(className: "slot-art-image").Q<Image>().image.width);
+            Assert.AreEqual(ScaleMode.StretchToFill, card.Q(className: "slot-art-image").Q<Image>().scaleMode);
+        }
+
+        [UnityTest]
+        public IEnumerator TheArtOnASlotCardFollowsSelectionAndSwaps()
+        {
+            GiveIcon("rys-t-bulletproof-helmet-black");
+            GiveIcon("altyn-bulletproof-helmet-olive-drab");
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var card = root.Q<VisualElement>("slot-helmet");
+            controller.SelectItem(controller.EquippedInstanceIn("helmet"));
+            Assert.IsTrue(card.Q(className: "slot-art-image").ClassListContains("cell-selected"));
+
+            var spare = controller.FirstInstanceOf("altyn-bulletproof-helmet-olive-drab");
+            Assume.That(spare, Is.Not.Null);
+            Assert.IsNull(controller.TryEquipItem(spare, "helmet"));
+
+            Assert.AreEqual(1, card.Query(className: "slot-art-image").ToList().Count, "one art element, not a pile");
+        }
+
+        [UnityTest]
+        public IEnumerator TheDetailPanelSwatchShowsTheArtToo()
+        {
+            GiveIcon("rys-t-bulletproof-helmet-black");
+            var controller = CreateGearScreen();
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            controller.SelectItem(controller.EquippedInstanceIn("helmet"));
+
+            Assert.AreEqual("", root.Q<Label>("label-selected-icon").text);
+            Assert.IsNotNull(root.Q<VisualElement>("swatch-selected").resolvedStyle.backgroundImage.texture);
         }
 
         /// <summary>A 1x1 item's cell in the stash: 48px pitch minus the 2px gap is 46.</summary>

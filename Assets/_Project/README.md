@@ -107,9 +107,10 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
   with `MeshGenerationContext.painter2D` instead of needing texture assets. `Theme.uss` deliberately
   avoids `box-shadow`/`outline` - support for those varies by Unity version, and an unsupported USS
   property just silently does nothing, which is a worse failure mode than not using it.
-- Item icons are placeholder monograms (3 letters from the item's category), not art. The project
-  will use real Tarkov icon sprites once those are in place; swapping a monogram `Label` for an
-  `Image` is a one-line change per cell, so building throwaway vector icons here would waste effort.
+- Item icons: an item with an icon in `icon_cache/` shows it in its cell, its slot card and the detail
+  panel (`Scripts/UI/IconLibrary.cs`); any other item - or everyone without the folder - keeps the
+  placeholder monogram (3 letters from the item's category). The drag copy always stays a monogram so
+  the moving preview stands out, as in the Python build. See "Item icons" below.
 - `Scripts/Editor/GearSceneBuilder.cs` (menu: **Safehouse > Build Gear Scene**) is the generator for
   `UI/GearPanelSettings.asset` and `Scenes/Gear.unity` - the same relationship as
   `tools/import_tarkov.py` and `data/items.json` on the Python side: the generator is what gets
@@ -120,6 +121,40 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
 - `Assets/Tests/PlayMode/GearScreenControllerTests.cs` builds the real UXML + controller in a bare
   `GameObject` (no scene needed) and drives selection through `GearScreenController.SelectItem()`
   rather than simulating a pointer event, for the same coverage with far less machinery.
+
+### Item icons (`icon_cache/`, not in git)
+
+The icons are Escape from Tarkov game art (via tarkov.dev), private use only - like the Python
+build's, they are **not** part of this repository or of any build, and `icon_cache/` is git-ignored.
+Each person puts their own copy in `icon_cache/` next to the `Assets/` folder (next to the `.exe` in a
+packaged game). Unity only imports what is under `Assets/`, so the folder is invisible to the Editor.
+
+```
+icon_cache/48/<item_id>.png     each exactly the item's footprint at 48 px per cell (a 4x1 rifle is 192x48)
+```
+
+That is the same layout the Python project's `tools/import_icons.py` writes, so either run that tool
+(it downloads them) and copy its `icon_cache/48/` here, or copy an existing one. Icons are read from
+disk the first time an item is drawn and cached; a missing folder or file is not an error. A turned item
+draws the same upright PNG spun 90 degrees rather than needing a second file. Do not redistribute them.
+
+#### Text-free art for the LOADOUT slots (`icon_cache/art/`)
+
+Those inventory icons have the item's short name (`LV-119`, `AK-12`) baked into the picture at a size
+that suits a grid cell. A slot card shows the same item at a different size each time, so the baked-in
+text would come out a different size on every card. The slot cards therefore use a text-free render
+instead, at the item's own proportions with no background box, fitted whole into the card:
+
+```
+py -3 -m pip install pillow           :: once
+py -3 tools/import_art.py             :: downloads ~670 wearable items (weapons, ammo, gear, meds), ~35 MB
+```
+
+`tools/import_art.py` reads each item's tarkov.dev id from the Python project's snapshot
+(`../safehouse_v0_1/data/source/tarkov_snapshot.json.gz`, or pass `--snapshot`), fetches the 512 px render
+and stores it as a 256 px PNG in `icon_cache/art/<item_id>.png`. An item without art there falls back to
+its stash icon (stretched to the card), and one without either keeps its placeholder text. Same rules as
+above: game art, git-ignored, private use only.
 
 ### Fonts (`UI/Fonts/`)
 
