@@ -2,7 +2,9 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Safehouse.Data;
 using Safehouse.UI;
+using Safehouse.UI.Sample;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.UIElements;
@@ -24,6 +26,7 @@ namespace Safehouse.Tests
         private GameObject _host;
 
         private string _iconRoot;
+        private string _dataRoot;
 
         [SetUp]
         public void SetUp()
@@ -32,6 +35,11 @@ namespace Safehouse.Tests
             // so they behave the same whether or not the developer has downloaded the real icons.
             _iconRoot = Path.Combine(Path.GetTempPath(), "safehouse-test-icons-" + System.Guid.NewGuid().ToString("N"));
             IconLibrary.DefaultFolder = _iconRoot;
+
+            // Each test gets its own empty data folder: the screen starts on the sample character in it, and
+            // nothing a test does reaches the real saves.
+            _dataRoot = Path.Combine(Path.GetTempPath(), "safehouse-test-data-" + System.Guid.NewGuid().ToString("N"));
+            GearScreenController.DataFolderOverride = _dataRoot;
         }
 
         [TearDown]
@@ -40,6 +48,12 @@ namespace Safehouse.Tests
             if (_host != null)
             {
                 Object.DestroyImmediate(_host);
+            }
+
+            GearScreenController.DataFolderOverride = null;
+            if (Directory.Exists(_dataRoot))
+            {
+                Directory.Delete(_dataRoot, recursive: true);
             }
 
             IconLibrary.DefaultFolder = null;
@@ -631,6 +645,157 @@ namespace Safehouse.Tests
 
             Assert.AreEqual("", root.Q<Label>("label-selected-icon").text);
             Assert.IsNotNull(root.Q<VisualElement>("swatch-selected").resolvedStyle.backgroundImage.texture);
+        }
+
+        // ---- saving, and the open character ----
+
+        private ProfileRepository Saves() => new ProfileRepository(_dataRoot, CatalogLoader.Load());
+
+        /// <summary>Closes the screen (releasing the data folder) so a test can change the saves and reopen it.</summary>
+        private void CloseScreen()
+        {
+            Object.DestroyImmediate(_host);
+            _host = null;
+        }
+
+        [UnityTest]
+        public IEnumerator AMoveIsWrittenToTheCharactersFile()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+            var id = SmallStashCell(controller.GetComponent<UIDocument>().rootVisualElement).name.Substring("cell-".Length);
+
+            Assert.IsNull(controller.TryTransferItem(id, "backpack", 5, 7, 0));
+
+            var saved = Saves().Load(SampleCharacter.ProfileId);
+            Assert.IsTrue(saved.Backpack.Stash.Any(item => item.InstanceId == id), "it is in the backpack on disk");
+            Assert.IsFalse(saved.Stash.Stash.Any(item => item.InstanceId == id));
+        }
+
+        [UnityTest]
+        public IEnumerator AChangeThatCannotBeSavedDoesNotHappenAndTheScreenSaysSo()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var cell = SmallStashCell(root);
+            var id = cell.name.Substring("cell-".Length);
+            var path = Saves().PathFor(SampleCharacter.ProfileId);
+
+            string error;
+            using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None)) // "another process" has it
+            {
+                error = controller.TryTransferItem(id, "backpack", 5, 7, 0);
+            }
+
+            Assert.IsNotNull(error);
+            Assert.AreEqual("stash", controller.GridOf(id), "the item stayed where it was");
+            Assert.AreSame(root.Q<VisualElement>("stash-grid"), cell.parent);
+            Assert.IsTrue(controller.MessageVisible);
+            StringAssert.Contains("not applied", controller.MessageText);
+        }
+
+        [UnityTest]
+        public IEnumerator TheScreenReopensWithTheChangeStillThere()
+        {
+            var controller = CreateGearScreen();
+            yield return null;
+            var id = SmallStashCell(controller.GetComponent<UIDocument>().rootVisualElement).name.Substring("cell-".Length);
+            Assert.IsNull(controller.TryTransferItem(id, "backpack", 5, 7, 0));
+            var spare = controller.FirstInstanceOf("altyn-bulletproof-helmet-olive-drab");
+            Assume.That(spare, Is.Not.Null);
+            Assert.IsNull(controller.TryEquipItem(spare, "helmet"));
+
+            CloseScreen();
+            var reopened = CreateGearScreen();
+            yield return null;
+
+            Assert.AreEqual("backpack", reopened.GridOf(id));
+            Assert.AreEqual("altyn-bulletproof-helmet-olive-drab", reopened.EquippedItemIn("helmet"));
+        }
+
+        [UnityTest]
+        public IEnumerator ADownedCharacterCannotBeChangedAndOneAwayCanOnlyChangeGear()
+        {
+            var first = CreateGearScreen();
+            yield return null;
+            var id = SmallStashCell(first.GetComponent<UIDocument>().rootVisualElement).name.Substring("cell-".Length);
+            var spare = first.FirstInstanceOf("altyn-bulletproof-helmet-olive-drab");
+            Assume.That(spare, Is.Not.Null);
+            CloseScreen();
+
+            var repository = Saves();
+            repository.Save(repository.Load(SampleCharacter.ProfileId).With(status: "downed"));
+            var downed = CreateGearScreen();
+            yield return null;
+            StringAssert.Contains("downed", downed.TryTransferItem(id, "backpack", 5, 7, 0));
+            StringAssert.Contains("downed", downed.TryEquipItem(spare, "helmet"));
+            Assert.AreEqual("stash", downed.GridOf(id));
+            CloseScreen();
+
+            repository.Save(repository.Load(SampleCharacter.ProfileId).With(status: "on_expedition"));
+            var away = CreateGearScreen();
+            yield return null;
+            StringAssert.Contains("expedition", away.TryTransferItem(id, "backpack", 5, 7, 0));
+            Assert.IsNull(away.TryEquipItem(spare, "helmet"), "gear can still be changed while away");
+        }
+
+        [UnityTest]
+        public IEnumerator TheCharacterButtonsSwitchBetweenSavedCharacters()
+        {
+            var first = CreateGearScreen();
+            yield return null;
+            CloseScreen();
+            var zed = Saves().Create("Zed");
+
+            var controller = CreateGearScreen();
+            yield return null;
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            Assert.AreEqual(SampleCharacter.Name, controller.CharacterName);
+            Assert.AreEqual(SampleCharacter.Name.ToUpperInvariant(), root.Q<Label>("label-character").text);
+
+            Assert.IsNull(controller.OpenCharacter(zed.ProfileId));
+
+            Assert.AreEqual("Zed", controller.CharacterName);
+            Assert.AreEqual(0, root.Q<VisualElement>("stash-grid").childCount, "Zed has an empty stash");
+            Assert.IsNull(controller.EquippedItemIn("helmet"));
+            Assert.IsNotNull(controller.OpenCharacter("ffffffffffffffffffffffffffffffff"), "an unknown character is refused");
+            Assert.AreEqual("Zed", controller.CharacterName, "still Zed");
+            Assert.IsNotNull(first);
+        }
+
+        [UnityTest]
+        public IEnumerator TheStashIsAsBigAsTheCharactersAndScrolls()
+        {
+            Saves().Create("Big", stashWidth: 10, stashHeight: 30); // a hideout-upgraded stash
+            var controller = CreateGearScreen();
+            yield return null;
+            yield return null;
+
+            var root = controller.GetComponent<UIDocument>().rootVisualElement;
+            var grid = root.Q<VisualElement>("stash-grid");
+
+            Assert.AreEqual("Big", controller.CharacterName);
+            Assert.AreEqual(10 * 48f, grid.style.width.value.value, 0.01f);
+            Assert.AreEqual(30 * 48f, grid.style.height.value.value, 0.01f);
+            Assert.IsNotNull(grid.GetFirstAncestorOfType<ScrollView>(), "far taller than the panel, so it scrolls");
+            StringAssert.Contains("0 / 300", root.Q<Label>("label-stash-cells").text);
+        }
+
+        [UnityTest]
+        public IEnumerator WhenTheDataFolderIsTakenTheScreenStillWorksButSaysItWillNotSave()
+        {
+            using (DataDirectoryLock.Acquire(_dataRoot)) // another copy of the game has the folder
+            {
+                var controller = CreateGearScreen();
+                yield return null;
+                var id = SmallStashCell(controller.GetComponent<UIDocument>().rootVisualElement).name.Substring("cell-".Length);
+
+                Assert.IsFalse(controller.Saving);
+                Assert.IsTrue(controller.MessageVisible);
+                StringAssert.Contains("NOT be kept", controller.MessageText);
+                Assert.IsNull(controller.TryTransferItem(id, "backpack", 5, 7, 0), "it can still be looked around in");
+            }
         }
 
         /// <summary>A 1x1 item's cell in the stash: 48px pitch minus the 2px gap is 46.</summary>

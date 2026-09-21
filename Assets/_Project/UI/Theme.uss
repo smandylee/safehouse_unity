@@ -200,6 +200,40 @@
     overflow: hidden;
 }
 
+/* ---- character switcher, message toast, stash scrollbars ---- */
+
+.btn-char {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 1px;
+    border-color: rgb(59, 68, 80);
+    color: rgb(154, 165, 177);
+    font-size: 11px;
+}
+.btn-char:hover { border-color: rgb(217, 164, 65); color: rgb(217, 164, 65); }
+
+/* A short message over the bottom of the screen: a refused change, a restore from backup, "not saving". */
+.toast { position: absolute; left: 0; right: 0; bottom: 72px; align-items: center; }
+.toast-label {
+    max-width: 900px;
+    padding: 8px 14px;
+    background-color: rgb(46, 26, 24);
+    border-width: 1px;
+    border-color: rgb(200, 80, 60);
+    color: rgb(230, 233, 236);
+    font-size: 12px;
+    white-space: normal;
+}
+
+#stash-scroll .unity-scroller { background-color: rgb(17, 20, 23); }
+#stash-scroll .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }
+#stash-scroll .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
+#stash-scroll .unity-scroller__low-button,
+#stash-scroll .unity-scroller__high-button { display: none; }
+
 /* ---- typography ---- */
 
 .text-heading {

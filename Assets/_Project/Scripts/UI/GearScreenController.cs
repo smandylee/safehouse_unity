@@ -13,9 +13,11 @@ namespace Safehouse.UI
     /// <summary>
     /// Wires the GEAR screen's UXML to real game data: the STASH, the RIG / BACKPACK grids in CARRIED
     /// and the seven LOADOUT slots are real catalog items under the real placement and equip rules.
-    /// Items drag between the three grids and onto (or off) the slot cards. The contents are sample
-    /// data (<see cref="SampleStash"/>, <see cref="SampleLoadout"/>) until Profile/save loading is
-    /// ported, and the health / abilities panels are still hand-written (see the Unity project README).
+    /// Items drag between the three grids and onto (or off) the slot cards.
+    ///
+    /// It shows the open character (<see cref="CharacterSession"/>): every change is committed - which saves
+    /// it - before the screen shows it, so a change that cannot be saved is refused and the screen keeps
+    /// matching the file. The health / abilities panels are still hand-written (see the Unity project README).
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public sealed class GearScreenController : MonoBehaviour
@@ -32,6 +34,7 @@ namespace Safehouse.UI
         {
             public string Name;
             public VisualElement Element;
+            public VisualElement Viewport; // what clips the grid on screen when it scrolls; null when nothing does
             public StashGrid Grid;
         }
 
@@ -48,7 +51,18 @@ namespace Safehouse.UI
             public VisualElement Art;   // the item's icon filling the card, when it has one; else null
         }
 
+        private const string LastCharacterKey = "Safehouse.LastCharacter";
+
+        /// <summary>Where characters are saved instead of the game's own folder. For tests.</summary>
+        public static string DataFolderOverride { get; set; }
+
         private Dictionary<string, ItemDefinition> _catalog;
+        private CharacterSession _session;
+        private VisualElement _toast;
+        private Label _toastText;
+        private IVisualElementScheduledItem _toastTimer;
+        private string _persistentMessage;
+        private Label _labelCharacter;
         private GearData _gear;
         private Loadout _loadout;
         private IconLibrary _icons;
@@ -76,7 +90,6 @@ namespace Safehouse.UI
         {
             _catalog = CatalogLoader.Load();
             _gear = GearLoader.Load(_catalog);
-            _loadout = SampleLoadout.BuildEquipped(_catalog);
             _icons = new IconLibrary();
 
             _root = GetComponent<UIDocument>().rootVisualElement;
@@ -91,18 +104,10 @@ namespace Safehouse.UI
             _views.Add(new GridView
             {
                 Name = StashGridName, Element = _root.Q<VisualElement>("stash-grid"),
-                Grid = SampleStash.Build(_catalog),
+                Viewport = _root.Q<ScrollView>("stash-scroll")?.contentViewport,
             });
-            _views.Add(new GridView
-            {
-                Name = RigGridName, Element = _root.Q<VisualElement>("rig-grid"),
-                Grid = SampleLoadout.BuildRig(_catalog),
-            });
-            _views.Add(new GridView
-            {
-                Name = BackpackGridName, Element = _root.Q<VisualElement>("backpack-grid"),
-                Grid = SampleLoadout.BuildBackpack(_catalog),
-            });
+            _views.Add(new GridView { Name = RigGridName, Element = _root.Q<VisualElement>("rig-grid") });
+            _views.Add(new GridView { Name = BackpackGridName, Element = _root.Q<VisualElement>("backpack-grid") });
 
             _slots.Clear();
             foreach (var slot in LoadoutSlots.All)
@@ -133,9 +138,65 @@ namespace Safehouse.UI
             _labelSelectedWeight = _root.Q<Label>("label-selected-weight");
             _labelSelectedPerCell = _root.Q<Label>("label-selected-percell");
 
-            BuildCells();
-            RenderSlots();
-            UpdateHeaders();
+            _labelCharacter = _root.Q<Label>("label-character");
+            _root.Q<Button>("character-prev").clicked += () => CycleCharacter(-1);
+            _root.Q<Button>("character-next").clicked += () => CycleCharacter(1);
+
+            CreateToast();
+            OpenSession();
+            ApplyProfile();
+        }
+
+        private void OnDisable()
+        {
+            _session?.Dispose(); // lets the next copy of the game (or the next test) use the data folder
+            _session = null;
+        }
+
+        // ---- the open character ----
+
+        private void OpenSession()
+        {
+            var notices = new List<string>();
+            var folder = DataFolderOverride ?? ProfileRepository.DefaultFolder;
+            var preferred = DataFolderOverride == null ? PlayerPrefs.GetString(LastCharacterKey, null) : null;
+            try
+            {
+                _session = CharacterSession.Open(_catalog, folder, () => SampleCharacter.Build(_catalog), preferred, notices);
+            }
+            catch (StorageException error)
+            {
+                // A screen that works but cannot save, with a warning that stays up, beats a blank one.
+                _session = CharacterSession.Unsaved(SampleCharacter.Build(_catalog));
+                _persistentMessage = "Saving is unavailable - changes will NOT be kept.\n" + error.Message;
+                ShowMessage(_persistentMessage, persistent: true);
+                return;
+            }
+
+            if (notices.Count > 0)
+            {
+                ShowMessage(string.Join("\n", notices));
+            }
+        }
+
+        /// <summary>Loads the open character into the screen: its grids (sized to them), its gear, its name.</summary>
+        private void ApplyProfile()
+        {
+            var profile = _session.Profile;
+            _views[0].Grid = profile.Stash;
+            _views[1].Grid = profile.Rig;
+            _views[2].Grid = profile.Backpack;
+            _loadout = profile.Loadout;
+            foreach (var view in _views)
+            {
+                view.Element.style.width = view.Grid.StashWidth * Pitch;
+                view.Element.style.height = view.Grid.StashHeight * Pitch;
+                view.Element.MarkDirtyRepaint();
+            }
+
+            _selectedInstanceId = null;
+            RefreshAll();
+            ClearSelection();
 
             var highestValueId = StashView.Grid.Stash
                 .OrderByDescending(instance => _catalog[instance.ItemId].BaseValue)
@@ -144,6 +205,131 @@ namespace Safehouse.UI
             if (highestValueId != null)
             {
                 SelectItem(highestValueId);
+            }
+
+            _labelCharacter.text = profile.DisplayName.ToUpperInvariant()
+                + (profile.Status == CharacterSheet.Active ? "" : " · " + profile.Status.Replace('_', ' ').ToUpperInvariant());
+            if (_session.Saves && DataFolderOverride == null)
+            {
+                PlayerPrefs.SetString(LastCharacterKey, profile.ProfileId); // reopen this one next time
+            }
+        }
+
+        private void ClearSelection()
+        {
+            _labelSelectedIcon.text = "?";
+            _labelSelectedName.text = "Select an item";
+            _labelSelectedRarity.text = "";
+            _labelSelectedSub.text = "";
+            _labelSelectedValue.text = "—";
+            _labelSelectedWeight.text = "—";
+            _labelSelectedPerCell.text = "—";
+            _swatchSelected.style.backgroundImage = StyleKeyword.None;
+        }
+
+        /// <summary>The open character's name.</summary>
+        public string CharacterName => _session.Profile.DisplayName;
+
+        /// <summary>The open character's id.</summary>
+        public string CharacterId => _session.Profile.ProfileId;
+
+        /// <summary>Opens another saved character. Returns why it could not, or null.</summary>
+        public string OpenCharacter(string profileId)
+        {
+            var notices = new List<string>();
+            try
+            {
+                _session.Switch(profileId, notices);
+            }
+            catch (StorageException error)
+            {
+                ShowMessage(error.Message);
+                return error.Message;
+            }
+
+            ApplyProfile();
+            if (notices.Count > 0)
+            {
+                ShowMessage(string.Join("\n", notices));
+            }
+
+            return null;
+        }
+
+        private void CycleCharacter(int step)
+        {
+            var characters = _session.Characters();
+            if (characters.Count < 2)
+            {
+                return;
+            }
+
+            var index = characters.ToList().FindIndex(profile => profile.ProfileId == _session.Profile.ProfileId);
+            OpenCharacter(characters[(index + step + characters.Count) % characters.Count].ProfileId);
+        }
+
+        // ---- messages ----
+
+        private void CreateToast()
+        {
+            _toast = new VisualElement { pickingMode = PickingMode.Ignore };
+            _toast.AddToClassList("toast");
+            _toast.style.display = DisplayStyle.None;
+            _toastText = new Label { pickingMode = PickingMode.Ignore };
+            _toastText.AddToClassList("toast-label");
+            _toast.Add(_toastText);
+            (_root.Q(className: "gear-root") ?? _root).Add(_toast);
+        }
+
+        /// <summary>Shows a message over the bottom of the screen for a few seconds (or until replaced, when
+        /// <paramref name="persistent"/>). A standing "not saving" warning comes back after any other message.</summary>
+        private void ShowMessage(string text, bool persistent = false)
+        {
+            _toastText.text = text;
+            _toast.style.display = DisplayStyle.Flex;
+            _toastTimer?.Pause();
+            if (!persistent)
+            {
+                _toastTimer = _toast.schedule.Execute(() =>
+                {
+                    if (_persistentMessage != null)
+                    {
+                        _toastText.text = _persistentMessage;
+                    }
+                    else
+                    {
+                        _toast.style.display = DisplayStyle.None;
+                    }
+                }).StartingIn(6000);
+            }
+        }
+
+        /// <summary>Whether a message is showing, and what it says. For tests.</summary>
+        public bool MessageVisible => _toast != null && _toast.style.display == DisplayStyle.Flex;
+
+        public string MessageText => _toastText?.text;
+
+        /// <summary>Whether changes are being written to disk.</summary>
+        public bool Saving => _session != null && _session.Saves;
+
+        /// <summary>
+        /// Saves the profile with these grids (and gear, when given) in place of the current ones and only then
+        /// makes it current. Returns why it could not be saved, having shown that to the player; the caller must
+        /// then change nothing.
+        /// </summary>
+        private string Persist(IDictionary<GridView, StashGrid> changes, Loadout loadout = null)
+        {
+            StashGrid Pick(GridView view) => changes.TryGetValue(view, out var grid) ? grid : view.Grid;
+            try
+            {
+                _session.Commit(_session.Profile.With(
+                    stash: Pick(_views[0]), rig: Pick(_views[1]), backpack: Pick(_views[2]), loadout: loadout));
+                return null;
+            }
+            catch (StorageException error)
+            {
+                ShowMessage(error.Message);
+                return error.Message;
             }
         }
 
@@ -478,6 +664,13 @@ namespace Safehouse.UI
 
         private string TryTransfer(string instanceId, GridView target, int x, int y, int rotation)
         {
+            var blocked = ProfileRules.StashEditError(_session.Profile);
+            if (blocked != null)
+            {
+                ShowMessage(blocked);
+                return blocked;
+            }
+
             var source = ViewOf(instanceId);
             StashGrid newSource;
             StashGrid newTarget;
@@ -489,6 +682,12 @@ namespace Safehouse.UI
             catch (ValidationException error)
             {
                 return error.Message;
+            }
+
+            var saveError = Persist(new Dictionary<GridView, StashGrid> { [source] = newSource, [target] = newTarget });
+            if (saveError != null)
+            {
+                return saveError;
             }
 
             source.Grid = newSource;
@@ -563,6 +762,13 @@ namespace Safehouse.UI
         /// </summary>
         public string TryEquipItem(string instanceId, string slot)
         {
+            var blocked = ProfileRules.GearEditError(_session.Profile);
+            if (blocked != null)
+            {
+                ShowMessage(blocked);
+                return blocked;
+            }
+
             var error = SlotDropError(instanceId, slot);
             if (error != null)
             {
@@ -576,6 +782,13 @@ namespace Safehouse.UI
 
             var source = ViewOf(instanceId);
             var result = LoadoutRules.Equip(_gear, _catalog, _loadout, source.Grid, StashView.Grid, instanceId);
+            var saveError = Persist(
+                new Dictionary<GridView, StashGrid> { [source] = result.Source, [StashView] = result.Stash }, result.Loadout);
+            if (saveError != null)
+            {
+                return saveError;
+            }
+
             _loadout = result.Loadout;
             source.Grid = result.Source;
             StashView.Grid = result.Stash;
@@ -587,6 +800,13 @@ namespace Safehouse.UI
         /// its ammunition into the same grid. Returns why it was refused, or null.</summary>
         public string TryUnequipItem(string instanceId, string gridName, int x, int y, int rotation)
         {
+            var blocked = ProfileRules.GearEditError(_session.Profile);
+            if (blocked != null)
+            {
+                ShowMessage(blocked);
+                return blocked;
+            }
+
             var worn = _loadout.FindByInstance(instanceId);
             if (worn == null)
             {
@@ -599,17 +819,24 @@ namespace Safehouse.UI
                 return $"Unknown grid: {gridName}.";
             }
 
+            (Loadout Loadout, StashGrid Target) result;
             try
             {
-                var result = LoadoutRules.Unequip(_catalog, _loadout, worn.Slot, target.Grid, x, y, rotation);
-                _loadout = result.Loadout;
-                target.Grid = result.Target;
+                result = LoadoutRules.Unequip(_catalog, _loadout, worn.Slot, target.Grid, x, y, rotation);
             }
             catch (ValidationException error)
             {
                 return error.Message;
             }
 
+            var saveError = Persist(new Dictionary<GridView, StashGrid> { [target] = result.Target }, result.Loadout);
+            if (saveError != null)
+            {
+                return saveError;
+            }
+
+            _loadout = result.Loadout;
+            target.Grid = result.Target;
             RefreshAll();
             return null;
         }
@@ -760,7 +987,9 @@ namespace Safehouse.UI
                 return;
             }
 
-            drag.TargetView = _views.FirstOrDefault(view => view.Element.worldBound.Contains(drag.Pointer));
+            // A grid that scrolls is only under the pointer where its viewport is, not the whole tall grid.
+            drag.TargetView = _views.FirstOrDefault(view => view.Element.worldBound.Contains(drag.Pointer)
+                                                            && (view.Viewport ?? view.Element).worldBound.Contains(drag.Pointer));
             if (drag.TargetView == null)
             {
                 _ghost.RemoveFromHierarchy();

@@ -45,7 +45,9 @@
                 <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 10px;">
                     <ui:Label text="LOADOUT" class="text-section" style="margin-right: 10px;" />
                     <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
-                    <ui:Label text="SVETLANA K." class="text-mono text-muted" />
+                    <ui:Button name="character-prev" text="&lt;" class="btn-char" />
+                    <ui:Label name="label-character" text="" class="text-mono text-muted" style="margin-left: 8px; margin-right: 8px;" />
+                    <ui:Button name="character-next" text="&gt;" class="btn-char" />
                 </ui:VisualElement>
 
                 <ui:VisualElement style="flex-direction: row; margin-bottom: 10px;">
@@ -240,7 +242,11 @@
                     <ui:Button text="BARTER" class="card btn" style="border-width: 0; color: rgb(154, 165, 177); font-size: 11px;" />
                 </ui:VisualElement>
 
-                <sh:GridBackground name="stash-grid" pitch="48" style="width: 480px; height: 528px; margin-bottom: 12px;" />
+                <!-- The stash is 10 wide by default and 20 tall (more once the hideout is upgraded), far more than
+                     fits on screen, so it scrolls. The grid inside is resized to the character's stash in code. -->
+                <ui:ScrollView name="stash-scroll" mode="VerticalAndHorizontal" style="width: 500px; height: 528px; margin-bottom: 12px;">
+                    <sh:GridBackground name="stash-grid" pitch="48" style="width: 480px; height: 960px;" />
+                </ui:ScrollView>
 
                 <!-- selected item detail -->
                 <ui:VisualElement class="card" style="flex-grow: 1; padding: 12px; flex-direction: row;">

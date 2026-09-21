@@ -76,6 +76,9 @@ input to Core.
 | `catalog.py` | `Data/CatalogLoader.cs` | JSON stays in Data so Core needs no dependencies. |
 | `gear.py` (slots, calibers, capacity) | `Core/GearData.cs`, `Data/GearLoader.cs` | Only what the loadout reads; combat-only numbers and enemies wait for the combat port. |
 | `session.equip` / `unequip`, `models.EquippedItem` | `Core/Loadout.cs`, `Core/LoadoutRules.cs` | Same rules: old piece returns to the stash, ammo must match the rifle, a refused change alters nothing. |
+| `models.Profile`, `TraderState`, `config` constants | `Core/Profile.cs`, `Core/ProfileParts.cs`, `Core/ProfileRules.cs` | Schema 7 = the Python v6 profile plus `carried` (rig and backpack grids). Trader state is kept and written back untouched. |
+| `storage.ProfileRepository`, `migrations.py` | `Data/ProfileRepository.cs`, `Data/ProfileSerializer.cs`, `Data/ProfileMigrations.cs`, `Data/Storage.cs` | Atomic writes, `.bak` of the previous save, restore from backup with the bad file kept in `recovery/`, migrations v1-v6 step for step, plus 6 to 7. |
+| `session.InventorySession` (commit/rollback) | `Data/CharacterSession.cs` | A change is saved first and only then becomes the open character; a failed save changes nothing. |
 
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
@@ -90,14 +93,14 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
 - `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. The STASH panel, CARRIED's
   RIG / BACKPACK grids and the seven LOADOUT slot cards are wired to real data (still sample
   contents, see below); only the body-part health and ability panels are hand-written.
-- `Scripts/UI/GearScreenController.cs` - loads the shipped catalog (`CatalogLoader`), builds a demo
-  stash (`Scripts/UI/Sample/SampleStash.cs`) by running real items through `PlacementRules.FirstFit`,
-  and renders one cell per placed item. Clicking a cell (`Button.clicked`) updates the detail panel.
+- `Scripts/UI/GearScreenController.cs` - loads the shipped catalog (`CatalogLoader`) and the open character
+  (`CharacterSession`; a new data folder starts with the sample one, `Scripts/UI/Sample/`), and renders one
+  cell per item it holds. Clicking a cell (`Button.clicked`) updates the detail panel.
   Cells can be dragged to a new spot, in the same grid or into another (stash, rig, backpack): a green/red ghost shows where a drop would land, **R** turns
   the item (while dragging, or in place when just selected), **Esc** cancels a drag, and a refused
   drop or turn snaps back and flashes the cell red. The rule is `PlacementRules.Move` in Core; the
   controller only forwards pointer input to it (`TryMoveItem` / `TryRotateItem`, which tests call
-  directly). Moves live in memory only - there is no save to write them to yet.
+  directly). Each change is saved to the open character before it shows (see "Saves").
   Dropping a stash / rig / backpack item on its LOADOUT slot wears it (`LoadoutRules.Equip`: the slot
   card turns green or red while hovering, the old piece goes back to the stash); dragging a slot card
   onto a grid takes it off there (`LoadoutRules.Unequip`).
@@ -177,6 +180,32 @@ that and is the same license, but isn't wired in yet since nothing on screen nee
 in the same way (copy the weights you need into `UI/Fonts/NotoSerifKR/`, add a `.font-*` class) once
 a screen has to render Korean text.
 
+## Saves
+
+The game keeps its **own** data folder, apart from the Python build's, so nothing here can touch a campaign
+the Python build owns: `SAFEHOUSE_UNITY_DATA_DIR` if set, otherwise `Application.persistentDataPath/Safehouse`
+(on Windows `%USERPROFILE%\AppData\LocalLow\<company>\Safehouse\Safehouse`).
+
+```
+saves/<id>.json  (+ .json.bak)   one file per character, schema 7
+recovery/                        a damaged save that was replaced from its backup
+.safehouse.lock                  held while the game runs, so two copies cannot write at once
+```
+
+**Safehouse > Import Python Characters** copies the Python build's characters (`%LOCALAPPDATA%\Safehouse\saves`,
+or `SAFEHOUSE_DATA_DIR`) into it. The Python files are only read; each goes through the migrations (old saves are
+schema 5 or earlier) and the same checks as any load, and one that will not pass is listed and left out. Running it
+again skips characters already here, so progress made in this game is never overwritten. A brand-new folder starts
+with a "Sample Operator" (sample stash, rig, backpack and gear) so the screen has something to show.
+
+On the GEAR screen the `<` `>` buttons beside the name switch between saved characters, and the last one opened is
+reopened next time. Every move, turn, equip and take-off is saved as it happens; if the save fails the change does
+not happen and the reason is shown. A downed character cannot be changed, and one away on an expedition can have
+only their gear changed (the Python rules). If the data folder is already in use by another copy of the game, the
+screen still opens but warns that nothing will be kept.
+
+The stash is the character's own size (10 x 20 by default, larger after a hideout upgrade) and scrolls.
+
 ## Not done yet
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
@@ -190,8 +219,10 @@ a screen has to render Korean text.
   disappear when a smaller bag is put on.
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
-- The save system (`storage.py`, `models.Profile`, `migrations.py`) is not ported. Its shape depends
-  on how abilities end up working.
+- The account (`account.json`: the character order and the shared hideout), settings, and expeditions are not
+  ported; only characters are. Trader state is carried through unchanged but nothing reads it yet.
+- No screen creates or deletes a character (the repository can), and there is no way yet to raise the stash
+  size - that is a hideout upgrade. A dragged item does not auto-scroll a long stash.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).
