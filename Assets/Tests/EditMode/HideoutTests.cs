@@ -29,6 +29,16 @@ namespace Safehouse.Tests
         }
 
         [Test]
+        public void StatBoostingFacilitiesAreMarkedDecorative()
+        {
+            Assert.IsTrue(HideoutRules.IsDecorative(Definition, "air_filtering_unit"));
+            Assert.IsTrue(HideoutRules.IsDecorative(Definition, "library"));
+            Assert.IsTrue(HideoutRules.IsDecorative(Definition, "shooting_range"));
+            Assert.IsFalse(HideoutRules.IsDecorative(Definition, "generator"));
+            Assert.IsFalse(HideoutRules.IsDecorative(Definition, "medstation"));
+        }
+
+        [Test]
         public void ANewHideoutHasEveryFacilityPresentAndOnlyGeneratorBuilt()
         {
             var hideout = Hideout.CreateNew();

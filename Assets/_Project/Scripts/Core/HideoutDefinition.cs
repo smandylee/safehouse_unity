@@ -85,13 +85,14 @@ namespace Safehouse.Core
     /// <summary>The rule data for one facility across all its levels.</summary>
     public sealed class FacilityDefinition
     {
-        public FacilityDefinition(string facilityId, string name, string description, int maxLevel,
+        public FacilityDefinition(string facilityId, string name, string description, int maxLevel, bool decorative,
             IReadOnlyDictionary<int, FacilityLevelDefinition> levels)
         {
             FacilityId = Validate.Identifier(facilityId, "facility_id");
             Name = Validate.Text(name, "Facility name", CoreLimits.MaxItemNameLength);
             Description = Validate.Text(description, "Facility description", CoreLimits.MaxDescriptionLength, allowEmpty: true);
             MaxLevel = Validate.Integer(maxLevel, "Max level", 1, HideoutLimits.MaxFacilityLevel);
+            Decorative = decorative;
             Levels = levels ?? new Dictionary<int, FacilityLevelDefinition>();
 
             if (Levels.Count == 0 || Levels.Keys.Min() != 1 || Levels.Keys.Max() != MaxLevel
@@ -105,6 +106,7 @@ namespace Safehouse.Core
         public string Name { get; }
         public string Description { get; }
         public int MaxLevel { get; }
+        public bool Decorative { get; }
         public IReadOnlyDictionary<int, FacilityLevelDefinition> Levels { get; }
 
         public FacilityLevelDefinition Level(int level)

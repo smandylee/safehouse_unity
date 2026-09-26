@@ -14,6 +14,13 @@ namespace Safehouse.Core
         public static int Population(Account account) => account?.Population ?? 0;
 
         /// <summary>
+        /// True when the facility exists only for atmosphere/immersion and should not alter character stats or other
+        /// gameplay numbers. Its effects may still be shown in the UI as flavor text.
+        /// </summary>
+        public static bool IsDecorative(HideoutDefinition definition, string facilityId) =>
+            definition.Facility(facilityId).Decorative;
+
+        /// <summary>
         /// Generator fuel consumed per in-game hour, reduced by Solar Power. Returns 0 when no population.
         /// </summary>
         public static int GeneratorFuelPerHour(HideoutDefinition definition, Hideout hideout, int population)

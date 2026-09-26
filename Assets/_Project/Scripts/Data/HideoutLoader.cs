@@ -27,6 +27,7 @@ namespace Safehouse.Data
         private static FacilityDefinition ReadFacility(string facilityId, JObject facility)
         {
             var maxLevel = Int(facility["max_level"], "max_level");
+            var decorative = Bool(facility["decorative"]);
             var levels = Obj(facility["levels"], "levels").Properties()
                 .ToDictionary(
                     property => ParseLevelKey(property.Name),
@@ -37,6 +38,7 @@ namespace Safehouse.Data
                 Str(facility["name"], "name"),
                 Str(facility["description"], "description", allowEmpty: true),
                 maxLevel,
+                decorative,
                 levels);
         }
 
@@ -143,5 +145,8 @@ namespace Safehouse.Data
                 throw new ValidationException($"{label} is out of range.");
             }
         }
+
+        private static bool Bool(JToken token) =>
+            token != null && token.Type == JTokenType.Boolean && token.Value<bool>();
     }
 }
