@@ -23,7 +23,8 @@ Assets/_Project/
     Scenes/
 Assets/StreamingAssets/
     data/         The rule data itself: items, traders, maps, gear, containers, combat,
-                  raid_nodes, maps_overrides - copied straight from the Python project's data/.
+                  raid_nodes, maps_overrides, hideout - copied straight from or equivalent to
+                  the Python project's data/.
 Assets/Tests/
     EditMode/     Unity Test Framework tests for Scripts/Core (the equivalent of tests/*.py).
     PlayMode/     Tests that need a running scene (UI flows, screen wiring).
@@ -36,7 +37,7 @@ StreamingAssets ships them next to the built game as plain files you can open an
 exactly how the Python build works. `Resources/` would bake them into the player and take that away,
 and a plain folder under `Assets/` can't be loaded by path at runtime at all.
 
-Only the four hand-tuned files (`containers`, `combat`, `raid_nodes`, `maps_overrides`) are edited
+The hand-tuned files (`containers`, `combat`, `raid_nodes`, `maps_overrides`, `hideout`) are edited
 here. `items`, `traders`, `maps` and `gear` stay generated: `tools/import_tarkov.py` in the Python
 repo remains the one generator, and its output is copied over. Regenerating in two places would let
 the two projects drift apart, and item ids must stay stable or existing saves stop opening.
@@ -80,7 +81,7 @@ input to Core.
 | `storage.ProfileRepository`, `migrations.py` | `Data/ProfileRepository.cs`, `Data/ProfileSerializer.cs`, `Data/ProfileMigrations.cs`, `Data/Storage.cs` | Atomic writes, `.bak` of the previous save, restore from backup with the bad file kept in `recovery/`, migrations v1-v7 step for step, plus 7 to 8. |
 | `session.InventorySession` (commit/rollback) | `Data/CharacterSession.cs` | A change is saved first and only then becomes the open character; a failed save changes nothing. Also loads and saves the shared account. |
 | `traders.py`, `session.buy` / `sell` / `set_standing` | `Core/Traders.cs`, `Core/TradingRules.cs`, `Data/TraderLoader.cs` | Loyalty (needs both spending and standing), per-character stock that restocks in fixed UTC windows, buy/sell as one save, the no-arbitrage check across all traders. The clock is passed in, never read. No barter or quest locks - the Python build has none either. |
-|| `account.json`, hideout, personal room | `Core/Account.cs`, `Core/Facility.cs`, `Core/Hideout.cs`, `Core/HideoutRules.cs`, `Core/PersonalRoom.cs`, `Data/AccountRepository.cs`, `Data/AccountSerializer.cs` | Shared hideout with all Tarkov facilities except the Stash (modeled per-character as the private room), per-character private room level, and population-dependent generator fuel cost. Schema 1 account + schema 8 profile. |
+|| `account.json`, hideout, personal room | `Core/Account.cs`, `Core/Facility.cs`, `Core/Hideout.cs`, `Core/HideoutDefinition.cs`, `Core/HideoutRules.cs`, `Core/PersonalRoom.cs`, `Data/AccountRepository.cs`, `Data/AccountSerializer.cs`, `Data/HideoutLoader.cs`, `StreamingAssets/data/hideout.json` | Shared hideout with all Tarkov facilities (starting at level 0 except Generator), per-character private room level, facility dependencies/costs/effects in data, and population-dependent generator fuel cost. Schema 1 account + schema 8 profile. |
 
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
@@ -222,7 +223,7 @@ recovery/                        a damaged save that was replaced from its backu
 or `SAFEHOUSE_DATA_DIR`) into it. The Python files are only read; each goes through the migrations (old saves are
 schema 5 or earlier) and the same checks as any load, and one that will not pass is listed and left out. Running it
 again skips characters already here, so progress made in this game is never overwritten. A brand-new folder starts
-with a default account (shared hideout + empty character order) and a "Sample Operator" (sample stash, rig, backpack and gear) so the screen has something to show.
+with a default account (shared hideout with only the Generator built + empty character order) and a "Sample Operator" (sample stash, rig, backpack and gear) so the screen has something to show.
 
 On the GEAR screen the `<` `>` buttons beside the name switch between saved characters, and the last one opened is
 reopened next time. Every move, turn, equip and take-off is saved as it happens; if the save fails the change does

@@ -74,7 +74,12 @@ namespace Safehouse.Core
         public int LevelOf(string facilityId) =>
             Facilities.FirstOrDefault(f => f.FacilityId == facilityId)?.Level ?? 0;
 
-        public static Hideout CreateNew() => new Hideout(SharedFacilityIds.Select(id => new Facility(id, 1)));
+        /// <summary>
+        /// A brand-new hideout: only the generator is built at level 1. Every other shared facility starts at
+        /// level 0 and must be upgraded by the player.
+        /// </summary>
+        public static Hideout CreateNew() => new Hideout(SharedFacilityIds.Select(id =>
+            new Facility(id, id == "generator" ? 1 : 0)));
 
         public Hideout WithFacility(Facility facility)
         {

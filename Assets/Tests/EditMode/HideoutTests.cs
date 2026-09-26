@@ -10,20 +10,33 @@ using Safehouse.Data;
 
 namespace Safehouse.Tests
 {
-    /// <summary>The hideout model, account JSON, and population/stash rules.</summary>
+    /// <summary>The hideout model, account JSON, population/stash rules, and hideout data loading.</summary>
     public sealed class HideoutTests
     {
         private static int _next;
         private static string NewId() => (++_next).ToString("x32");
 
+        private static HideoutDefinition Definition => _definition ?? (_definition = HideoutLoader.Load());
+        private static HideoutDefinition _definition;
+
         [Test]
-        public void ANewHideoutHasEveryTarkovSharedFacilityAtLevelOne()
+        public void HideoutDataDefinesEverySharedFacilityAndAPersonalRoom()
+        {
+            CollectionAssert.AreEquivalent(Hideout.SharedFacilityIds,
+                Definition.Facilities.Keys.Where(id => id != "personal_room"));
+            Assert.IsTrue(Definition.HasFacility("personal_room"));
+            Assert.AreEqual(19, Hideout.SharedFacilityIds.Count);
+        }
+
+        [Test]
+        public void ANewHideoutHasEveryFacilityPresentAndOnlyGeneratorBuilt()
         {
             var hideout = Hideout.CreateNew();
 
             CollectionAssert.AreEquivalent(Hideout.SharedFacilityIds, hideout.Facilities.Select(f => f.FacilityId));
             Assert.AreEqual(19, hideout.Facilities.Count, "every Tarkov shared facility except the personal stash");
-            Assert.IsTrue(hideout.Facilities.All(f => f.Level == 1));
+            Assert.AreEqual(1, hideout.Facilities.Single(f => f.FacilityId == "generator").Level);
+            Assert.IsTrue(hideout.Facilities.Where(f => f.FacilityId != "generator").All(f => f.Level == 0));
         }
 
         [Test]
@@ -50,7 +63,7 @@ namespace Safehouse.Tests
             var hideout = Hideout.CreateNew().WithFacility(new Facility("generator", 3));
 
             Assert.AreEqual(3, hideout.LevelOf("generator"));
-            Assert.AreEqual(1, hideout.LevelOf("workbench"));
+            Assert.AreEqual(0, hideout.LevelOf("workbench"));
         }
 
         [Test]
@@ -86,7 +99,7 @@ namespace Safehouse.Tests
 
             Assert.AreEqual(original.CharacterOrder.Single(), back.CharacterOrder.Single());
             Assert.AreEqual(2, back.Hideout.LevelOf("generator"));
-            Assert.AreEqual(1, back.Hideout.LevelOf("workbench"));
+            Assert.AreEqual(0, back.Hideout.LevelOf("workbench"));
             Assert.AreEqual(AccountSerializer.Serialize(original), AccountSerializer.Serialize(back));
         }
 
@@ -104,32 +117,102 @@ namespace Safehouse.Tests
         [Test]
         public void GeneratorFuelScalesWithPopulationAndLevel()
         {
-            // Level 1: 10 per person.
-            Assert.AreEqual(0, HideoutRules.GeneratorFuelPerHour(1, 0));
-            Assert.AreEqual(10, HideoutRules.GeneratorFuelPerHour(1, 1));
-            Assert.AreEqual(40, HideoutRules.GeneratorFuelPerHour(1, 4));
+            var hideout = Hideout.CreateNew();
 
-            // Level 2: 5 per person.
-            Assert.AreEqual(20, HideoutRules.GeneratorFuelPerHour(2, 4));
+            Assert.AreEqual(0, HideoutRules.GeneratorFuelPerHour(Definition, hideout, 0));
+            Assert.AreEqual(10, HideoutRules.GeneratorFuelPerHour(Definition, hideout, 1));
+            Assert.AreEqual(40, HideoutRules.GeneratorFuelPerHour(Definition, hideout, 4));
 
-            // Level 5: 2 per person.
-            Assert.AreEqual(8, HideoutRules.GeneratorFuelPerHour(5, 4));
+            var levelTwo = hideout.WithFacility(new Facility("generator", 2));
+            Assert.AreEqual(20, HideoutRules.GeneratorFuelPerHour(Definition, levelTwo, 4));
         }
 
         [Test]
-        public void RoomLevelGivesStashSize()
+        public void SolarPowerReducesGeneratorFuelConsumption()
         {
-            Assert.AreEqual((10, 20), HideoutRules.RoomStashSize(1));
-            Assert.AreEqual((12, 24), HideoutRules.RoomStashSize(2));
-            Assert.AreEqual((14, 28), HideoutRules.RoomStashSize(3));
+            var hideout = Hideout.CreateNew().WithFacility(new Facility("solar_power", 1));
+
+            var fuel = HideoutRules.GeneratorFuelPerHour(Definition, hideout, 4);
+
+            Assert.AreEqual(28, fuel); // 40 * 0.7 = 28
+        }
+
+        [Test]
+        public void RoomLevelGivesStashSizeFromData()
+        {
+            Assert.AreEqual((10, 20), HideoutRules.RoomStashSize(Definition, 1));
+            Assert.AreEqual((12, 24), HideoutRules.RoomStashSize(Definition, 2));
+            Assert.AreEqual((14, 28), HideoutRules.RoomStashSize(Definition, 3));
         }
 
         [Test]
         public void RoomLevelIsDerivedFromStashSize()
         {
-            Assert.AreEqual(1, HideoutRules.RoomLevelForStash(10, 20));
-            Assert.AreEqual(2, HideoutRules.RoomLevelForStash(12, 24));
-            Assert.AreEqual(1, HideoutRules.RoomLevelForStash(11, 22));
+            Assert.AreEqual(1, HideoutRules.RoomLevelForStash(Definition, 10, 20));
+            Assert.AreEqual(2, HideoutRules.RoomLevelForStash(Definition, 12, 24));
+            Assert.AreEqual(1, HideoutRules.RoomLevelForStash(Definition, 11, 22));
+        }
+
+        [Test]
+        public void UpgradeRequirementsAreChecked()
+        {
+            var hideout = Hideout.CreateNew();
+
+            Assert.IsFalse(HideoutRules.CanUpgrade(Definition, hideout, "workbench", 2),
+                "workbench level 2 needs generator level 2");
+            Assert.IsFalse(HideoutRules.CanUpgrade(Definition, hideout, "solar_power", 1),
+                "solar power needs generator level 2 and workbench level 2");
+
+            var generatorUpgraded = hideout.WithFacility(new Facility("generator", 2));
+            Assert.IsTrue(HideoutRules.CanUpgrade(Definition, generatorUpgraded, "workbench", 2));
+
+            var fullyUpgraded = generatorUpgraded.WithFacility(new Facility("workbench", 2));
+            Assert.IsTrue(HideoutRules.CanUpgrade(Definition, fullyUpgraded, "solar_power", 1));
+        }
+
+        [Test]
+        public void UpgradeCostIsReadFromData()
+        {
+            var hideout = Hideout.CreateNew();
+
+            var levelOneCost = HideoutRules.UpgradeCost(Definition, hideout, "workbench", 1);
+            Assert.AreEqual(25000, levelOneCost.Money);
+
+            var levelTwoCost = HideoutRules.UpgradeCost(Definition, hideout, "workbench", 2);
+            Assert.AreEqual(100000, levelTwoCost.Money);
+
+            Assert.IsNull(HideoutRules.UpgradeCost(Definition, hideout, "workbench", 0));
+        }
+
+        [Test]
+        public void UpgradeErrorExplainsWhy()
+        {
+            var profile = Profile.CreateNew(NewId(), "Ana", money: 1000);
+            var hideout = Hideout.CreateNew();
+
+            var error = HideoutRules.UpgradeError(Definition, hideout, profile, "solar_power", 1);
+            StringAssert.Contains("Requires", error);
+
+            var missingRequirement = HideoutRules.UpgradeError(Definition, hideout, profile, "workbench", 2);
+            StringAssert.Contains("Generator", missingRequirement);
+
+            var affordable = Profile.CreateNew(NewId(), "Rich", money: 10_000_000);
+            var generatorUpgraded = hideout.WithFacility(new Facility("generator", 2));
+            var noRequirements = HideoutRules.UpgradeError(Definition, generatorUpgraded, affordable, "workbench", 2);
+            Assert.IsNull(noRequirements);
+
+            var missingMoney = HideoutRules.UpgradeError(Definition, generatorUpgraded, profile, "workbench", 2);
+            StringAssert.Contains("Needs", missingMoney);
+        }
+
+        [Test]
+        public void EffectQueriesReturnDefaultsWhenNotBuilt()
+        {
+            var hideout = new Hideout(Enumerable.Empty<Facility>());
+
+            Assert.AreEqual(0, HideoutRules.IntEffect(Definition, hideout, "workbench", "crafting_slots"));
+            Assert.AreEqual(0.0, HideoutRules.DoubleEffect(Definition, hideout, "rest_space", "hp_regen_per_hour"));
+            Assert.IsEmpty(HideoutRules.StringListEffect(Definition, hideout, "workbench", "crafting_categories"));
         }
 
         [Test]

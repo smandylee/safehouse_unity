@@ -27,10 +27,11 @@ namespace Safehouse.Data
         public const string Combat = "combat";
         public const string RaidNodes = "raid_nodes";
         public const string MapsOverrides = "maps_overrides";
+        public const string Hideout = "hideout";
 
         public static readonly IReadOnlyList<string> All = new[]
         {
-            Items, Traders, Maps, Gear, Containers, Combat, RaidNodes, MapsOverrides,
+            Items, Traders, Maps, Gear, Containers, Combat, RaidNodes, MapsOverrides, Hideout,
         };
     }
 
