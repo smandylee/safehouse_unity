@@ -76,10 +76,11 @@ input to Core.
 | `catalog.py` | `Data/CatalogLoader.cs` | JSON stays in Data so Core needs no dependencies. |
 | `gear.py` (slots, calibers, capacity) | `Core/GearData.cs`, `Data/GearLoader.cs` | Only what the loadout reads; combat-only numbers and enemies wait for the combat port. |
 | `session.equip` / `unequip`, `models.EquippedItem` | `Core/Loadout.cs`, `Core/LoadoutRules.cs` | Same rules: old piece returns to the stash, ammo must match the rifle, a refused change alters nothing. |
-| `models.Profile`, `TraderState`, `config` constants | `Core/Profile.cs`, `Core/ProfileParts.cs`, `Core/ProfileRules.cs` | Schema 7 = the Python v6 profile plus `carried` (rig and backpack grids). Trader state is kept and written back untouched. |
-| `storage.ProfileRepository`, `migrations.py` | `Data/ProfileRepository.cs`, `Data/ProfileSerializer.cs`, `Data/ProfileMigrations.cs`, `Data/Storage.cs` | Atomic writes, `.bak` of the previous save, restore from backup with the bad file kept in `recovery/`, migrations v1-v6 step for step, plus 6 to 7. |
-| `session.InventorySession` (commit/rollback) | `Data/CharacterSession.cs` | A change is saved first and only then becomes the open character; a failed save changes nothing. |
+| `models.Profile`, `TraderState`, `config` constants | `Core/Profile.cs`, `Core/ProfileParts.cs`, `Core/ProfileRules.cs` | Schema 8 = the Python v6 profile plus `carried` (rig and backpack grids) and `personal_room` (level). Trader state is kept and written back untouched. |
+| `storage.ProfileRepository`, `migrations.py` | `Data/ProfileRepository.cs`, `Data/ProfileSerializer.cs`, `Data/ProfileMigrations.cs`, `Data/Storage.cs` | Atomic writes, `.bak` of the previous save, restore from backup with the bad file kept in `recovery/`, migrations v1-v7 step for step, plus 7 to 8. |
+| `session.InventorySession` (commit/rollback) | `Data/CharacterSession.cs` | A change is saved first and only then becomes the open character; a failed save changes nothing. Also loads and saves the shared account. |
 | `traders.py`, `session.buy` / `sell` / `set_standing` | `Core/Traders.cs`, `Core/TradingRules.cs`, `Data/TraderLoader.cs` | Loyalty (needs both spending and standing), per-character stock that restocks in fixed UTC windows, buy/sell as one save, the no-arbitrage check across all traders. The clock is passed in, never read. No barter or quest locks - the Python build has none either. |
+|| `account.json`, hideout, personal room | `Core/Account.cs`, `Core/Facility.cs`, `Core/Hideout.cs`, `Core/HideoutRules.cs`, `Core/PersonalRoom.cs`, `Data/AccountRepository.cs`, `Data/AccountSerializer.cs` | Shared hideout with four facilities (Generator, Workbench, Medstation, Rest Space), per-character private room level, and population-dependent generator fuel cost. Schema 1 account + schema 8 profile. |
 
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
@@ -211,7 +212,8 @@ the Python build owns: `SAFEHOUSE_UNITY_DATA_DIR` if set, otherwise `Application
 (on Windows `%USERPROFILE%\AppData\LocalLow\<company>\Safehouse\Safehouse`).
 
 ```
-saves/<id>.json  (+ .json.bak)   one file per character, schema 7
+account.json  (+ .json.bak)      shared hideout + character order, schema 1
+saves/<id>.json  (+ .json.bak)   one file per character, schema 8
 recovery/                        a damaged save that was replaced from its backup
 .safehouse.lock                  held while the game runs, so two copies cannot write at once
 ```
@@ -220,7 +222,7 @@ recovery/                        a damaged save that was replaced from its backu
 or `SAFEHOUSE_DATA_DIR`) into it. The Python files are only read; each goes through the migrations (old saves are
 schema 5 or earlier) and the same checks as any load, and one that will not pass is listed and left out. Running it
 again skips characters already here, so progress made in this game is never overwritten. A brand-new folder starts
-with a "Sample Operator" (sample stash, rig, backpack and gear) so the screen has something to show.
+with a default account (shared hideout + empty character order) and a "Sample Operator" (sample stash, rig, backpack and gear) so the screen has something to show.
 
 On the GEAR screen the `<` `>` buttons beside the name switch between saved characters, and the last one opened is
 reopened next time. Every move, turn, equip and take-off is saved as it happens; if the save fails the change does
@@ -236,10 +238,9 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
   there as it's needed (data import from the Tarkov snapshot, build scripts).
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
-- The account (`account.json`: the character order and the shared hideout), settings, and expeditions are not
-  ported; only characters and trader states are.
-- No screen creates or deletes a character (the repository can), and there is no way yet to raise the stash
-  size - that is a hideout upgrade.
+- Settings and expeditions are not ported.
+- No screen creates or deletes a character (the repository can), and there is no hideout UI yet; the room level and
+  stash size are data only for now.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).

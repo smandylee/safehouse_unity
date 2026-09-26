@@ -42,11 +42,11 @@ namespace Safehouse.Data
         private static readonly IReadOnlyDictionary<int, Func<JObject, JObject>> Steps =
             new Dictionary<int, Func<JObject, JObject>>
             {
-                [1] = V1ToV2, [2] = V2ToV3, [3] = V3ToV4, [4] = V4ToV5, [5] = V5ToV6, [6] = V6ToV7,
+                [1] = V1ToV2, [2] = V2ToV3, [3] = V3ToV4, [4] = V4ToV5, [5] = V5ToV6, [6] = V6ToV7, [7] = V7ToV8,
             };
 
         /// <summary>
-        /// Upgrades a copy of the document to schema 7. Anything this version cannot upgrade - not an object,
+        /// Upgrades a copy of the document to schema 8. Anything this version cannot upgrade - not an object,
         /// a version it does not know, or a newer one - is returned unchanged, so reading it reports the
         /// problem instead of guessing.
         /// </summary>
@@ -181,6 +181,17 @@ namespace Safehouse.Data
             {
                 ["rig"] = EmptyGrid(Profile.DefaultRigWidth, Profile.DefaultRigHeight),
                 ["backpack"] = EmptyGrid(Profile.DefaultBackpackWidth, Profile.DefaultBackpackHeight),
+            };
+            return raw;
+        }
+
+        private static JObject V7ToV8(JObject raw)
+        {
+            // Every character gets a personal room, starting at level 1.
+            raw["schema_version"] = 8;
+            raw["personal_room"] = new JObject
+            {
+                ["level"] = PersonalRoom.DefaultLevel,
             };
             return raw;
         }

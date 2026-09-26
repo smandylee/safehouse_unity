@@ -1,0 +1,91 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Safehouse.Core;
+
+namespace Safehouse.Data
+{
+    /// <summary>
+    /// An account as JSON, and back. The C# side of the Python account.json serialization. Reads are strict:
+    /// a number must be an integer, and unknown keys are ignored and dropped on the next write.
+    /// </summary>
+    public static class AccountSerializer
+    {
+        /// <summary>Parses account text into a JSON tree using the same strict rules as profile saves.</summary>
+        public static JToken Parse(string text) => ProfileSerializer.Parse(text);
+
+        /// <summary>The bytes to write: 2-space indent, LF, no BOM, one trailing newline.</summary>
+        public static byte[] Serialize(Account account) =>
+            new UTF8Encoding(false).GetBytes(ToJson(account).ToString(Formatting.Indented).Replace("\r\n", "\n") + "\n");
+
+        public static JObject ToJson(Account account)
+        {
+            return new JObject
+            {
+                ["schema_version"] = Account.SchemaVersion,
+                ["character_order"] = new JArray(account.CharacterOrder),
+                ["hideout"] = new JObject
+                {
+                    ["facilities"] = new JArray(account.Hideout.Facilities.Select(facility => new JObject
+                    {
+                        ["facility_id"] = facility.FacilityId,
+                        ["level"] = facility.Level,
+                    })),
+                },
+            };
+        }
+
+        public static Account FromJson(JToken document)
+        {
+            var root = Obj(document, "Account");
+            if (root["schema_version"] == null || root["schema_version"].Type != JTokenType.Integer
+                || root["schema_version"].Value<long>() != Account.SchemaVersion)
+            {
+                throw new ValidationException($"Unsupported account schema: {root["schema_version"]}.");
+            }
+
+            var hideout = Obj(root["hideout"], "hideout");
+            var facilities = Arr(hideout["facilities"], "facilities").Select(ReadFacility);
+            var characterOrder = Arr(root["character_order"], "character_order").Select(token => Str(token, "character_id"));
+
+            return new Account(new Hideout(facilities), characterOrder);
+        }
+
+        private static Facility ReadFacility(JToken token)
+        {
+            var facility = Obj(token, "Each facility");
+            return new Facility(Str(facility["facility_id"], "facility_id"),
+                Int(facility["level"], "level"));
+        }
+
+        private static JObject Obj(JToken token, string label) =>
+            token as JObject ?? throw new ValidationException($"{label} must be an object.");
+
+        private static JArray Arr(JToken token, string label) =>
+            token as JArray ?? throw new ValidationException($"{label} must be a list.");
+
+        private static string Str(JToken token, string label) =>
+            token != null && token.Type == JTokenType.String
+                ? token.Value<string>()
+                : throw new ValidationException($"{label} must be text.");
+
+        private static int Int(JToken token, string label)
+        {
+            if (token == null || token.Type != JTokenType.Integer)
+            {
+                throw new ValidationException($"{label} must be an integer.");
+            }
+
+            try
+            {
+                return token.Value<int>();
+            }
+            catch (System.OverflowException)
+            {
+                throw new ValidationException($"{label} is out of range.");
+            }
+        }
+    }
+}

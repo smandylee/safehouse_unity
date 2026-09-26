@@ -10,14 +10,18 @@ namespace Safehouse.Data
     /// it (which saves it), and only then does it become the current one. A save that fails throws and leaves
     /// <see cref="Profile"/> as it was, so the screen and the file cannot disagree - the same guarantee the
     /// Python InventorySession gives. Also holds the data-folder lock for as long as the game has it open.
+    /// The shared account (hideout + character order) is loaded alongside the character.
     /// </summary>
     public sealed class CharacterSession : IDisposable
     {
         private DataDirectoryLock _lock;
 
-        private CharacterSession(ProfileRepository repository, Profile profile, DataDirectoryLock folderLock)
+        private CharacterSession(ProfileRepository repository, AccountRepository accountRepository, Account account,
+            Profile profile, DataDirectoryLock folderLock)
         {
             Repository = repository;
+            AccountRepository = accountRepository;
+            Account = account;
             Profile = profile;
             _lock = folderLock;
         }
@@ -25,17 +29,21 @@ namespace Safehouse.Data
         /// <summary>Null for an <see cref="Unsaved"/> session.</summary>
         public ProfileRepository Repository { get; }
 
+        /// <summary>Null for an <see cref="Unsaved"/> session.</summary>
+        public AccountRepository AccountRepository { get; }
+
+        public Account Account { get; private set; }
         public Profile Profile { get; private set; }
 
         /// <summary>False when nothing is being written: the changes exist only until the game closes.</summary>
         public bool Saves => Repository != null;
 
         /// <summary>
-        /// Opens the data folder (locking it against a second copy of the game) and a character: the one with
-        /// <paramref name="preferredId"/> if it exists, otherwise the first by name. A folder with no characters
-        /// gets <paramref name="firstCharacter"/>, saved. Problems with individual files, and any restore from a
-        /// backup, are added to <paramref name="notices"/>; throws <see cref="StorageException"/> if the folder is
-        /// in use or the first character cannot be saved.
+        /// Opens the data folder (locking it against a second copy of the game), the account, and a character:
+        /// the one with <paramref name="preferredId"/> if it exists, otherwise the first by name. A folder with
+        /// no account gets a default one; a folder with no characters gets <paramref name="firstCharacter"/>, saved.
+        /// Problems with individual files, and any restore from a backup, are added to <paramref name="notices"/>;
+        /// throws <see cref="StorageException"/> if the folder is in use or the first character cannot be saved.
         /// </summary>
         public static CharacterSession Open(IReadOnlyDictionary<string, ItemDefinition> catalog, string folder,
             Func<Profile> firstCharacter, string preferredId, ICollection<string> notices)
@@ -43,6 +51,11 @@ namespace Safehouse.Data
             var folderLock = DataDirectoryLock.Acquire(folder);
             try
             {
+                var accountRepository = new AccountRepository(folder);
+                var account = accountRepository.Exists
+                    ? accountRepository.Load(notices)
+                    : accountRepository.CreateDefault();
+
                 var repository = new ProfileRepository(folder, catalog);
                 var (profiles, problems) = repository.List(notices);
                 foreach (var problem in problems)
@@ -55,9 +68,15 @@ namespace Safehouse.Data
                 {
                     chosen = firstCharacter();
                     repository.Save(chosen);
+
+                    if (!account.CharacterOrder.Contains(chosen.ProfileId))
+                    {
+                        account = account.With(characterOrder: account.CharacterOrder.Concat(new[] { chosen.ProfileId }));
+                        accountRepository.Save(account);
+                    }
                 }
 
-                return new CharacterSession(repository, chosen, folderLock);
+                return new CharacterSession(repository, accountRepository, account, chosen, folderLock);
             }
             catch
             {
@@ -67,7 +86,8 @@ namespace Safehouse.Data
         }
 
         /// <summary>A session that never touches the disk, for when the real one cannot be opened.</summary>
-        public static CharacterSession Unsaved(Profile profile) => new CharacterSession(null, profile, null);
+        public static CharacterSession Unsaved(Profile profile, Account account = null) =>
+            new CharacterSession(null, null, account ?? Account.CreateNew(), profile, null);
 
         /// <summary>Saves the candidate and makes it the current profile. Throws, changing nothing, if it cannot be saved.</summary>
         public void Commit(Profile candidate)
@@ -79,6 +99,13 @@ namespace Safehouse.Data
 
             Repository?.Save(candidate);
             Profile = candidate;
+        }
+
+        /// <summary>Saves the candidate and makes it the current account. Throws, changing nothing, if it cannot be saved.</summary>
+        public void Commit(Account candidate)
+        {
+            AccountRepository?.Save(candidate);
+            Account = candidate;
         }
 
         /// <summary>Opens another character. The current one is untouched if that fails.</summary>

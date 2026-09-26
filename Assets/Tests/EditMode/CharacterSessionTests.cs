@@ -64,6 +64,9 @@ namespace Safehouse.Tests
             Assert.Greater(session.Profile.Stash.Stash.Count, 0);
             Assert.AreEqual((10, 20), (session.Profile.Stash.StashWidth, session.Profile.Stash.StashHeight));
             Assert.IsTrue(session.Repository.Exists(SampleCharacter.ProfileId), "it is a real, saved character");
+            Assert.IsTrue(session.AccountRepository.Exists, "a default account is created with the first character");
+            Assert.AreEqual(1, session.Account.CharacterOrder.Count);
+            Assert.AreEqual(session.Profile.ProfileId, session.Account.CharacterOrder[0]);
         }
 
         [Test]
@@ -158,6 +161,7 @@ namespace Safehouse.Tests
             var session = CharacterSession.Unsaved(SampleCharacter.Build(Catalog));
 
             session.Commit(session.Profile.With(money: 5));
+            session.Commit(Account.CreateNew());
 
             Assert.IsFalse(session.Saves);
             Assert.AreEqual(5, session.Profile.Money);

@@ -81,6 +81,10 @@ namespace Safehouse.Data
                     ["rig"] = CarriedGrid(profile.Rig),
                     ["backpack"] = CarriedGrid(profile.Backpack),
                 },
+                ["personal_room"] = new JObject
+                {
+                    ["level"] = profile.Room.Level,
+                },
             };
         }
 
@@ -101,7 +105,7 @@ namespace Safehouse.Data
         }));
 
         /// <summary>
-        /// Reads a current-schema (7) profile. Older documents go through <see cref="ProfileMigrations.Upgrade"/>
+        /// Reads a current-schema (8) profile. Older documents go through <see cref="ProfileMigrations.Upgrade"/>
         /// first; anything else - including a newer schema - is refused rather than guessed at.
         /// </summary>
         public static Profile FromJson(JToken document)
@@ -131,8 +135,14 @@ namespace Safehouse.Data
                 Obj(root["body_parts"], "body_parts").Properties().ToDictionary(p => p.Name, p => Int(p.Value, p.Name)),
                 ReadConditions(root["conditions"]),
                 Obj(root["bio"], "bio").Properties().ToDictionary(p => p.Name, p => Str(p.Value, p.Name)),
-                Obj(root["abilities"], "abilities").Properties().ToDictionary(p => p.Name, p => Int(p.Value, p.Name)));
+                Obj(root["abilities"], "abilities").Properties().ToDictionary(p => p.Name, p => Int(p.Value, p.Name)),
+                ReadRoom(root["personal_room"]));
         }
+
+        private static PersonalRoom ReadRoom(JToken token) =>
+            token == null || token.Type == JTokenType.Null
+                ? PersonalRoom.Default
+                : new PersonalRoom(Int(Obj(token, "personal_room")["level"], "personal_room level"));
 
         private static StashGrid ReadGrid(JToken width, JToken height, JToken items, string label)
         {

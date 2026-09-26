@@ -6,14 +6,15 @@ namespace Safehouse.Core
     /// <summary>
     /// One character, exactly as saved. Immutable: a change builds a new profile (see <see cref="With"/>),
     /// so a change that fails to save can never leave a half-changed one behind. The C# side of the Python
-    /// models.Profile, plus the rig and backpack grids, which the Python save has no concept of (schema 7).
+    /// models.Profile, plus the rig and backpack grids, which the Python save has no concept of (schema 7),
+    /// and the personal room level (schema 8).
     ///
     /// The constructor checks every field on its own; whether the items exist in the catalog and fit their
     /// grids needs the catalog, and is <see cref="ProfileRules.ValidateAgainstCatalog"/>.
     /// </summary>
     public sealed class Profile
     {
-        public const int SchemaVersion = 7;
+        public const int SchemaVersion = 8;
 
         public const int DefaultMoney = 500_000;
         public const int DefaultStashWidth = 10;
@@ -32,7 +33,8 @@ namespace Safehouse.Core
             IReadOnlyDictionary<string, int> bodyParts,
             IReadOnlyDictionary<string, IReadOnlyList<string>> conditions,
             IReadOnlyDictionary<string, string> bio,
-            IReadOnlyDictionary<string, int> abilities)
+            IReadOnlyDictionary<string, int> abilities,
+            PersonalRoom room = null)
         {
             ProfileId = Validate.Identifier(profileId, "profile_id", instance: true);
             DisplayName = Validate.Text(displayName, "Character name", CharacterSheet.MaxNameLength).Trim();
@@ -68,6 +70,7 @@ namespace Safehouse.Core
             Conditions = CheckConditions(conditions);
             Bio = CheckBio(bio);
             Abilities = CheckAbilities(abilities);
+            Room = room ?? PersonalRoom.Default;
         }
 
         public string ProfileId { get; }
@@ -83,6 +86,7 @@ namespace Safehouse.Core
         public IReadOnlyDictionary<string, IReadOnlyList<string>> Conditions { get; }
         public IReadOnlyDictionary<string, string> Bio { get; }
         public IReadOnlyDictionary<string, int> Abilities { get; }
+        public PersonalRoom Room { get; }
 
         /// <summary>Total hit points: derived from the body parts, never stored.</summary>
         public int Health => BodyParts.Values.Sum();
@@ -103,11 +107,11 @@ namespace Safehouse.Core
         /// <summary>A copy with some parts replaced; anything left out is kept.</summary>
         public Profile With(StashGrid stash = null, StashGrid rig = null, StashGrid backpack = null,
             Loadout loadout = null, int? money = null, string status = null,
-            IEnumerable<TraderState> traders = null) =>
+            IEnumerable<TraderState> traders = null, PersonalRoom room = null) =>
             new Profile(ProfileId, DisplayName, money ?? Money,
                 stash ?? Stash, rig ?? Rig, backpack ?? Backpack,
                 traders ?? Traders, status ?? Status, loadout ?? Loadout,
-                BodyParts, Conditions, Bio, Abilities);
+                BodyParts, Conditions, Bio, Abilities, room ?? Room);
 
         private static IReadOnlyDictionary<string, int> CheckBodyParts(IReadOnlyDictionary<string, int> parts)
         {

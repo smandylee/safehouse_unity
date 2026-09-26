@@ -51,6 +51,7 @@ namespace Safehouse.Tests
             Assert.AreEqual((10, 20), (profile.Stash.StashWidth, profile.Stash.StashHeight));
             Assert.AreEqual((6, 4), (profile.Rig.StashWidth, profile.Rig.StashHeight));
             Assert.IsTrue(profile.Abilities.Values.All(score => score == 5));
+            Assert.AreEqual(1, profile.Room.Level);
         }
 
         [Test]
@@ -79,7 +80,7 @@ namespace Safehouse.Tests
             var text = Encoding.UTF8.GetString(bytes);
 
             Assert.AreNotEqual(0xEF, bytes[0], "no BOM");
-            StringAssert.StartsWith("{\n  \"schema_version\": 7,\n  \"profile_id\": ", text);
+            StringAssert.StartsWith("{\n  \"schema_version\": 8,\n  \"profile_id\": ", text);
             StringAssert.EndsWith("}\n", text);
             StringAssert.DoesNotContain("\r", text);
         }
@@ -219,13 +220,14 @@ namespace Safehouse.Tests
             var upgraded = ProfileMigrations.Upgrade(V1Document());
             var profile = ProfileSerializer.FromJson(upgraded);
 
-            Assert.AreEqual(7, upgraded["schema_version"].Value<int>());
+            Assert.AreEqual(8, upgraded["schema_version"].Value<int>());
             Assert.AreEqual("Old Save", profile.DisplayName);
             Assert.AreEqual("cpu-fan", profile.Stash.Stash.Single().ItemId, "the old test item is renamed");
             Assert.AreEqual((3, 4), (profile.Stash.Stash.Single().X, profile.Stash.Stash.Single().Y));
             Assert.AreEqual(440, profile.Health);
             Assert.AreEqual("active", profile.Status);
             Assert.AreEqual(0, profile.Rig.Stash.Count, "the rig and backpack start empty");
+            Assert.AreEqual(1, profile.Room.Level, "the personal room starts at level 1");
         }
 
         [Test]
