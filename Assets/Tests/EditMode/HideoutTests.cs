@@ -17,12 +17,12 @@ namespace Safehouse.Tests
         private static string NewId() => (++_next).ToString("x32");
 
         [Test]
-        public void ANewHideoutHasTheFourSharedFacilitiesAtLevelOne()
+        public void ANewHideoutHasEveryTarkovSharedFacilityAtLevelOne()
         {
             var hideout = Hideout.CreateNew();
 
-            CollectionAssert.AreEquivalent(new[] { "generator", "workbench", "medstation", "rest_space" },
-                hideout.Facilities.Select(f => f.FacilityId));
+            CollectionAssert.AreEquivalent(Hideout.SharedFacilityIds, hideout.Facilities.Select(f => f.FacilityId));
+            Assert.AreEqual(19, hideout.Facilities.Count, "every Tarkov shared facility except the personal stash");
             Assert.IsTrue(hideout.Facilities.All(f => f.Level == 1));
         }
 

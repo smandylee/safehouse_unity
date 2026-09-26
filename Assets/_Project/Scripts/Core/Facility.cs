@@ -26,9 +26,31 @@ namespace Safehouse.Core
     /// </summary>
     public sealed class Hideout
     {
+        /// <summary>
+        /// Every shared hideout module from Escape from Tarkov. The Stash is excluded because this project
+        /// models stash size through each character's private <see cref="PersonalRoom"/> instead.
+        /// </summary>
         public static readonly IReadOnlyList<string> SharedFacilityIds = new[]
         {
-            "generator", "workbench", "medstation", "rest_space",
+            "air_filtering_unit",
+            "bitcoin_farm",
+            "booze_generator",
+            "generator",
+            "heating",
+            "illumination",
+            "intelligence_center",
+            "lavatory",
+            "library",
+            "medstation",
+            "nutrition_unit",
+            "rest_space",
+            "scav_case",
+            "security",
+            "shooting_range",
+            "solar_power",
+            "vents",
+            "water_collector",
+            "workbench",
         };
 
         public Hideout(IEnumerable<Facility> facilities)
