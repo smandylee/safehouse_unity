@@ -30,8 +30,10 @@ namespace Safehouse.UI
 
         private readonly string _folder;
         private readonly string _artFolder;
+        private readonly string _traderFolder;
         private readonly Dictionary<string, Texture2D> _loaded = new Dictionary<string, Texture2D>();
         private readonly Dictionary<string, Texture2D> _loadedArt = new Dictionary<string, Texture2D>();
+        private readonly Dictionary<string, Texture2D> _loadedTraders = new Dictionary<string, Texture2D>();
 
         /// <param name="rootFolder">The icon_cache folder; <see cref="DefaultFolder"/> when omitted.</param>
         public IconLibrary(string rootFolder = null)
@@ -39,6 +41,7 @@ namespace Safehouse.UI
             var root = rootFolder ?? DefaultFolder;
             _folder = Path.Combine(root, Size.ToString());
             _artFolder = Path.Combine(root, "art");
+            _traderFolder = Path.Combine(root, "traders");
         }
 
         /// <summary>
@@ -84,6 +87,9 @@ namespace Safehouse.UI
 
         /// <summary>The item's text-free art at its own proportions, or null when there is none.</summary>
         public Texture2D GetArt(string itemId) => Cached(_loadedArt, _artFolder, itemId);
+
+        /// <summary>A trader's portrait (<c>icon_cache/traders/&lt;trader_id&gt;.png</c>, made by tools/import_art.py --traders), or null.</summary>
+        public Texture2D GetTrader(string traderId) => Cached(_loadedTraders, _traderFolder, traderId);
 
         private static Texture2D Cached(Dictionary<string, Texture2D> cache, string folder, string itemId)
         {

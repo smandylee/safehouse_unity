@@ -234,6 +234,96 @@
 #stash-scroll .unity-scroller__low-button,
 #stash-scroll .unity-scroller__high-button { display: none; }
 
+/* ---- TRADERS screen ---- */
+
+.trader-btn {
+    flex-direction: row;
+    align-items: center;
+    height: 40px;
+    margin: 0 8px 0 0;
+    padding: 0 14px 0 4px;
+    background-color: rgb(25, 29, 35);
+    border-width: 1px;
+    border-color: rgb(38, 45, 54);
+    border-radius: 0;
+    color: rgb(154, 165, 177);
+}
+.trader-btn:hover { border-color: rgb(90, 102, 116); color: rgb(230, 233, 236); }
+.trader-btn-active { border-color: rgb(217, 164, 65); color: rgb(217, 164, 65); }
+.trader-btn-face { width: 32px; height: 32px; margin-right: 8px; }
+.trader-btn-name { font-size: 12px; letter-spacing: 1.4px; }
+
+.trader-portrait {
+    width: 104px;
+    height: 104px;
+    flex-shrink: 0;
+    border-width: 1px;
+    border-color: rgb(59, 68, 80);
+    background-color: rgb(17, 20, 23);
+}
+
+.offer-header {
+    flex-direction: row;
+    align-items: center;
+    height: 22px;
+    flex-shrink: 0;
+    padding-right: 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(36, 43, 51);
+}
+.offer-row {
+    flex-direction: row;
+    align-items: center;
+    height: 44px;
+    padding: 0 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(30, 35, 42);
+}
+.offer-icon { width: 40px; height: 36px; margin-right: 8px; flex-shrink: 0; }
+.offer-col-name { flex-grow: 1; font-size: 12px; overflow: hidden; white-space: nowrap; }
+.offer-col-size { width: 54px; -unity-text-align: middle-right; font-size: 11px; }
+.offer-col-price { width: 96px; -unity-text-align: middle-right; font-size: 12px; color: rgb(217, 164, 65); }
+.offer-col-level { width: 44px; -unity-text-align: middle-right; font-size: 11px; }
+.offer-col-stock { width: 60px; -unity-text-align: middle-right; font-size: 11px; }
+.offer-unavailable { opacity: 0.4; }
+
+/* The list's own selection colour, and the dark fields, replace Unity's light default skin. */
+#offer-list { background-color: rgb(17, 20, 23); border-width: 1px; border-color: rgb(36, 43, 51); }
+#offer-list .unity-collection-view__item--selected { background-color: rgb(46, 52, 62); }
+#offer-list .unity-collection-view__item:hover { background-color: rgb(32, 37, 45); }
+#offer-list .unity-scroller { background-color: rgb(17, 20, 23); }
+#offer-list .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }
+#offer-list .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
+#offer-list .unity-scroller__low-button,
+#offer-list .unity-scroller__high-button { display: none; }
+
+#field-trade-search .unity-base-text-field__input,
+#field-standing .unity-base-text-field__input,
+#field-category .unity-base-popup-field__input {
+    background-color: rgb(20, 23, 27);
+    border-width: 1px;
+    border-color: rgb(42, 48, 56);
+    border-radius: 0;
+    color: rgb(230, 233, 236);
+    font-size: 12px;
+}
+#field-category .unity-base-popup-field__text { color: rgb(230, 233, 236); }
+
+#trade-stash-scroll .unity-scroller { background-color: rgb(17, 20, 23); }
+#trade-stash-scroll .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }
+#trade-stash-scroll .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
+#trade-stash-scroll .unity-scroller__low-button,
+#trade-stash-scroll .unity-scroller__high-button { display: none; }
+
+.trade-status {
+    height: 20px;
+    margin-top: 8px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: rgb(154, 165, 177);
+}
+.trade-status-error { color: rgb(200, 80, 60); }
+
 /* ---- typography ---- */
 
 .text-heading {

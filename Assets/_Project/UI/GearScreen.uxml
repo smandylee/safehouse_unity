@@ -22,7 +22,7 @@
             <ui:Button text="CHARACTER" class="navtab" />
             <ui:Button text="GEAR" name="navtab-gear" class="navtab navtab-active" />
             <ui:Button text="HIDEOUT" class="navtab" />
-            <ui:Button text="TRADERS" class="navtab" />
+            <ui:Button text="TRADERS" name="navtab-traders" class="navtab" />
             <ui:Button text="SCAVENGE" class="navtab" />
             <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
             <ui:VisualElement style="flex-grow: 1;" />

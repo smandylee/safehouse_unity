@@ -102,10 +102,11 @@ namespace Safehouse.Core
 
         /// <summary>A copy with some parts replaced; anything left out is kept.</summary>
         public Profile With(StashGrid stash = null, StashGrid rig = null, StashGrid backpack = null,
-            Loadout loadout = null, int? money = null, string status = null) =>
+            Loadout loadout = null, int? money = null, string status = null,
+            IEnumerable<TraderState> traders = null) =>
             new Profile(ProfileId, DisplayName, money ?? Money,
                 stash ?? Stash, rig ?? Rig, backpack ?? Backpack,
-                Traders, status ?? Status, loadout ?? Loadout,
+                traders ?? Traders, status ?? Status, loadout ?? Loadout,
                 BodyParts, Conditions, Bio, Abilities);
 
         private static IReadOnlyDictionary<string, int> CheckBodyParts(IReadOnlyDictionary<string, int> parts)

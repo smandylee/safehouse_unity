@@ -5,6 +5,7 @@ Optional development step: the game works without it and never downloads anythin
     py -3 tools/import_art.py                 download art for every wearable item not in icon_cache/art yet
     py -3 tools/import_art.py --refresh       download and convert all of it again
     py -3 tools/import_art.py --all           every item in the catalog, not just wearable gear
+    py -3 tools/import_art.py --traders       the trader portraits (one 128 px face each) for the TRADERS screen
 
 The stash icons in icon_cache/48 are the game's inventory images, which have the item's short name
 (LV-119, AK-12, ...) baked in at a fixed pixel size. That is fine at their native 48 px per cell, but a
@@ -100,6 +101,50 @@ def convert(image: bytes) -> bytes:
     return out.getvalue()
 
 
+DEFAULT_TRADER_OUTPUT = PROJECT / "icon_cache" / "traders"
+
+
+def load_trader_ids(snapshot: Path) -> dict[str, str]:
+    """Trader slug (our trader_id, which is the game's normalizedName) -> tarkov.dev id."""
+    with gzip.open(snapshot, "rt", encoding="utf-8") as handle:
+        return {row["normalizedName"]: row["id"] for row in json.load(handle)["traders"]}
+
+
+def import_traders(snapshot: Path, output: Path, refresh: bool) -> int:
+    """
+    Downloads each trader in traders.json a portrait: https://assets.tarkov.dev/<id>.webp, already 128 px square and
+    with no text on it, so it is only converted to PNG (Unity cannot read WebP). Saved as <trader_id>.png.
+    """
+    document = json.loads((DATA / "traders.json").read_text(encoding="utf-8-sig"))
+    ids = load_trader_ids(snapshot)
+    output.mkdir(parents=True, exist_ok=True)
+    failed = 0
+    for row in document["traders"]:
+        slug = row["trader_id"]
+        target = output / f"{slug}.png"
+        if target.exists() and not refresh:
+            continue
+        game_id = ids.get(slug)
+        if game_id is None:
+            print(f"  {slug}: no tarkov.dev id in the snapshot")
+            failed += 1
+            continue
+        try:
+            data = fetch(f"https://assets.tarkov.dev/{game_id}.webp")
+            if data is None:
+                print(f"  {slug}: no portrait on tarkov.dev")
+                failed += 1
+                continue
+            temp = target.with_suffix(".tmp")
+            temp.write_bytes(convert(data))
+            temp.replace(target)
+            print(f"  {slug}: ok")
+        except Exception as error:  # one trader must not stop the others
+            print(f"  {slug}: failed: {type(error).__name__}: {error}")
+            failed += 1
+    return 1 if failed else 0
+
+
 def import_one(job: tuple[str, str], output: Path) -> tuple[str, str]:
     item_id, tarkov_id = job
     try:
@@ -122,6 +167,7 @@ def main() -> int:
     parser.add_argument("--refresh", action="store_true", help="Download art that already exists again")
     parser.add_argument("--all", action="store_true", help="Every catalog item, not just wearable gear")
     parser.add_argument("--only", nargs="*", metavar="ITEM_ID", help="Just these item ids (for trying it out)")
+    parser.add_argument("--traders", action="store_true", help="Download the trader portraits instead of item art")
     args = parser.parse_args()
 
     try:
@@ -133,6 +179,10 @@ def main() -> int:
         print(f"Snapshot not found: {args.snapshot}\nPass the Python project's data/source/tarkov_snapshot.json.gz "
               "with --snapshot.", file=sys.stderr)
         return 2
+
+    if args.traders:
+        output = DEFAULT_TRADER_OUTPUT if args.output == DEFAULT_OUTPUT else args.output
+        return import_traders(args.snapshot, output, args.refresh)
 
     catalog = load_catalog()
     tarkov_ids = load_tarkov_ids(args.snapshot)

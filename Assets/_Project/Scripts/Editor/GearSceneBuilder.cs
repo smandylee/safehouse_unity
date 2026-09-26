@@ -17,6 +17,7 @@ namespace Safehouse.Editor
         private const string UiFolder = "Assets/_Project/UI";
         private const string PanelSettingsPath = UiFolder + "/GearPanelSettings.asset";
         private const string UxmlPath = UiFolder + "/GearScreen.uxml";
+        private const string TradersUxmlPath = UiFolder + "/TradersScreen.uxml";
         private const string ScenePath = "Assets/_Project/Scenes/Gear.unity";
 
         [MenuItem("Safehouse/Build Gear Scene")]
@@ -58,6 +59,13 @@ namespace Safehouse.Editor
                 return;
             }
 
+            var tradersUxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(TradersUxmlPath);
+            if (tradersUxml == null)
+            {
+                Debug.LogError($"GearSceneBuilder: no VisualTreeAsset at {TradersUxmlPath}.");
+                return;
+            }
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // UI Toolkit's Screen Space - Overlay panel (our PanelSettings mode) draws straight to
@@ -76,6 +84,14 @@ namespace Safehouse.Editor
             document.panelSettings = panelSettings;
             document.visualTreeAsset = uxml;
             host.AddComponent<GearScreenController>();
+
+            // The TRADERS screen is a second document on the same panel. It starts hidden; the top bar's tabs
+            // (ScreenNavigator) switch between the two.
+            var tradersHost = new GameObject("TradersScreen");
+            var tradersDocument = tradersHost.AddComponent<UIDocument>();
+            tradersDocument.panelSettings = panelSettings;
+            tradersDocument.visualTreeAsset = tradersUxml;
+            tradersHost.AddComponent<TradersScreenController>();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();

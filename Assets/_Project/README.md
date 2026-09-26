@@ -79,6 +79,7 @@ input to Core.
 | `models.Profile`, `TraderState`, `config` constants | `Core/Profile.cs`, `Core/ProfileParts.cs`, `Core/ProfileRules.cs` | Schema 7 = the Python v6 profile plus `carried` (rig and backpack grids). Trader state is kept and written back untouched. |
 | `storage.ProfileRepository`, `migrations.py` | `Data/ProfileRepository.cs`, `Data/ProfileSerializer.cs`, `Data/ProfileMigrations.cs`, `Data/Storage.cs` | Atomic writes, `.bak` of the previous save, restore from backup with the bad file kept in `recovery/`, migrations v1-v6 step for step, plus 6 to 7. |
 | `session.InventorySession` (commit/rollback) | `Data/CharacterSession.cs` | A change is saved first and only then becomes the open character; a failed save changes nothing. |
+| `traders.py`, `session.buy` / `sell` / `set_standing` | `Core/Traders.cs`, `Core/TradingRules.cs`, `Data/TraderLoader.cs` | Loyalty (needs both spending and standing), per-character stock that restocks in fixed UTC windows, buy/sell as one save, the no-arbitrage check across all traders. The clock is passed in, never read. No barter or quest locks - the Python build has none either. |
 
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
@@ -91,8 +92,8 @@ https://claude.ai/artifact/Y8ycmAv5F6yfN76Mr4LbDB - open that link and `UI/Theme
 if a colour or spacing value ever needs to change; keep them in sync by eye.
 
 - `UI/GearScreen.uxml` + `UI/Theme.uss` - the screen's layout and styling. The STASH panel, CARRIED's
-  RIG / BACKPACK grids and the seven LOADOUT slot cards are wired to real data (still sample
-  contents, see below); only the body-part health and ability panels are hand-written.
+  RIG / BACKPACK grids and the seven LOADOUT slot cards are wired to the open character; only the
+  body-part health and ability panels are hand-written.
 - `Scripts/UI/GearScreenController.cs` - loads the shipped catalog (`CatalogLoader`) and the open character
   (`CharacterSession`; a new data folder starts with the sample one, `Scripts/UI/Sample/`), and renders one
   cell per item it holds. Clicking a cell (`Button.clicked`) updates the detail panel.
@@ -180,6 +181,25 @@ that and is the same license, but isn't wired in yet since nothing on screen nee
 in the same way (copy the weights you need into `UI/Fonts/NotoSerifKR/`, add a `.font-*` class) once
 a screen has to render Korean text.
 
+## The TRADERS screen (`UI/TradersScreen.uxml`, `Scripts/UI/TradersScreenController.cs`)
+
+A second UI document on the same panel as GEAR (`GearSceneBuilder` adds both; re-run **Safehouse > Build Gear
+Scene** after pulling changes to the UXML or the scene). `ScreenNavigator` shows one and hides the other; the top
+bar's GEAR / TRADERS tabs call it. Both screens show the same open character (the GEAR screen holds the
+`CharacterSession`), so a purchase made here is on the GEAR screen's stash and money straight away.
+
+Pick a trader (portrait, loyalty level, what the next level needs, the standing adjustment), search and filter the
+offers, and BUY; select an item in the stash on the right to see what the trader pays, and SELL (the button asks
+once more before selling). Offers the character cannot buy are greyed, and BUY says why. Every trade is built by
+`TradingRules` and committed - saved - before the screen changes, so one that cannot be saved does not happen. A
+downed character cannot trade, and one away on an expedition cannot either (the Python rules).
+
+Standing is only raised by hand for now ("Standing (GM adjustment)"), because the quests that will raise it do not
+exist yet - and the higher loyalty levels need standing, so without it only level 1 is ever open.
+
+Trader portraits are game art like the item icons: `py -3 tools/import_art.py --traders` downloads them into
+`icon_cache/traders/` (git-ignored, private use). Without them the trader buttons are text only.
+
 ## Saves
 
 The game keeps its **own** data folder, apart from the Python build's, so nothing here can touch a campaign
@@ -210,9 +230,6 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
   there as it's needed (data import from the Tarkov snapshot, build scripts).
-- The stash, rig, backpack and worn gear are sample items (`Sample/SampleStash.cs`,
-  `Sample/SampleLoadout.cs`) rather than a real character's, and nothing is persisted - that needs
-  the save system (below) ported first. The body-part health and abilities panels are still static.
 - The RIG / BACKPACK grids are a fixed 6x4 / 6x8, whatever rig and backpack are worn. In the data a
   rig or backpack's `capacity` is its cell count (LV-119 = 24, 6Sh118 = 48), so the grids should
   eventually be sized from the worn item; that also has to decide what happens to items in cells that
@@ -220,7 +237,7 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
 - The account (`account.json`: the character order and the shared hideout), settings, and expeditions are not
-  ported; only characters are. Trader state is carried through unchanged but nothing reads it yet.
+  ported; only characters and trader states are.
 - No screen creates or deletes a character (the repository can), and there is no way yet to raise the stash
   size - that is a hideout upgrade. A dragged item does not auto-scroll a long stash.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.

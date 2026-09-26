@@ -1,0 +1,111 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:sh="Safehouse.UI.Chrome">
+    <ui:Style src="Theme.uss" />
+
+    <!--
+      The TRADERS screen: pick a trader, see how far the character has come with them, buy from what they offer,
+      and sell things from the stash. Laid out in exact pixels against the same 1440x900 artboard as the GEAR
+      screen (gear-root is the shared fixed-size class), and filled in by TradersScreenController.
+
+      No gap/flex-gap: spacing between siblings is an explicit margin on each child.
+    -->
+    <ui:VisualElement name="traders-root" class="gear-root" style="flex-direction: column;">
+
+        <!-- TOP BAR: the same tabs as the GEAR screen; TRADERS is the active one here -->
+        <ui:VisualElement class="bar bar-top">
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 22px;">
+                <ui:Label text="SAFEHOUSE" class="text-heading" />
+            </ui:VisualElement>
+            <ui:Button text="CHARACTER" class="navtab" />
+            <ui:Button text="GEAR" name="navtab-gear" class="navtab" />
+            <ui:Button text="HIDEOUT" class="navtab" />
+            <ui:Button text="TRADERS" name="navtab-traders" class="navtab navtab-active" />
+            <ui:Button text="SCAVENGE" class="navtab" />
+            <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end; margin-right: 18px;">
+                <ui:Label text="ROUBLES" class="text-label" style="margin-right: 7px;" />
+                <ui:Label name="label-roubles" text="—" class="text-mono text-accent" />
+            </ui:VisualElement>
+            <ui:VisualElement class="divider-v" style="height: 22px; margin-right: 18px;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end;">
+                <ui:Label text="RESTOCK IN" class="text-label" style="margin-right: 7px;" />
+                <ui:Label name="label-restock" text="—" class="text-mono" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement style="flex-grow: 1; flex-direction: column; padding: 14px 24px;">
+
+            <!-- one button per trader, filled in code -->
+            <ui:VisualElement name="trader-picker" style="flex-direction: row; margin-bottom: 12px; flex-shrink: 0;" />
+
+            <!-- the chosen trader and where the character stands with them -->
+            <sh:FacetedPanel style="flex-direction: row; padding: 12px; margin-bottom: 12px; height: 132px; flex-shrink: 0;">
+                <ui:Image name="trader-portrait" class="trader-portrait" />
+                <ui:VisualElement style="flex-grow: 1; margin-left: 14px;">
+                    <ui:Label name="trader-name" text="" class="text-heading" style="margin-bottom: 4px;" />
+                    <ui:Label name="trader-description" text="" class="text-muted" style="font-size: 11px; white-space: normal; margin-bottom: 8px;" />
+                    <ui:Label name="trader-loyalty" text="" class="text-mono" style="font-size: 12px; margin-bottom: 3px;" />
+                    <ui:Label name="trader-next" text="" class="text-mono text-muted" style="font-size: 11px;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="width: 250px; justify-content: center;">
+                    <ui:Label text="STANDING (GM ADJUSTMENT)" class="text-label" style="margin-bottom: 6px;" />
+                    <ui:VisualElement style="flex-direction: row; align-items: center;">
+                        <ui:IntegerField name="field-standing" value="0" style="width: 96px; margin-right: 8px;" />
+                        <ui:Button name="button-standing" text="SET" class="btn btn-outline" style="font-size: 11px; height: 26px;" />
+                    </ui:VisualElement>
+                    <ui:Label text="-1000 to 1000. Quests will raise this later." class="text-muted" style="font-size: 9px; margin-top: 5px; white-space: normal;" />
+                </ui:VisualElement>
+            </sh:FacetedPanel>
+
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; min-height: 0;">
+
+                <!-- OFFERS -->
+                <sh:FacetedPanel style="width: 700px; flex-shrink: 0; flex-direction: column; padding: 14px; margin-right: 16px;">
+                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 10px;">
+                        <ui:Label text="OFFERS" class="text-section" style="margin-right: 10px;" />
+                        <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
+                        <ui:Label name="label-offer-count" text="" class="text-mono text-muted" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-direction: row; margin-bottom: 8px; flex-shrink: 0;">
+                        <ui:TextField name="field-trade-search" placeholder-text="Search offers" style="flex-grow: 1; margin-right: 8px;" />
+                        <ui:DropdownField name="field-category" style="width: 200px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="offer-header">
+                        <ui:Label text="ITEM" class="text-label" style="flex-grow: 1; margin-left: 48px;" />
+                        <ui:Label text="SIZE" class="text-label offer-col-size" />
+                        <ui:Label text="PRICE" class="text-label offer-col-price" />
+                        <ui:Label text="LL" class="text-label offer-col-level" />
+                        <ui:Label text="STOCK" class="text-label offer-col-stock" />
+                    </ui:VisualElement>
+                    <ui:ListView name="offer-list" fixed-item-height="44" selection-type="Single" style="flex-grow: 1; min-height: 0;" />
+                    <ui:VisualElement class="card" style="padding: 10px 12px; margin-top: 8px; flex-shrink: 0; height: 104px;">
+                        <ui:Label name="label-offer-name" text="" style="font-size: 14px; margin-bottom: 2px;" />
+                        <ui:Label name="label-offer-sub" text="" class="text-muted" style="font-size: 10px; margin-bottom: 4px; white-space: normal;" />
+                        <ui:VisualElement style="flex-direction: row; align-items: center; margin-top: 2px;">
+                            <ui:Label name="label-offer-problem" text="" class="text-danger" style="flex-grow: 1; font-size: 11px; white-space: normal; margin-right: 10px;" />
+                            <ui:Button name="button-buy" text="BUY" class="btn btn-primary" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </sh:FacetedPanel>
+
+                <!-- YOUR STASH, to sell from -->
+                <sh:FacetedPanel style="flex-grow: 1; flex-direction: column; padding: 14px;">
+                    <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 10px;">
+                        <ui:Label text="YOUR STASH" class="text-section" style="margin-right: 10px;" />
+                        <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
+                        <ui:Label name="label-trade-stash-cells" text="" class="text-mono text-muted" />
+                    </ui:VisualElement>
+                    <ui:ScrollView name="trade-stash-scroll" mode="VerticalAndHorizontal" style="width: 500px; height: 396px; flex-shrink: 0;">
+                        <sh:GridBackground name="trade-stash-grid" pitch="48" style="width: 480px; height: 960px;" />
+                    </ui:ScrollView>
+                    <ui:VisualElement class="card" style="padding: 10px 12px; margin-top: 8px; flex-shrink: 0; height: 92px;">
+                        <ui:Label name="label-sell-info" text="" style="font-size: 12px; white-space: normal; flex-grow: 1;" />
+                        <ui:Button name="button-sell" text="SELL" class="btn btn-outline" style="align-self: flex-end;" />
+                    </ui:VisualElement>
+                </sh:FacetedPanel>
+            </ui:VisualElement>
+
+            <ui:Label name="label-trade-status" text="" class="trade-status" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

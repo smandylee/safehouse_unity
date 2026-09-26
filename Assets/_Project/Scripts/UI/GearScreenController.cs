@@ -63,6 +63,7 @@ namespace Safehouse.UI
         private IVisualElementScheduledItem _toastTimer;
         private string _persistentMessage;
         private Label _labelCharacter;
+        private Label _labelRoubles;
         private GearData _gear;
         private Loadout _loadout;
         private IconLibrary _icons;
@@ -139,18 +140,50 @@ namespace Safehouse.UI
             _labelSelectedPerCell = _root.Q<Label>("label-selected-percell");
 
             _labelCharacter = _root.Q<Label>("label-character");
+            _labelRoubles = _root.Q<Label>("label-roubles");
             _root.Q<Button>("character-prev").clicked += () => CycleCharacter(-1);
             _root.Q<Button>("character-next").clicked += () => CycleCharacter(1);
 
             CreateToast();
             OpenSession();
             ApplyProfile();
+
+            // The screens are separate documents; the top bar's tabs move between them.
+            Current = this;
+            ScreenNavigator.Register("gear", ShowScreen, HideScreen);
+            _root.Q<Button>("navtab-traders").clicked += () => ScreenNavigator.Go("traders");
         }
 
         private void OnDisable()
         {
+            if (Current == this)
+            {
+                Current = null;
+            }
+
+            ScreenNavigator.Unregister("gear");
             _session?.Dispose(); // lets the next copy of the game (or the next test) use the data folder
             _session = null;
+        }
+
+        /// <summary>The GEAR screen that is open, for the other screens to reach the character it holds.</summary>
+        public static GearScreenController Current { get; private set; }
+
+        /// <summary>The open character and how it is saved. Shared with the TRADERS screen, which trades for the same character.</summary>
+        public CharacterSession Session => _session;
+
+        private void ShowScreen()
+        {
+            _root.style.display = DisplayStyle.Flex;
+            if (_session != null)
+            {
+                ApplyProfile(); // the character may have traded on the other screen
+            }
+        }
+
+        private void HideScreen()
+        {
+            _root.style.display = DisplayStyle.None;
         }
 
         // ---- the open character ----
@@ -187,6 +220,7 @@ namespace Safehouse.UI
             _views[1].Grid = profile.Rig;
             _views[2].Grid = profile.Backpack;
             _loadout = profile.Loadout;
+            _labelRoubles.text = Spaced(profile.Money);
             foreach (var view in _views)
             {
                 view.Element.style.width = view.Grid.StashWidth * Pitch;
@@ -386,7 +420,7 @@ namespace Safehouse.UI
             return cell;
         }
 
-        private static Label MonogramLabel(ItemDefinition item) =>
+        internal static Label MonogramLabel(ItemDefinition item) =>
             new Label(Monogram(item.Category))
             {
                 style =
@@ -402,7 +436,7 @@ namespace Safehouse.UI
         /// gets the same image spun 90 degrees about the middle of its (swapped) cell rather than a
         /// second, pre-rotated file. Sized to the area inside the cell's 1px border.
         /// </summary>
-        private static Image IconImage(ItemDefinition item, Texture2D icon, int rotation)
+        internal static Image IconImage(ItemDefinition item, Texture2D icon, int rotation)
         {
             PlacementRules.Footprint(item, rotation, out var cellsWide, out var cellsHigh);
             float imageWidth = item.Width * Pitch - 4;
@@ -472,7 +506,7 @@ namespace Safehouse.UI
             return art;
         }
 
-        private static void PositionCell(VisualElement cell, int x, int y, int width, int height)
+        internal static void PositionCell(VisualElement cell, int x, int y, int width, int height)
         {
             cell.style.left = x * Pitch + 2;
             cell.style.top = y * Pitch + 2;
@@ -1194,13 +1228,13 @@ namespace Safehouse.UI
             _labelSelectedPerCell.text = Spaced(item.BaseValue / (width * height));
         }
 
-        private static string Monogram(string category)
+        internal static string Monogram(string category)
         {
             var letters = category.Where(char.IsLetter).Take(3).ToArray();
             return new string(letters).ToUpperInvariant();
         }
 
-        private static string Spaced(double value) =>
+        public static string Spaced(double value) =>
             Math.Round(value).ToString("N0", CultureInfo.InvariantCulture).Replace(",", " ");
     }
 }
