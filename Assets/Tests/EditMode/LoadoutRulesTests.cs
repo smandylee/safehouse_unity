@@ -247,6 +247,21 @@ namespace Safehouse.Tests
         }
 
         [Test]
+        public void UnequippingIntoTheBackpackUpdatesTheBackpackGrid()
+        {
+            var helmet = Worn("helmet", "helm-a");
+            var loadout = new Loadout(new[] { helmet });
+            var backpack = Stash(6, 8);
+
+            var (after, target, _, newBackpack) = LoadoutRules.Unequip(Catalog, loadout, "helmet", backpack,
+                DefaultRig, backpack, 4, 6);
+
+            Assert.IsNull(after.Get("helmet"));
+            Assert.AreSame(target, newBackpack, "the backpack grid returned must be the one the item went into");
+            Assert.AreEqual("helm-a", newBackpack.Stash.Single().ItemId);
+        }
+
+        [Test]
         public void UnequippingPlacesTheItemWhereAskedWithItsOwnInstanceId()
         {
             var helmet = Worn("helmet", "helm-a");

@@ -99,7 +99,12 @@ namespace Safehouse.Core
 
                 rigAfter = EmptyGridFor(gear, item.ItemId);
             }
-            else if (slot == LoadoutSlots.Backpack)
+            else if (ReferenceEquals(source, rig))
+            {
+                rigAfter = sourceAfter;
+            }
+
+            if (slot == LoadoutSlots.Backpack)
             {
                 foreach (var carried in backpack.Stash)
                 {
@@ -107,6 +112,10 @@ namespace Safehouse.Core
                 }
 
                 backpackAfter = EmptyGridFor(gear, item.ItemId);
+            }
+            else if (ReferenceEquals(source, backpack))
+            {
+                backpackAfter = sourceAfter;
             }
 
             return new EquipResult(new Loadout(kept), sameGrid ? stashAfter : sourceAfter, stashAfter, rigAfter, backpackAfter);
@@ -161,10 +170,12 @@ namespace Safehouse.Core
                 removed.Add(LoadoutSlots.Ammo);
             }
 
-            var rigAfter = slot == LoadoutSlots.Rig ? new StashGrid(Profile.DefaultRigWidth, Profile.DefaultRigHeight) : rig;
+            var rigAfter = slot == LoadoutSlots.Rig
+                ? new StashGrid(Profile.DefaultRigWidth, Profile.DefaultRigHeight)
+                : ReferenceEquals(target, rig) ? targetAfter : rig;
             var backpackAfter = slot == LoadoutSlots.Backpack
                 ? new StashGrid(Profile.DefaultBackpackWidth, Profile.DefaultBackpackHeight)
-                : backpack;
+                : ReferenceEquals(target, backpack) ? targetAfter : backpack;
 
             return (new Loadout(loadout.Items.Where(item => !removed.Contains(item.Slot))), targetAfter, rigAfter,
                 backpackAfter);

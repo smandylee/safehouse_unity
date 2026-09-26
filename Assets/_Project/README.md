@@ -101,7 +101,9 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
   the item (while dragging, or in place when just selected), **Esc** cancels a drag, and a refused
   drop or turn snaps back and flashes the cell red. The rule is `PlacementRules.Move` in Core; the
   controller only forwards pointer input to it (`TryMoveItem` / `TryRotateItem`, which tests call
-  directly). Each change is saved to the open character before it shows (see "Saves").
+  directly). While dragging inside the stash, holding the pointer near the top or bottom edge of the
+  visible area scrolls the long stash automatically. Each change is saved to the open character before
+  it shows (see "Saves").
   Dropping a stash / rig / backpack item on its LOADOUT slot wears it (`LoadoutRules.Equip`: the slot
   card turns green or red while hovering, the old piece goes back to the stash); dragging a slot card
   onto a grid takes it off there (`LoadoutRules.Unequip`). Equipping a rig or backpack resizes its
@@ -237,7 +239,7 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
 - The account (`account.json`: the character order and the shared hideout), settings, and expeditions are not
   ported; only characters and trader states are.
 - No screen creates or deletes a character (the repository can), and there is no way yet to raise the stash
-  size - that is a hideout upgrade. A dragged item does not auto-scroll a long stash.
+  size - that is a hideout upgrade.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).

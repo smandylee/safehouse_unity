@@ -28,6 +28,8 @@ namespace Safehouse.UI
 
         private const float Pitch = 48f;
         private const float DragThreshold = 4f;
+        private const float AutoScrollEdge = 48f;      // pointer this close to the viewport edge starts scrolling
+        private const float AutoScrollSpeed = 300f;    // pixels per second while held at the edge
 
         /// <summary>One on-screen grid: the element cells live in, and the rules-side grid behind it.</summary>
         private sealed class GridView
@@ -916,6 +918,9 @@ namespace Safehouse.UI
         private VisualElement _ghost;
         private VisualElement _proxy;
 
+        private ScrollView _autoScrollView;
+        private float _autoScrollPixelsPerSecond;
+
         /// <summary>Makes a grid cell or a slot card draggable. <paramref name="instanceIdOf"/> says which
         /// item it stands for right now - a slot card's item changes as gear is swapped, and it may be empty.</summary>
         private void RegisterDrag(VisualElement element, Func<string> instanceIdOf)
@@ -1060,6 +1065,53 @@ namespace Safehouse.UI
             var fits = PlacementRules.CanPlace(drag.TargetView.Grid, _catalog, itemId,
                 drag.TargetX, drag.TargetY, drag.Rotation, drag.InstanceId);
             _ghost.EnableInClassList("cell-ghost-bad", !fits);
+
+            UpdateAutoScroll(drag);
+        }
+
+        private void UpdateAutoScroll(Drag drag)
+        {
+            if (drag.TargetView == null || drag.TargetView.Viewport == null)
+            {
+                _autoScrollView = null;
+                _autoScrollPixelsPerSecond = 0f;
+                return;
+            }
+
+            var viewport = drag.TargetView.Viewport.worldBound;
+            var distanceFromTop = drag.Pointer.y - viewport.y;
+            var distanceFromBottom = viewport.y + viewport.height - drag.Pointer.y;
+
+            if (distanceFromTop < AutoScrollEdge && distanceFromTop < distanceFromBottom)
+            {
+                _autoScrollView = drag.TargetView.Viewport.parent as ScrollView;
+                _autoScrollPixelsPerSecond = -AutoScrollSpeed;
+            }
+            else if (distanceFromBottom < AutoScrollEdge)
+            {
+                _autoScrollView = drag.TargetView.Viewport.parent as ScrollView;
+                _autoScrollPixelsPerSecond = AutoScrollSpeed;
+            }
+            else
+            {
+                _autoScrollView = null;
+                _autoScrollPixelsPerSecond = 0f;
+            }
+        }
+
+        private void Update()
+        {
+            if (_autoScrollView == null || _drag == null || !_drag.Active)
+            {
+                return;
+            }
+
+            var offset = _autoScrollView.scrollOffset;
+            var maxOffset = _autoScrollView.contentContainer.layout.height - _autoScrollView.layout.height;
+            offset.y = Mathf.Clamp(offset.y + _autoScrollPixelsPerSecond * Time.deltaTime, 0f, Mathf.Max(0f, maxOffset));
+            _autoScrollView.scrollOffset = offset;
+
+            RefreshDrag();
         }
 
         private void ClearSlotHighlights()
@@ -1139,6 +1191,8 @@ namespace Safehouse.UI
             _ghost = null;
             ClearSlotHighlights();
             element.RemoveFromClassList("cell-dragging");
+            _autoScrollView = null;
+            _autoScrollPixelsPerSecond = 0f;
         }
 
         private static void Reject(VisualElement element)
