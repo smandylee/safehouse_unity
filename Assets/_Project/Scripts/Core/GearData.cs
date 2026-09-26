@@ -75,6 +75,23 @@ namespace Safehouse.Core
 
         /// <summary>Grid cells a rig or backpack adds to what a character can carry.</summary>
         public int Capacity { get; }
+
+        /// <summary>
+        /// The internal grid shape for this rig or backpack. Armor and helmets have no grid and return (0, 0).
+        /// Width is fixed at 6 columns to match the CARRIED panel; height is the smallest whole number of rows
+        /// that holds the capacity.
+        /// </summary>
+        public (int Width, int Height) GridDimensions()
+        {
+            if (Capacity <= 0)
+            {
+                return (0, 0);
+            }
+
+            const int width = 6;
+            var height = (Capacity + width - 1) / width;
+            return (width, height);
+        }
     }
 
     public sealed class MedStats

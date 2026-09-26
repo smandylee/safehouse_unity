@@ -104,7 +104,9 @@ if a colour or spacing value ever needs to change; keep them in sync by eye.
   directly). Each change is saved to the open character before it shows (see "Saves").
   Dropping a stash / rig / backpack item on its LOADOUT slot wears it (`LoadoutRules.Equip`: the slot
   card turns green or red while hovering, the old piece goes back to the stash); dragging a slot card
-  onto a grid takes it off there (`LoadoutRules.Unequip`).
+  onto a grid takes it off there (`LoadoutRules.Unequip`). Equipping a rig or backpack resizes its
+  CARRIED grid from the item's `capacity` (6 cells wide, height rounded up) and moves the old grid's
+  contents back to the stash; a swap that would not fit is refused.
   This is the first place `Safehouse.Core`/`Safehouse.Data` actually drive a screen, not just a test.
 - `Scripts/UI/Chrome/FacetedPanel.cs`, `GridBackground.cs` - USS has no `clip-path` and no repeating
   gradients, so the artboard's cut-corner panels and the stash's faint grid lines are drawn directly
@@ -230,10 +232,6 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
   there as it's needed (data import from the Tarkov snapshot, build scripts).
-- The RIG / BACKPACK grids are a fixed 6x4 / 6x8, whatever rig and backpack are worn. In the data a
-  rig or backpack's `capacity` is its cell count (LV-119 = 24, 6Sh118 = 48), so the grids should
-  eventually be sized from the worn item; that also has to decide what happens to items in cells that
-  disappear when a smaller bag is put on.
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
 - The account (`account.json`: the character order and the shared hideout), settings, and expeditions are not

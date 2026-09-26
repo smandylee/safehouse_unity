@@ -787,7 +787,8 @@ namespace Safehouse.UI
             }
 
             var view = ViewOf(instanceId);
-            return LoadoutRules.EquipError(_gear, _catalog, _loadout, view.Grid, StashView.Grid, instanceId);
+            return LoadoutRules.EquipError(_gear, _catalog, _loadout, view.Grid, StashView.Grid,
+                _views[1].Grid, _views[2].Grid, instanceId);
         }
 
         /// <summary>
@@ -815,9 +816,15 @@ namespace Safehouse.UI
             }
 
             var source = ViewOf(instanceId);
-            var result = LoadoutRules.Equip(_gear, _catalog, _loadout, source.Grid, StashView.Grid, instanceId);
-            var saveError = Persist(
-                new Dictionary<GridView, StashGrid> { [source] = result.Source, [StashView] = result.Stash }, result.Loadout);
+            var result = LoadoutRules.Equip(_gear, _catalog, _loadout, source.Grid, StashView.Grid,
+                _views[1].Grid, _views[2].Grid, instanceId);
+            var saveError = Persist(new Dictionary<GridView, StashGrid>
+            {
+                [source] = result.Source,
+                [StashView] = result.Stash,
+                [_views[1]] = result.Rig,
+                [_views[2]] = result.Backpack,
+            }, result.Loadout);
             if (saveError != null)
             {
                 return saveError;
@@ -826,6 +833,8 @@ namespace Safehouse.UI
             _loadout = result.Loadout;
             source.Grid = result.Source;
             StashView.Grid = result.Stash;
+            _views[1].Grid = result.Rig;
+            _views[2].Grid = result.Backpack;
             RefreshAll();
             return null;
         }
@@ -853,17 +862,23 @@ namespace Safehouse.UI
                 return $"Unknown grid: {gridName}.";
             }
 
-            (Loadout Loadout, StashGrid Target) result;
+            (Loadout Loadout, StashGrid Target, StashGrid Rig, StashGrid Backpack) result;
             try
             {
-                result = LoadoutRules.Unequip(_catalog, _loadout, worn.Slot, target.Grid, x, y, rotation);
+                result = LoadoutRules.Unequip(_catalog, _loadout, worn.Slot, target.Grid,
+                    _views[1].Grid, _views[2].Grid, x, y, rotation);
             }
             catch (ValidationException error)
             {
                 return error.Message;
             }
 
-            var saveError = Persist(new Dictionary<GridView, StashGrid> { [target] = result.Target }, result.Loadout);
+            var saveError = Persist(new Dictionary<GridView, StashGrid>
+            {
+                [target] = result.Target,
+                [_views[1]] = result.Rig,
+                [_views[2]] = result.Backpack,
+            }, result.Loadout);
             if (saveError != null)
             {
                 return saveError;
@@ -871,6 +886,8 @@ namespace Safehouse.UI
 
             _loadout = result.Loadout;
             target.Grid = result.Target;
+            _views[1].Grid = result.Rig;
+            _views[2].Grid = result.Backpack;
             RefreshAll();
             return null;
         }

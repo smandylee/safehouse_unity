@@ -6,11 +6,13 @@ namespace Safehouse.Core
     /// <summary>What an equip produced. Each field is a fresh copy; the inputs are untouched.</summary>
     public readonly struct EquipResult
     {
-        public EquipResult(Loadout loadout, StashGrid source, StashGrid stash)
+        public EquipResult(Loadout loadout, StashGrid source, StashGrid stash, StashGrid rig, StashGrid backpack)
         {
             Loadout = loadout;
             Source = source;
             Stash = stash;
+            Rig = rig;
+            Backpack = backpack;
         }
 
         public Loadout Loadout { get; }
@@ -20,6 +22,12 @@ namespace Safehouse.Core
 
         /// <summary>The stash, which is where whatever was worn before goes back to.</summary>
         public StashGrid Stash { get; }
+
+        /// <summary>The rig grid, resized when a rig was equipped.</summary>
+        public StashGrid Rig { get; }
+
+        /// <summary>The backpack grid, resized when a backpack was equipped.</summary>
+        public StashGrid Backpack { get; }
     }
 
     /// <summary>
@@ -32,9 +40,11 @@ namespace Safehouse.Core
         /// Wears an item taken from <paramref name="source"/> (the stash, or a rig or backpack grid).
         /// Whatever the slot held goes back to <paramref name="stash"/> by first fit, keeping its
         /// instance id. Changing to a weapon of another caliber also takes off the loaded ammunition.
+        /// Equipping a rig or backpack resizes that grid to the item's capacity and empties it; the old
+        /// grid's contents go back to the stash with the old piece.
         /// </summary>
         public static EquipResult Equip(GearData gear, IReadOnlyDictionary<string, ItemDefinition> catalog,
-            Loadout loadout, StashGrid source, StashGrid stash, string instanceId)
+            Loadout loadout, StashGrid source, StashGrid stash, StashGrid rig, StashGrid backpack, string instanceId)
         {
             var index = PlacementRules.IndexOf(source, instanceId);
             var item = source.Stash[index];
@@ -78,16 +88,37 @@ namespace Safehouse.Core
                 stashAfter = ReturnToGrid(stashAfter, catalog, worn);
             }
 
-            return new EquipResult(new Loadout(kept), sameGrid ? stashAfter : sourceAfter, stashAfter);
+            var rigAfter = rig;
+            var backpackAfter = backpack;
+            if (slot == LoadoutSlots.Rig)
+            {
+                foreach (var carried in rig.Stash)
+                {
+                    stashAfter = ReturnToGrid(stashAfter, catalog, AsEquipped(carried, LoadoutSlots.Rig));
+                }
+
+                rigAfter = EmptyGridFor(gear, item.ItemId);
+            }
+            else if (slot == LoadoutSlots.Backpack)
+            {
+                foreach (var carried in backpack.Stash)
+                {
+                    stashAfter = ReturnToGrid(stashAfter, catalog, AsEquipped(carried, LoadoutSlots.Backpack));
+                }
+
+                backpackAfter = EmptyGridFor(gear, item.ItemId);
+            }
+
+            return new EquipResult(new Loadout(kept), sameGrid ? stashAfter : sourceAfter, stashAfter, rigAfter, backpackAfter);
         }
 
         /// <summary>The reason <see cref="Equip"/> would refuse, or null when it would succeed.</summary>
         public static string EquipError(GearData gear, IReadOnlyDictionary<string, ItemDefinition> catalog,
-            Loadout loadout, StashGrid source, StashGrid stash, string instanceId)
+            Loadout loadout, StashGrid source, StashGrid stash, StashGrid rig, StashGrid backpack, string instanceId)
         {
             try
             {
-                Equip(gear, catalog, loadout, source, stash, instanceId);
+                Equip(gear, catalog, loadout, source, stash, rig, backpack, instanceId);
                 return null;
             }
             catch (ValidationException error)
@@ -99,10 +130,13 @@ namespace Safehouse.Core
         /// <summary>
         /// Takes the item in <paramref name="slot"/> off and puts it into <paramref name="target"/> at
         /// x,y. Taking off a weapon also unloads its ammunition, which goes into the same grid by first
-        /// fit. Refused, changing nothing, when either does not fit.
+        /// fit. Refused, changing nothing, when either does not fit. Taking off a rig or backpack resets
+        /// that grid to the default empty size.
         /// </summary>
-        public static (Loadout Loadout, StashGrid Target) Unequip(IReadOnlyDictionary<string, ItemDefinition> catalog,
-            Loadout loadout, string slot, StashGrid target, int x, int y, int rotation = 0)
+        public static (Loadout Loadout, StashGrid Target, StashGrid Rig, StashGrid Backpack) Unequip(
+            IReadOnlyDictionary<string, ItemDefinition> catalog,
+            Loadout loadout, string slot, StashGrid target, StashGrid rig, StashGrid backpack, int x, int y,
+            int rotation = 0)
         {
             var worn = loadout.Get(slot)
                 ?? throw new ValidationException($"Nothing is equipped in the {slot} slot.");
@@ -127,8 +161,29 @@ namespace Safehouse.Core
                 removed.Add(LoadoutSlots.Ammo);
             }
 
-            return (new Loadout(loadout.Items.Where(item => !removed.Contains(item.Slot))), targetAfter);
+            var rigAfter = slot == LoadoutSlots.Rig ? new StashGrid(Profile.DefaultRigWidth, Profile.DefaultRigHeight) : rig;
+            var backpackAfter = slot == LoadoutSlots.Backpack
+                ? new StashGrid(Profile.DefaultBackpackWidth, Profile.DefaultBackpackHeight)
+                : backpack;
+
+            return (new Loadout(loadout.Items.Where(item => !removed.Contains(item.Slot))), targetAfter, rigAfter,
+                backpackAfter);
         }
+
+        private static StashGrid EmptyGridFor(GearData gear, string itemId)
+        {
+            var stats = gear.Equipment.TryGetValue(itemId, out var found) ? found : null;
+            if (stats == null)
+            {
+                throw new ValidationException($"No equipment data for {itemId}.");
+            }
+
+            var (width, height) = stats.GridDimensions();
+            return new StashGrid(width, height);
+        }
+
+        private static EquippedItem AsEquipped(ItemInstance item, string slot) =>
+            EquippedItem.Create(slot, item.InstanceId, item.ItemId);
 
         private static StashGrid ReturnToGrid(StashGrid grid, IReadOnlyDictionary<string, ItemDefinition> catalog,
             EquippedItem worn)
