@@ -17,7 +17,7 @@
             </ui:VisualElement>
             <ui:Button text="CHARACTER" class="navtab" />
             <ui:Button text="GEAR" name="navtab-gear" class="navtab" />
-            <ui:Button text="HIDEOUT" class="navtab" />
+            <ui:Button text="HIDEOUT" name="navtab-hideout" class="navtab" />
             <ui:Button text="TRADERS" name="navtab-traders" class="navtab navtab-active" />
             <ui:Button text="SCAVENGE" class="navtab" />
             <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />

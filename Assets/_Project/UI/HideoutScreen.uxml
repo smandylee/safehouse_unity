@@ -1,0 +1,75 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:sh="Safehouse.UI.Chrome">
+    <ui:Style src="Theme.uss" />
+
+    <!--
+      The HIDEOUT screen: see every shared facility, its level, requirements, cost and effects, and upgrade.
+      Laid out in exact pixels against the same 1440x900 artboard as the GEAR screen.
+    -->
+    <ui:VisualElement name="hideout-root" class="gear-root" style="flex-direction: column;">
+
+        <!-- TOP BAR -->
+        <ui:VisualElement class="bar bar-top">
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 22px;">
+                <ui:Label text="SAFEHOUSE" class="text-heading" />
+            </ui:VisualElement>
+            <ui:Button text="CHARACTER" class="navtab" />
+            <ui:Button text="GEAR" name="navtab-gear" class="navtab" />
+            <ui:Button text="HIDEOUT" name="navtab-hideout" class="navtab navtab-active" />
+            <ui:Button text="TRADERS" name="navtab-traders" class="navtab" />
+            <ui:Button text="SCAVENGE" class="navtab" />
+            <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end; margin-right: 18px;">
+                <ui:Label text="ROUBLES" class="text-label" style="margin-right: 7px;" />
+                <ui:Label name="label-roubles" text="—" class="text-mono text-accent" />
+            </ui:VisualElement>
+            <ui:VisualElement class="divider-v" style="height: 22px; margin-right: 18px;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end;">
+                <ui:Label text="POPULATION" class="text-label" style="margin-right: 7px;" />
+                <ui:Label name="label-population" text="—" class="text-mono" />
+            </ui:VisualElement>
+            <ui:VisualElement class="divider-v" style="height: 22px; margin-right: 18px;" />
+            <ui:VisualElement style="flex-direction: row; align-items: flex-end;">
+                <ui:Label text="FUEL/H" class="text-label" style="margin-right: 7px;" />
+                <ui:Label name="label-fuel" text="—" class="text-mono" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- MAIN -->
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; padding: 14px 24px; min-height: 0;">
+
+            <!-- LEFT: summary and personal room -->
+            <sh:FacetedPanel style="width: 320px; flex-shrink: 0; flex-direction: column; padding: 14px; margin-right: 16px;">
+                <ui:Label text="HIDEOUT" class="text-section" style="margin-bottom: 10px;" />
+                <ui:Label text="Shared facilities benefit every character. Upgrade them with roubles and the right prerequisites." class="text-muted" style="font-size: 11px; white-space: normal; margin-bottom: 14px;" />
+
+                <ui:VisualElement class="card" style="padding: 10px 12px; margin-bottom: 10px;">
+                    <ui:Label text="GENERATOR" class="text-label" />
+                    <ui:Label name="label-generator-summary" text="" class="text-mono" style="font-size: 12px; margin-top: 4px;" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="card" style="padding: 10px 12px; margin-bottom: 10px;">
+                    <ui:Label text="PERSONAL ROOM" class="text-label" />
+                    <ui:Label name="label-room-level" text="" class="text-mono" style="font-size: 12px; margin-top: 4px;" />
+                    <ui:Label name="label-room-size" text="" class="text-muted" style="font-size: 11px; margin-top: 2px;" />
+                    <ui:Button name="button-upgrade-room" text="UPGRADE ROOM" class="btn btn-outline" style="margin-top: 8px; font-size: 11px; height: 26px;" />
+                </ui:VisualElement>
+
+                <ui:VisualElement style="flex-grow: 1;" />
+                <ui:Label name="label-status" text="" class="text-muted" style="font-size: 11px; white-space: normal;" />
+            </sh:FacetedPanel>
+
+            <!-- RIGHT: facility cards -->
+            <sh:FacetedPanel style="flex-grow: 1; flex-direction: column; padding: 14px; min-height: 0;">
+                <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 10px;">
+                    <ui:Label text="FACILITIES" class="text-section" style="margin-right: 10px;" />
+                    <ui:VisualElement class="divider-h" style="margin-right: 10px;" />
+                    <ui:Label name="label-facility-count" text="" class="text-mono text-muted" />
+                </ui:VisualElement>
+                <ui:ScrollView name="facility-scroll" style="flex-grow: 1;">
+                    <ui:VisualElement name="facility-list" style="flex-direction: column;" />
+                </ui:ScrollView>
+            </sh:FacetedPanel>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -356,3 +356,68 @@
 
 .divider-v { width: 1px; background-color: rgb(42, 48, 56); }
 .divider-h { height: 1px; background-color: rgb(36, 43, 51); flex-grow: 1; }
+
+/* ---- hideout ---- */
+
+.facility-card {
+    flex-direction: column;
+    background-color: rgb(25, 29, 35);
+    border-width: 1px;
+    border-color: rgb(38, 45, 54);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+.facility-card-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.facility-card-name {
+    font-size: 13px;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+    flex-grow: 1;
+}
+.facility-card-level {
+    font-size: 11px;
+    color: rgb(217, 164, 65);
+    margin-right: 10px;
+}
+.facility-card-desc {
+    font-size: 11px;
+    color: rgb(120, 132, 143);
+    white-space: normal;
+    margin-bottom: 8px;
+}
+.facility-card-requirements {
+    font-size: 11px;
+    color: rgb(200, 80, 60);
+    white-space: normal;
+    margin-bottom: 4px;
+}
+.facility-card-cost {
+    font-size: 11px;
+    color: rgb(217, 164, 65);
+    margin-bottom: 4px;
+}
+.facility-card-effects {
+    font-size: 11px;
+    color: rgb(111, 158, 92);
+    white-space: normal;
+    margin-bottom: 8px;
+}
+.facility-card-decorative {
+    font-size: 10px;
+    color: rgb(120, 132, 143);
+    margin-bottom: 8px;
+}
+.facility-card-btn {
+    align-self: flex-end;
+    font-size: 11px;
+    height: 26px;
+}
+
+#facility-scroll .unity-scroller { background-color: rgb(17, 20, 23); }
+#facility-scroll .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }
+#facility-scroll .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
+#facility-scroll .unity-scroller__low-button,
+#facility-scroll .unity-scroller__high-button { display: none; }

@@ -206,6 +206,23 @@ exist yet - and the higher loyalty levels need standing, so without it only leve
 Trader portraits are game art like the item icons: `py -3 tools/import_art.py --traders` downloads them into
 `icon_cache/traders/` (git-ignored, private use). Without them the trader buttons are text only.
 
+## The HIDEOUT screen (`UI/HideoutScreen.uxml`, `Scripts/UI/HideoutScreenController.cs`)
+
+A third UI document on the same panel as GEAR and TRADERS (`GearSceneBuilder` adds all three; re-run **Safehouse > Build Gear
+Scene** after pulling changes to the UXML or the scene). `ScreenNavigator` shows one and hides the others; the top bar's
+GEAR / TRADERS / HIDEOUT tabs call it. The HIDEOUT screen reads and writes the shared `Account` (loaded through the
+GEAR screen's `CharacterSession`), so a facility upgraded here is upgraded for every character.
+
+Each facility card shows its current level, description, upgrade cost and requirements, and the effects the current
+level provides. The UPGRADE button is enabled only when every dependency and cost is satisfied; clicking it upgrades
+the facility and saves the account immediately. Facilities whose real Tarkov purpose is to boost character stats
+(Air Filtering Unit, Library, Shooting Range) are flagged `decorative` and explicitly do **not** alter character stats -
+they can be built for flavour, but the Unity port keeps character stats in the profile only.
+
+The data lives in `StreamingAssets/data/hideout.json` and is loaded by `Data/HideoutLoader.cs`. All Tarkov facilities
+are present; a new account starts with the Generator at level 1 and everything else at level 0, matching the Python
+build's hideout.
+
 ## Saves
 
 The game keeps its **own** data folder, apart from the Python build's, so nothing here can touch a campaign
@@ -240,8 +257,9 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
 - Settings and expeditions are not ported.
-- No screen creates or deletes a character (the repository can), and there is no hideout UI yet; the room level and
-  stash size are data only for now.
+- No screen creates or deletes a character (the repository can).
+- Hideout effects other than stash size / fuel cost are not wired to combat or expeditions yet; the UI upgrades and
+  saves them, but the systems that will read them are still Python-only.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).

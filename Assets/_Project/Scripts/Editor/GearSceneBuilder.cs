@@ -18,6 +18,7 @@ namespace Safehouse.Editor
         private const string PanelSettingsPath = UiFolder + "/GearPanelSettings.asset";
         private const string UxmlPath = UiFolder + "/GearScreen.uxml";
         private const string TradersUxmlPath = UiFolder + "/TradersScreen.uxml";
+        private const string HideoutUxmlPath = UiFolder + "/HideoutScreen.uxml";
         private const string ScenePath = "Assets/_Project/Scenes/Gear.unity";
 
         [MenuItem("Safehouse/Build Gear Scene")]
@@ -66,6 +67,13 @@ namespace Safehouse.Editor
                 return;
             }
 
+            var hideoutUxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(HideoutUxmlPath);
+            if (hideoutUxml == null)
+            {
+                Debug.LogError($"GearSceneBuilder: no VisualTreeAsset at {HideoutUxmlPath}.");
+                return;
+            }
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // UI Toolkit's Screen Space - Overlay panel (our PanelSettings mode) draws straight to
@@ -85,13 +93,19 @@ namespace Safehouse.Editor
             document.visualTreeAsset = uxml;
             host.AddComponent<GearScreenController>();
 
-            // The TRADERS screen is a second document on the same panel. It starts hidden; the top bar's tabs
-            // (ScreenNavigator) switch between the two.
+            // The TRADERS and HIDEOUT screens are additional documents on the same panel. They start hidden;
+            // the top bar's tabs (ScreenNavigator) switch between them.
             var tradersHost = new GameObject("TradersScreen");
             var tradersDocument = tradersHost.AddComponent<UIDocument>();
             tradersDocument.panelSettings = panelSettings;
             tradersDocument.visualTreeAsset = tradersUxml;
             tradersHost.AddComponent<TradersScreenController>();
+
+            var hideoutHost = new GameObject("HideoutScreen");
+            var hideoutDocument = hideoutHost.AddComponent<UIDocument>();
+            hideoutDocument.panelSettings = panelSettings;
+            hideoutDocument.visualTreeAsset = hideoutUxml;
+            hideoutHost.AddComponent<HideoutScreenController>();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
