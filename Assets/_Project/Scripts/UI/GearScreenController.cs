@@ -155,6 +155,7 @@ namespace Safehouse.UI
             ScreenNavigator.Register("gear", ShowScreen, HideScreen);
             _root.Q<Button>("navtab-traders").clicked += () => ScreenNavigator.Go("traders");
             _root.Q<Button>("navtab-hideout").clicked += () => ScreenNavigator.Go("hideout");
+            _root.Q<Button>("navtab-settings").clicked += () => ScreenNavigator.Go("settings");
         }
 
         private void OnDisable()

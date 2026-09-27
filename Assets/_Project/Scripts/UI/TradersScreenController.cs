@@ -125,6 +125,7 @@ namespace Safehouse.UI
             _standingButton.clicked += () => TrySetStanding(_fieldStanding.value);
             _root.Q<Button>("navtab-gear").clicked += () => ScreenNavigator.Go("gear");
             _root.Q<Button>("navtab-hideout").clicked += () => ScreenNavigator.Go("hideout");
+            _root.Q<Button>("navtab-settings").clicked += () => ScreenNavigator.Go("settings");
 
             BuildTraderButtons();
             ScreenNavigator.Register("traders", Show, Hide);

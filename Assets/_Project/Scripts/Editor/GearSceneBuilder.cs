@@ -19,6 +19,7 @@ namespace Safehouse.Editor
         private const string UxmlPath = UiFolder + "/GearScreen.uxml";
         private const string TradersUxmlPath = UiFolder + "/TradersScreen.uxml";
         private const string HideoutUxmlPath = UiFolder + "/HideoutScreen.uxml";
+        private const string SettingsUxmlPath = UiFolder + "/SettingsScreen.uxml";
         private const string ScenePath = "Assets/_Project/Scenes/Gear.unity";
 
         [MenuItem("Safehouse/Build Gear Scene")]
@@ -74,6 +75,13 @@ namespace Safehouse.Editor
                 return;
             }
 
+            var settingsUxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(SettingsUxmlPath);
+            if (settingsUxml == null)
+            {
+                Debug.LogError($"GearSceneBuilder: no VisualTreeAsset at {SettingsUxmlPath}.");
+                return;
+            }
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // UI Toolkit's Screen Space - Overlay panel (our PanelSettings mode) draws straight to
@@ -106,6 +114,12 @@ namespace Safehouse.Editor
             hideoutDocument.panelSettings = panelSettings;
             hideoutDocument.visualTreeAsset = hideoutUxml;
             hideoutHost.AddComponent<HideoutScreenController>();
+
+            var settingsHost = new GameObject("SettingsScreen");
+            var settingsDocument = settingsHost.AddComponent<UIDocument>();
+            settingsDocument.panelSettings = panelSettings;
+            settingsDocument.visualTreeAsset = settingsUxml;
+            settingsHost.AddComponent<SettingsScreenController>();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();

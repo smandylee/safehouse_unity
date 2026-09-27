@@ -235,6 +235,12 @@ outputs back to the same stash. The Bitcoin farm is a repeating job: insert Grap
 Physical Bitcoins in cycles. The Scav case draws a random item from a loot table. Crafting speed is affected by the
 Illumination facility, and production requires the generator to be running.
 
+## The SETTINGS screen (`UI/SettingsScreen.uxml`, `Scripts/UI/SettingsScreenController.cs`)
+
+A fourth UI document on the same panel. The top-bar SETTINGS tab opens it. For now it shows the current data folder
+path (`ProfileRepository.DefaultFolder`) and a button to open that folder in the OS file manager. Later this is where
+graphics, audio, and keybinding options will live.
+
 ## Saves
 
 The game keeps its **own** data folder, apart from the Python build's, so nothing here can touch a campaign
@@ -268,7 +274,7 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
   there as it's needed (data import from the Tarkov snapshot, build scripts).
 - Combat, expeditions, gear and the injury system are still Python-only. They wait on the
   Gundog Revised combat/ability rules being settled.
-- Settings and expeditions are not ported.
+- Expeditions are not ported. Settings has a basic screen (data-folder path + open folder) but no deep options yet.
 - No screen creates or deletes a character (the repository can).
 - Hideout effects other than stash size / fuel consumption / production speed are not wired to combat or expeditions
   yet; the UI upgrades and saves them, but the systems that will read them are still Python-only.

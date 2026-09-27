@@ -26,6 +26,7 @@
             <ui:Button text="SCAVENGE" class="navtab" />
             <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
             <ui:VisualElement style="flex-grow: 1;" />
+            <ui:Button text="SETTINGS" name="navtab-settings" class="navtab" />
             <ui:VisualElement style="flex-direction: row; align-items: flex-end; margin-right: 18px;">
                 <ui:Label text="ROUBLES" class="text-label" style="margin-right: 7px;" />
                 <ui:Label name="label-roubles" text="1 284 500" class="text-mono text-accent" />
