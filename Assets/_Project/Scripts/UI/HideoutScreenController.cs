@@ -17,6 +17,8 @@ namespace Safehouse.UI
     public sealed class HideoutScreenController : MonoBehaviour
     {
         private HideoutDefinition _definition;
+        private RecipeBook _recipes;
+        private IReadOnlyDictionary<string, ItemDefinition> _catalog;
         private VisualElement _root;
         private VisualElement _facilityList;
         private Label _labelMoney;
@@ -29,13 +31,19 @@ namespace Safehouse.UI
         private Label _labelFacilityCount;
         private Label _labelStatus;
 
+        /// <summary>Seconds since Unix epoch. Replaced in tests.</summary>
+        public Func<double> Clock { get; set; } = () => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
         private CharacterSession Session => GearScreenController.Current?.Session;
         private Profile Profile => Session?.Profile;
         private Account Account => Session?.Account;
+        private double Now => Clock();
 
         private void OnEnable()
         {
             _definition = HideoutLoader.Load();
+            _recipes = RecipeLoader.LoadForCatalog(CatalogLoader.Load());
+            _catalog = CatalogLoader.Load();
 
             _root = GetComponent<UIDocument>().rootVisualElement;
             _root.style.alignItems = Align.Center;
@@ -214,7 +222,152 @@ namespace Safehouse.UI
                 }
             }
 
+            AddProductionSection(card, definition.FacilityId, currentLevel);
+
             return card;
+        }
+
+        private void AddProductionSection(VisualElement card, string facilityId, int facilityLevel)
+        {
+            var recipes = _recipes.ForFacility(facilityId).Where(r => r.FacilityLevel <= facilityLevel).ToList();
+            if (recipes.Count == 0)
+            {
+                return;
+            }
+
+            var section = new VisualElement();
+            section.AddToClassList("facility-card-production");
+
+            foreach (var recipe in recipes)
+            {
+                var row = new VisualElement();
+                row.AddToClassList("facility-recipe-row");
+
+                var name = new Label(recipe.Name);
+                name.AddToClassList("facility-recipe-name");
+                row.Add(name);
+
+                var running = Account?.ProductionJobs.FirstOrDefault(j => j.RecipeId == recipe.RecipeId);
+                if (running != null)
+                {
+                    var progress = ProductionRules.Progress(recipe, running, _definition, Account.Hideout, Now);
+                    var ready = ProductionRules.IsReady(recipe, running, _definition, Account.Hideout, Now);
+
+                    var track = new VisualElement();
+                    track.AddToClassList("facility-recipe-progress");
+                    var bar = new VisualElement();
+                    bar.AddToClassList("facility-recipe-progress-bar");
+                    bar.style.width = new Length((float)(progress * 100.0), LengthUnit.Percent);
+                    track.Add(bar);
+                    row.Add(track);
+
+                    var button = new Button { text = ready ? "COLLECT" : $"{progress * 100f:0}%" };
+                    button.AddToClassList("btn");
+                    button.AddToClassList(ready ? "btn-primary" : "btn-outline");
+                    button.AddToClassList("facility-recipe-btn");
+                    button.SetEnabled(ready);
+                    var job = running;
+                    button.clicked += () => TryCollectRecipe(recipe, job);
+                    row.Add(button);
+                }
+                else
+                {
+                    var error = Profile != null && Account != null
+                        ? ProductionRules.CanStartError(recipe, Profile, Account, _definition, _recipes, _catalog,
+                            GpuCountFor(recipe))
+                        : "Open a character first.";
+
+                    var button = new Button
+                    {
+                        text = recipe.Category == RecipeCategory.Repeating ? "INSERT GPUs" : "START"
+                    };
+                    button.AddToClassList("btn");
+                    button.AddToClassList("btn-primary");
+                    button.AddToClassList("facility-recipe-btn");
+                    button.SetEnabled(error == null);
+                    if (error != null)
+                    {
+                        button.tooltip = error;
+                    }
+
+                    var r = recipe;
+                    button.clicked += () => TryStartRecipe(r);
+                    row.Add(button);
+                }
+
+                section.Add(row);
+            }
+
+            card.Add(section);
+        }
+
+        private int GpuCountFor(RecipeDefinition recipe)
+        {
+            if (recipe.Category != RecipeCategory.Repeating || Profile == null || Account == null)
+            {
+                return 0;
+            }
+
+            var maxSlots = HideoutRules.IntEffect(_definition, Account.Hideout, "bitcoin_farm", "bitcoin_slots");
+            var available = Profile.Stash.Stash.Count(i => i.ItemId == "graphics-card");
+            return Math.Min(maxSlots, available);
+        }
+
+        private void TryStartRecipe(RecipeDefinition recipe)
+        {
+            var profile = Profile;
+            var account = Account;
+            if (profile == null || account == null)
+            {
+                SetStatus("Open a character on the GEAR screen first.", error: true);
+                return;
+            }
+
+            var gpuCount = recipe.Category == RecipeCategory.Repeating ? GpuCountFor(recipe) : 0;
+            try
+            {
+                var (paidProfile, withJob) = ProductionRules.Start(recipe, profile, account, _definition, _recipes,
+                    Now, _catalog, gpuCount);
+                if (!CommitAll(paidProfile, withJob))
+                {
+                    return;
+                }
+
+                SetStatus($"Started {recipe.Name}.");
+                Refresh();
+            }
+            catch (ValidationException error)
+            {
+                SetStatus(error.Message, error: true);
+            }
+        }
+
+        private void TryCollectRecipe(RecipeDefinition recipe, ProductionJob job)
+        {
+            var profile = Profile;
+            var account = Account;
+            if (profile == null || account == null)
+            {
+                SetStatus("Open a character on the GEAR screen first.", error: true);
+                return;
+            }
+
+            try
+            {
+                var (withOutput, collected) = ProductionRules.Collect(recipe, job, profile, account, _definition,
+                    _recipes, _catalog, Now, new System.Random());
+                if (!CommitAll(withOutput, collected))
+                {
+                    return;
+                }
+
+                SetStatus($"Collected {recipe.Name}.");
+                Refresh();
+            }
+            catch (ValidationException error)
+            {
+                SetStatus(error.Message, error: true);
+            }
         }
 
         private static string FormatEffects(IReadOnlyDictionary<string, object> effects)

@@ -36,6 +36,16 @@ namespace Safehouse.Data
                         ["level"] = facility.Level,
                     })),
                 },
+                ["production"] = new JObject
+                {
+                    ["jobs"] = new JArray(account.ProductionJobs.Select(job => new JObject
+                    {
+                        ["recipe_id"] = job.RecipeId,
+                        ["start_time"] = job.StartTime,
+                        ["character_id"] = job.CharacterId,
+                        ["gpu_count"] = job.GpuCount,
+                    })),
+                },
             };
         }
 
@@ -62,7 +72,12 @@ namespace Safehouse.Data
                 ? lastFuelTickToken.Value<double>()
                 : 0.0;
 
-            return new Account(new Hideout(facilities, fuel), characterOrder, lastFuelTick);
+            var production = root["production"];
+            var jobs = production != null && production.Type == JTokenType.Object
+                ? Arr(production["jobs"], "jobs").Select(ReadJob).ToList()
+                : new List<ProductionJob>();
+
+            return new Account(new Hideout(facilities, fuel), characterOrder, lastFuelTick, jobs);
         }
 
         private static Facility ReadFacility(JToken token)
@@ -70,6 +85,17 @@ namespace Safehouse.Data
             var facility = Obj(token, "Each facility");
             return new Facility(Str(facility["facility_id"], "facility_id"),
                 Int(facility["level"], "level"));
+        }
+
+        private static ProductionJob ReadJob(JToken token)
+        {
+            var job = Obj(token, "Each production job");
+            var gpuToken = job["gpu_count"];
+            return new ProductionJob(
+                Str(job["recipe_id"], "recipe_id"),
+                Double(job["start_time"], "start_time"),
+                Str(job["character_id"], "character_id"),
+                gpuToken != null && gpuToken.Type == JTokenType.Integer ? gpuToken.Value<int>() : 0);
         }
 
         private static JObject Obj(JToken token, string label) =>
@@ -95,9 +121,20 @@ namespace Safehouse.Data
                 return token.Value<int>();
             }
             catch (System.OverflowException)
+            
             {
                 throw new ValidationException($"{label} is out of range.");
             }
+        }
+
+        private static double Double(JToken token, string label)
+        {
+            if (token == null || (token.Type != JTokenType.Float && token.Type != JTokenType.Integer))
+            {
+                throw new ValidationException($"{label} must be a number.");
+            }
+
+            return token.Value<double>();
         }
     }
 }

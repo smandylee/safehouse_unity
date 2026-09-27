@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "recipes": [
+    {
+      "recipe_id": "medstation-bandage",
+      "facility_id": "medstation",
+      "facility_level": 1,
+      "name": "Aseptic bandage",
+      "category": "crafting",
+      "duration_hours": 0.5,
+      "inputs": [
+        { "item_id": "duct-tape", "count": 1 },
+        { "item_id": "toilet-paper", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "aseptic-bandage", "count": 2 }
+      ]
+    },
+    {
+      "recipe_id": "medstation-salewa",
+      "facility_id": "medstation",
+      "facility_level": 2,
+      "name": "Salewa first aid kit",
+      "category": "crafting",
+      "duration_hours": 1.0,
+      "inputs": [
+        { "item_id": "aseptic-bandage", "count": 2 },
+        { "item_id": "analgin-painkillers", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "salewa-first-aid-kit", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "nutrition-water",
+      "facility_id": "nutrition_unit",
+      "facility_level": 1,
+      "name": "Bottle of water (0.6L)",
+      "category": "crafting",
+      "duration_hours": 0.5,
+      "inputs": [
+        { "item_id": "crickent-lighter", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "bottle-of-water-06l", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "workbench-ammo",
+      "facility_id": "workbench",
+      "facility_level": 1,
+      "name": "5.56x45mm M855 ammo pack (50 pcs)",
+      "category": "crafting",
+      "duration_hours": 1.5,
+      "inputs": [
+        { "item_id": "bolts", "count": 1 },
+        { "item_id": "screw-nuts", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "556x45mm-m855-ammo-pack-50-pcs", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "lavatory-condensed-milk",
+      "facility_id": "lavatory",
+      "facility_level": 1,
+      "name": "Can of condensed milk",
+      "category": "crafting",
+      "duration_hours": 1.0,
+      "inputs": [
+        { "item_id": "bottle-of-water-06l", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "can-of-condensed-milk", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "booze-generator-moonshine",
+      "facility_id": "booze_generator",
+      "facility_level": 1,
+      "name": "Fierce Hatchling moonshine",
+      "category": "crafting",
+      "duration_hours": 2.0,
+      "inputs": [
+        { "item_id": "bottle-of-tarkovskaya-vodka", "count": 1 },
+        { "item_id": "bottle-of-water-06l", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "bottle-of-fierce-hatchling-moonshine", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "water-collector",
+      "facility_id": "water_collector",
+      "facility_level": 1,
+      "name": "Bottle of water (0.6L)",
+      "category": "crafting",
+      "duration_hours": 4.0,
+      "inputs": [],
+      "outputs": [
+        { "item_id": "bottle-of-water-06l", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "bitcoin-farm",
+      "facility_id": "bitcoin_farm",
+      "facility_level": 1,
+      "name": "Physical Bitcoin",
+      "category": "repeating",
+      "inputs": [
+        { "item_id": "graphics-card", "count": 1 }
+      ],
+      "outputs": [
+        { "item_id": "physical-bitcoin", "count": 1 }
+      ]
+    },
+    {
+      "recipe_id": "scav-case",
+      "facility_id": "scav_case",
+      "facility_level": 1,
+      "name": "Scavenger run",
+      "category": "random",
+      "duration_hours": 2.0,
+      "inputs": [
+        { "item_id": "crickent-lighter", "count": 1 }
+      ],
+      "output_table": "scav-case-common"
+    }
+  ],
+  "loot_tables": {
+    "scav-case-common": [
+      { "item_id": "bottle-of-water-06l", "count": 1, "weight": 30 },
+      { "item_id": "aseptic-bandage", "count": 2, "weight": 25 },
+      { "item_id": "crickent-lighter", "count": 1, "weight": 20 },
+      { "item_id": "556x45mm-m855-ammo-pack-50-pcs", "count": 1, "weight": 15 },
+      { "item_id": "cpu-fan", "count": 1, "weight": 10 }
+    ]
+  }
+}

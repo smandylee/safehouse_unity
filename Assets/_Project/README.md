@@ -81,7 +81,7 @@ input to Core.
 | `storage.ProfileRepository`, `migrations.py` | `Data/ProfileRepository.cs`, `Data/ProfileSerializer.cs`, `Data/ProfileMigrations.cs`, `Data/Storage.cs` | Atomic writes, `.bak` of the previous save, restore from backup with the bad file kept in `recovery/`, migrations v1-v7 step for step, plus 7 to 8. |
 | `session.InventorySession` (commit/rollback) | `Data/CharacterSession.cs` | A change is saved first and only then becomes the open character; a failed save changes nothing. Also loads and saves the shared account. |
 | `traders.py`, `session.buy` / `sell` / `set_standing` | `Core/Traders.cs`, `Core/TradingRules.cs`, `Data/TraderLoader.cs` | Loyalty (needs both spending and standing), per-character stock that restocks in fixed UTC windows, buy/sell as one save, the no-arbitrage check across all traders. The clock is passed in, never read. No barter or quest locks - the Python build has none either. |
-|| `account.json`, hideout, personal room | `Core/Account.cs`, `Core/Facility.cs`, `Core/Hideout.cs`, `Core/HideoutDefinition.cs`, `Core/HideoutRules.cs`, `Core/PersonalRoom.cs`, `Data/AccountRepository.cs`, `Data/AccountSerializer.cs`, `Data/HideoutLoader.cs`, `StreamingAssets/data/hideout.json` | Shared hideout with all Tarkov facilities (starting at level 0 except Generator), per-character private room level, facility dependencies/costs/effects in data, population-dependent generator fuel consumption, and personal-room stash size expansion. Stat-boosting facilities (Air Filtering Unit, Library, Shooting Range) are flagged `decorative` and do not alter character stats. Schema 1 account + schema 8 profile. |
+|| `account.json`, hideout, personal room | `Core/Account.cs`, `Core/Facility.cs`, `Core/Hideout.cs`, `Core/HideoutDefinition.cs`, `Core/HideoutRules.cs`, `Core/PersonalRoom.cs`, `Core/ProductionRules.cs`, `Data/AccountRepository.cs`, `Data/AccountSerializer.cs`, `Data/HideoutLoader.cs`, `Data/RecipeLoader.cs`, `StreamingAssets/data/hideout.json`, `StreamingAssets/data/recipes.json` | Shared hideout with all Tarkov facilities (starting at level 0 except Generator), per-character private room level, facility dependencies/costs/effects in data, population-dependent generator fuel consumption, personal-room stash size expansion, and production/crafting jobs. Stat-boosting facilities (Air Filtering Unit, Library, Shooting Range) are flagged `decorative` and do not alter character stats. Schema 1 account + schema 8 profile. |
 
 `Safehouse.Core` is compiled with `noEngineReferences`, so it genuinely cannot call into
 UnityEngine - the same separation the Python side gets for free by keeping rules out of `ui/`.
@@ -228,6 +228,13 @@ consumes fuel each in-game hour based on the number of characters (population) a
 `CharacterSession.Open` ticks fuel forward from the last recorded tick and saves the account, so returning after a
 long absence finds the tanks emptied.
 
+Production recipes live in `StreamingAssets/data/recipes.json` and are loaded by `Data/RecipeLoader.cs`. Each facility
+that has recipes shows them in its card once the facility is built to the required level: START consumes the inputs
+from the current character's stash and creates a job, the progress bar advances in real time, and COLLECT adds the
+outputs back to the same stash. The Bitcoin farm is a repeating job: insert Graphics Cards and it keeps producing
+Physical Bitcoins in cycles. The Scav case draws a random item from a loot table. Crafting speed is affected by the
+Illumination facility, and production requires the generator to be running.
+
 ## Saves
 
 The game keeps its **own** data folder, apart from the Python build's, so nothing here can touch a campaign
@@ -263,10 +270,8 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
   Gundog Revised combat/ability rules being settled.
 - Settings and expeditions are not ported.
 - No screen creates or deletes a character (the repository can).
-- Hideout production/crafting (Bitcoin farm, Scav case, Medstation, Nutrition unit, Water collector, Booze generator,
-  Workbench, Lavatory) is not implemented yet. Upgrading works, but there are no recipes or running jobs.
-- Hideout effects other than stash size / fuel consumption are not wired to combat or expeditions yet; the UI upgrades
-  and saves them, but the systems that will read them are still Python-only.
+- Hideout effects other than stash size / fuel consumption / production speed are not wired to combat or expeditions
+  yet; the UI upgrades and saves them, but the systems that will read them are still Python-only.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.
 - Game art/icons are not bundled here, same reasoning as the Python project's `icon_cache/`
   (Escape from Tarkov assets via tarkov.dev: private use only).

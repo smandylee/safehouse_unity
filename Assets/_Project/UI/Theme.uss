@@ -415,6 +415,38 @@
     font-size: 11px;
     height: 26px;
 }
+.facility-card-production {
+    flex-direction: column;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top-width: 1px;
+    border-top-color: rgb(43, 50, 59);
+}
+.facility-recipe-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.facility-recipe-name {
+    font-size: 11px;
+    color: rgb(180, 188, 198);
+    flex-grow: 1;
+}
+.facility-recipe-progress {
+    flex-grow: 1;
+    height: 8px;
+    background-color: rgb(43, 50, 59);
+    margin-right: 8px;
+}
+.facility-recipe-progress-bar {
+    height: 8px;
+    background-color: rgb(111, 158, 92);
+}
+.facility-recipe-btn {
+    font-size: 10px;
+    height: 22px;
+    width: 70px;
+}
 
 #facility-scroll .unity-scroller { background-color: rgb(17, 20, 23); }
 #facility-scroll .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }

@@ -12,11 +12,13 @@ namespace Safehouse.Core
         public const int SchemaVersion = 1;
         public const int MaxCharacterOrder = CharacterSheet.MaxCharacters;
 
-        public Account(Hideout hideout, IEnumerable<string> characterOrder, double lastFuelTick = 0.0)
+        public Account(Hideout hideout, IEnumerable<string> characterOrder, double lastFuelTick = 0.0,
+            IEnumerable<ProductionJob> productionJobs = null)
         {
             Hideout = hideout ?? throw new ValidationException("An account needs a hideout.");
             CharacterOrder = (characterOrder ?? Enumerable.Empty<string>()).ToList();
             LastFuelTick = lastFuelTick;
+            ProductionJobs = (productionJobs ?? Enumerable.Empty<ProductionJob>()).ToList();
             if (CharacterOrder.Count > MaxCharacterOrder)
             {
                 throw new ValidationException($"At most {MaxCharacterOrder} characters can be ordered.");
@@ -39,11 +41,15 @@ namespace Safehouse.Core
         /// <summary>Seconds since Unix epoch when fuel was last consumed. 0 means it has never been ticked.</summary>
         public double LastFuelTick { get; }
 
+        /// <summary>Running hideout production jobs. Empty when none are active.</summary>
+        public IReadOnlyList<ProductionJob> ProductionJobs { get; }
+
         public static Account CreateNew() => new Account(Hideout.CreateNew(), null);
 
         public Account With(Hideout hideout = null, IEnumerable<string> characterOrder = null,
-            double? lastFuelTick = null) =>
-            new Account(hideout ?? Hideout, characterOrder ?? CharacterOrder, lastFuelTick ?? LastFuelTick);
+            double? lastFuelTick = null, IEnumerable<ProductionJob> productionJobs = null) =>
+            new Account(hideout ?? Hideout, characterOrder ?? CharacterOrder, lastFuelTick ?? LastFuelTick,
+                productionJobs ?? ProductionJobs);
 
         public int Population => CharacterOrder.Count;
     }
