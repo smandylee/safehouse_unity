@@ -46,8 +46,10 @@ namespace Safehouse.Data
         /// throws <see cref="StorageException"/> if the folder is in use or the first character cannot be saved.
         /// </summary>
         public static CharacterSession Open(IReadOnlyDictionary<string, ItemDefinition> catalog, string folder,
-            Func<Profile> firstCharacter, string preferredId, ICollection<string> notices)
+            Func<Profile> firstCharacter, string preferredId, ICollection<string> notices,
+            Func<double> clock = null)
         {
+            clock = clock ?? (() => DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             var folderLock = DataDirectoryLock.Acquire(folder);
             try
             {
@@ -55,6 +57,9 @@ namespace Safehouse.Data
                 var account = accountRepository.Exists
                     ? accountRepository.Load(notices)
                     : accountRepository.CreateDefault();
+
+                var now = clock();
+                account = TickFuel(account, now, accountRepository);
 
                 var repository = new ProfileRepository(folder, catalog);
                 var (profiles, problems) = repository.List(notices);
@@ -67,12 +72,22 @@ namespace Safehouse.Data
                 if (chosen == null)
                 {
                     chosen = firstCharacter();
+                    chosen = HideoutRules.EnsureRoomStashSize(HideoutLoader.Load(), chosen);
                     repository.Save(chosen);
 
                     if (!account.CharacterOrder.Contains(chosen.ProfileId))
                     {
                         account = account.With(characterOrder: account.CharacterOrder.Concat(new[] { chosen.ProfileId }));
                         accountRepository.Save(account);
+                    }
+                }
+                else
+                {
+                    var resized = HideoutRules.EnsureRoomStashSize(HideoutLoader.Load(), chosen);
+                    if (resized != chosen)
+                    {
+                        repository.Save(resized);
+                        chosen = resized;
                     }
                 }
 
@@ -83,6 +98,25 @@ namespace Safehouse.Data
                 folderLock.Dispose();
                 throw;
             }
+        }
+
+        private static Account TickFuel(Account account, double now, AccountRepository accountRepository)
+        {
+            var definition = HideoutLoader.Load();
+            var elapsedHours = account.LastFuelTick == 0.0
+                ? 0.0
+                : (now - account.LastFuelTick) / 3600.0;
+            var ticked = HideoutRules.TickFuel(definition, account.Hideout, account.Population, elapsedHours);
+            var updated = account.With(
+                hideout: ticked,
+                lastFuelTick: now);
+
+            if (updated.Hideout.Fuel != account.Hideout.Fuel || updated.LastFuelTick != account.LastFuelTick)
+            {
+                accountRepository?.Save(updated);
+            }
+
+            return updated;
         }
 
         /// <summary>A session that never touches the disk, for when the real one cannot be opened.</summary>

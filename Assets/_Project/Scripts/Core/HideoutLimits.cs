@@ -10,5 +10,6 @@ namespace Safehouse.Core
         public const int MaxRoomLevel = 10;
         public const int MaxPopulation = 10;
         public const int MaxFuelPerHour = 1_000;
+        public const int MaxFuel = 100_000;
     }
 }

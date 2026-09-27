@@ -12,10 +12,11 @@ namespace Safehouse.Core
         public const int SchemaVersion = 1;
         public const int MaxCharacterOrder = CharacterSheet.MaxCharacters;
 
-        public Account(Hideout hideout, IEnumerable<string> characterOrder)
+        public Account(Hideout hideout, IEnumerable<string> characterOrder, double lastFuelTick = 0.0)
         {
             Hideout = hideout ?? throw new ValidationException("An account needs a hideout.");
             CharacterOrder = (characterOrder ?? Enumerable.Empty<string>()).ToList();
+            LastFuelTick = lastFuelTick;
             if (CharacterOrder.Count > MaxCharacterOrder)
             {
                 throw new ValidationException($"At most {MaxCharacterOrder} characters can be ordered.");
@@ -35,10 +36,14 @@ namespace Safehouse.Core
         public Hideout Hideout { get; }
         public IReadOnlyList<string> CharacterOrder { get; }
 
+        /// <summary>Seconds since Unix epoch when fuel was last consumed. 0 means it has never been ticked.</summary>
+        public double LastFuelTick { get; }
+
         public static Account CreateNew() => new Account(Hideout.CreateNew(), null);
 
-        public Account With(Hideout hideout = null, IEnumerable<string> characterOrder = null) =>
-            new Account(hideout ?? Hideout, characterOrder ?? CharacterOrder);
+        public Account With(Hideout hideout = null, IEnumerable<string> characterOrder = null,
+            double? lastFuelTick = null) =>
+            new Account(hideout ?? Hideout, characterOrder ?? CharacterOrder, lastFuelTick ?? LastFuelTick);
 
         public int Population => CharacterOrder.Count;
     }

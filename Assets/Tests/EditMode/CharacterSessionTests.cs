@@ -45,9 +45,11 @@ namespace Safehouse.Tests
             _open.Clear();
         }
 
-        private CharacterSession Open(string preferredId = null, ICollection<string> notices = null)
+        private CharacterSession Open(string preferredId = null, ICollection<string> notices = null,
+            Func<double> clock = null)
         {
-            var session = CharacterSession.Open(Catalog, _folder, () => SampleCharacter.Build(Catalog), preferredId, notices);
+            var session = CharacterSession.Open(Catalog, _folder, () => SampleCharacter.Build(Catalog), preferredId,
+                notices, clock);
             _open.Add(session);
             return session;
         }
@@ -182,6 +184,23 @@ namespace Safehouse.Tests
             var downed = active.With(status: "downed");
             StringAssert.Contains("downed", ProfileRules.StashEditError(downed));
             StringAssert.Contains("downed", ProfileRules.GearEditError(downed));
+        }
+
+        [Test]
+        public void OpeningASessionTicksGeneratorFuelConsumption()
+        {
+            var startTime = 1000.0;
+            var session = Open(clock: () => startTime);
+            Assert.AreEqual(startTime, session.Account.LastFuelTick);
+            Assert.AreEqual(Hideout.DefaultFuel, session.Account.Hideout.Fuel, 0.0001,
+                "no time has elapsed, so fuel should be untouched");
+            session.Dispose();
+
+            var later = startTime + 3600.0; // one hour later
+            var reopened = Open(clock: () => later);
+            Assert.AreEqual(later, reopened.Account.LastFuelTick);
+            Assert.AreEqual(Hideout.DefaultFuel - 10.0, reopened.Account.Hideout.Fuel, 0.0001,
+                "one hour of fuel for one character should be consumed");
         }
     }
 }

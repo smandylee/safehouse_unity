@@ -30,5 +30,12 @@ namespace Safehouse.Core
 
         public StashGrid With(IEnumerable<ItemInstance> stash) =>
             new StashGrid(StashWidth, StashHeight, stash);
+
+        /// <summary>
+        /// A copy with a new size. Used when a hideout personal-room upgrade expands the stash.
+        /// The caller is responsible for ensuring the existing items still fit.
+        /// </summary>
+        public StashGrid WithSize(int width, int height) =>
+            new StashGrid(width, height, Stash);
     }
 }

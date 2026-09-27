@@ -104,7 +104,8 @@ namespace Safehouse.UI
         {
             var generatorLevel = hideout.LevelOf("generator");
             var perPerson = HideoutRules.IntEffect(_definition, hideout, "generator", "fuel_per_character");
-            _labelGeneratorSummary.text = $"LEVEL {generatorLevel} · {perPerson}/person/h";
+            var running = Account != null && HideoutRules.IsGeneratorRunning(_definition, hideout, Account.Population);
+            _labelGeneratorSummary.text = $"LEVEL {generatorLevel} · {perPerson}/person/h · FUEL {Math.Floor(hideout.Fuel)} · {(running ? "RUNNING" : "OFF")}";
         }
 
         private void RefreshRoomSummary(PersonalRoom room)
@@ -294,12 +295,13 @@ namespace Safehouse.UI
             }
 
             var paidProfile = profile.With(money: profile.Money - cost.Money, room: new PersonalRoom(nextLevel));
+            paidProfile = HideoutRules.EnsureRoomStashSize(_definition, paidProfile);
             if (!CommitAll(paidProfile, account))
             {
                 return;
             }
 
-            SetStatus($"Upgraded personal room to level {nextLevel}.");
+            SetStatus($"Upgraded personal room to level {nextLevel}. Stash expanded to {paidProfile.Stash.StashWidth}×{paidProfile.Stash.StashHeight}.");
             Refresh();
         }
 

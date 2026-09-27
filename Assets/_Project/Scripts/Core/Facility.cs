@@ -26,6 +26,8 @@ namespace Safehouse.Core
     /// </summary>
     public sealed class Hideout
     {
+        public const double DefaultFuel = 100.0;
+
         /// <summary>
         /// Every shared hideout module from Escape from Tarkov. The Stash is excluded because this project
         /// models stash size through each character's private <see cref="PersonalRoom"/> instead.
@@ -53,7 +55,7 @@ namespace Safehouse.Core
             "workbench",
         };
 
-        public Hideout(IEnumerable<Facility> facilities)
+        public Hideout(IEnumerable<Facility> facilities, double fuel = DefaultFuel)
         {
             var list = (facilities ?? Enumerable.Empty<Facility>()).ToList();
             var ids = list.Select(f => f.FacilityId).ToList();
@@ -63,9 +65,11 @@ namespace Safehouse.Core
             }
 
             Facilities = list;
+            Fuel = Validate.Double(fuel, "Fuel", 0.0, HideoutLimits.MaxFuel);
         }
 
         public IReadOnlyList<Facility> Facilities { get; }
+        public double Fuel { get; }
 
         public Facility Facility(string facilityId) =>
             Facilities.FirstOrDefault(f => f.FacilityId == facilityId)
@@ -79,14 +83,16 @@ namespace Safehouse.Core
         /// level 0 and must be upgraded by the player.
         /// </summary>
         public static Hideout CreateNew() => new Hideout(SharedFacilityIds.Select(id =>
-            new Facility(id, id == "generator" ? 1 : 0)));
+            new Facility(id, id == "generator" ? 1 : 0)), DefaultFuel);
 
         public Hideout WithFacility(Facility facility)
         {
             var list = Facilities.Where(f => f.FacilityId != facility.FacilityId).ToList();
             list.Add(facility);
-            return new Hideout(list);
+            return new Hideout(list, Fuel);
         }
+
+        public Hideout WithFuel(double fuel) => new Hideout(Facilities, fuel);
     }
 
     /// <summary>

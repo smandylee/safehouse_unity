@@ -96,24 +96,6 @@ namespace Safehouse.Tests
         }
 
         [Test]
-        public void AccountSurvivesAWriteAndARead()
-        {
-            var id = NewId();
-            var original = new Account(
-                Hideout.CreateNew().WithFacility(new Facility("generator", 2)),
-                new[] { id });
-
-            var bytes = AccountSerializer.Serialize(original);
-            var back = AccountSerializer.FromJson(
-                AccountSerializer.Parse(Encoding.UTF8.GetString(bytes)));
-
-            Assert.AreEqual(original.CharacterOrder.Single(), back.CharacterOrder.Single());
-            Assert.AreEqual(2, back.Hideout.LevelOf("generator"));
-            Assert.AreEqual(0, back.Hideout.LevelOf("workbench"));
-            Assert.AreEqual(AccountSerializer.Serialize(original), AccountSerializer.Serialize(back));
-        }
-
-        [Test]
         public void AccountUnknownKeysAreIgnoredAndDroppedOnTheNextWrite()
         {
             var document = AccountSerializer.ToJson(Account.CreateNew());
@@ -135,6 +117,50 @@ namespace Safehouse.Tests
 
             var levelTwo = hideout.WithFacility(new Facility("generator", 2));
             Assert.AreEqual(20, HideoutRules.GeneratorFuelPerHour(Definition, levelTwo, 4));
+        }
+
+        [Test]
+        public void TickFuelConsumesFuelBasedOnPopulationAndGeneratorLevel()
+        {
+            var hideout = Hideout.CreateNew().WithFuel(100.0);
+
+            var after = HideoutRules.TickFuel(Definition, hideout, 2, 5.0);
+
+            Assert.AreEqual(0.0, after.Fuel, 0.0001, "2 people * 10/h * 5h = 100");
+        }
+
+        [Test]
+        public void TickFuelNeverGoesBelowZero()
+        {
+            var hideout = Hideout.CreateNew().WithFuel(10.0);
+
+            var after = HideoutRules.TickFuel(Definition, hideout, 1, 2.0);
+
+            Assert.AreEqual(0.0, after.Fuel, 0.0001, "cannot consume more fuel than stored");
+        }
+
+        [Test]
+        public void TickFuelDoesNothingWhenTimeDoesNotAdvance()
+        {
+            var hideout = Hideout.CreateNew().WithFuel(50.0);
+
+            Assert.AreSame(hideout, HideoutRules.TickFuel(Definition, hideout, 4, 0.0));
+            Assert.AreSame(hideout, HideoutRules.TickFuel(Definition, hideout, 4, -1.0));
+        }
+
+        [Test]
+        public void GeneratorRunningRequiresFuelAndPopulation()
+        {
+            var hideout = Hideout.CreateNew().WithFuel(10.0);
+
+            Assert.IsTrue(HideoutRules.IsGeneratorRunning(Definition, hideout, 1));
+            Assert.IsFalse(HideoutRules.IsGeneratorRunning(Definition, hideout, 0));
+
+            var empty = hideout.WithFuel(0.0);
+            Assert.IsFalse(HideoutRules.IsGeneratorRunning(Definition, empty, 1));
+
+            var noGenerator = hideout.WithFacility(new Facility("generator", 0));
+            Assert.IsFalse(HideoutRules.IsGeneratorRunning(Definition, noGenerator, 1));
         }
 
         [Test]
@@ -226,6 +252,34 @@ namespace Safehouse.Tests
         }
 
         [Test]
+        public void StashGridCanBeResizedWhileKeepingItems()
+        {
+            var catalog = CatalogLoader.Load();
+            var item = catalog.First().Value;
+            var instance = ItemInstance.Create(Guid.NewGuid().ToString("N"), item.ItemId, 0, 0);
+            var grid = new StashGrid(10, 20, new[] { instance });
+
+            var bigger = grid.WithSize(12, 24);
+
+            Assert.AreEqual(12, bigger.StashWidth);
+            Assert.AreEqual(24, bigger.StashHeight);
+            Assert.AreEqual(instance.InstanceId, bigger.Stash.Single().InstanceId);
+        }
+
+        [Test]
+        public void EnsureRoomStashSizeExpandsStashToMatchRoomLevel()
+        {
+            var profile = Profile.CreateNew(NewId(), "Ana").With(room: new PersonalRoom(2));
+
+            var adjusted = HideoutRules.EnsureRoomStashSize(Definition, profile);
+
+            Assert.AreEqual(12, adjusted.Stash.StashWidth);
+            Assert.AreEqual(24, adjusted.Stash.StashHeight);
+            Assert.AreSame(adjusted, HideoutRules.EnsureRoomStashSize(Definition, adjusted),
+                "already large enough should return the same profile");
+        }
+
+        [Test]
         public void ProfileRoomSurvivesRoundTrip()
         {
             var profile = Profile.CreateNew(NewId(), "Ana").With(room: new PersonalRoom(3));
@@ -234,6 +288,27 @@ namespace Safehouse.Tests
                 ProfileSerializer.Parse(Encoding.UTF8.GetString(ProfileSerializer.Serialize(profile)))));
 
             Assert.AreEqual(3, back.Room.Level);
+        }
+
+        [Test]
+        public void AccountSurvivesAWriteAndARead()
+        {
+            var id = NewId();
+            var original = new Account(
+                Hideout.CreateNew().WithFacility(new Facility("generator", 2)).WithFuel(42.5),
+                new[] { id },
+                lastFuelTick: 1234.5);
+
+            var bytes = AccountSerializer.Serialize(original);
+            var back = AccountSerializer.FromJson(
+                AccountSerializer.Parse(Encoding.UTF8.GetString(bytes)));
+
+            Assert.AreEqual(original.CharacterOrder.Single(), back.CharacterOrder.Single());
+            Assert.AreEqual(2, back.Hideout.LevelOf("generator"));
+            Assert.AreEqual(0, back.Hideout.LevelOf("workbench"));
+            Assert.AreEqual(42.5, back.Hideout.Fuel, 0.0001);
+            Assert.AreEqual(1234.5, back.LastFuelTick, 0.0001);
+            Assert.AreEqual(AccountSerializer.Serialize(original), AccountSerializer.Serialize(back));
         }
 
         [Test]

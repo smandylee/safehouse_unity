@@ -77,6 +77,22 @@ namespace Safehouse.Core
             return level == 0 ? 1 : level;
         }
 
+        /// <summary>
+        /// Expands the character's stash to match their personal-room level. Safe to call on load:
+        /// it only grows the grid, and a room level never shrinks the stash.
+        /// </summary>
+        public static Profile EnsureRoomStashSize(HideoutDefinition definition, Profile profile)
+        {
+            var (width, height) = RoomStashSize(definition, profile.Room.Level);
+            if (profile.Stash.StashWidth >= width && profile.Stash.StashHeight >= height)
+            {
+                return profile;
+            }
+
+            var newStash = profile.Stash.WithSize(width, height);
+            return profile.With(stash: newStash);
+        }
+
         /// <summary>Whether the hideout has this facility built at least to the given level.</summary>
         public static bool HasLevel(Hideout hideout, string facilityId, int level) =>
             LevelOf(hideout, facilityId) >= level;
@@ -161,6 +177,32 @@ namespace Safehouse.Core
             }
 
             return definition.Facility(facilityId).Level(level).Effects.TryGetValue(effectKey, out value);
+        }
+
+        /// <summary>
+        /// True when the generator is built, has fuel, and there is population to consume it.
+        /// </summary>
+        public static bool IsGeneratorRunning(HideoutDefinition definition, Hideout hideout, int population) =>
+            LevelOf(hideout, "generator") > 0
+            && population > 0
+            && hideout.Fuel > 0.0001;
+
+        /// <summary>
+        /// Advances fuel consumption by <paramref name="elapsedHours"/>. Returns the hideout with the new fuel level
+        /// (never below zero). The caller is responsible for updating the last-fuel-tick timestamp.
+        /// </summary>
+        public static Hideout TickFuel(HideoutDefinition definition, Hideout hideout, int population,
+            double elapsedHours)
+        {
+            if (elapsedHours <= 0)
+            {
+                return hideout;
+            }
+
+            var perHour = GeneratorFuelPerHour(definition, hideout, population);
+            var consumed = perHour * elapsedHours;
+            var remaining = Math.Max(0.0, hideout.Fuel - consumed);
+            return hideout.WithFuel(remaining);
         }
 
         /// <summary>Numeric effect value at a facility's current level, or the default if missing/not built.</summary>

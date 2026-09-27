@@ -26,8 +26,10 @@ namespace Safehouse.Data
             {
                 ["schema_version"] = Account.SchemaVersion,
                 ["character_order"] = new JArray(account.CharacterOrder),
+                ["last_fuel_tick"] = account.LastFuelTick,
                 ["hideout"] = new JObject
                 {
+                    ["fuel"] = account.Hideout.Fuel,
                     ["facilities"] = new JArray(account.Hideout.Facilities.Select(facility => new JObject
                     {
                         ["facility_id"] = facility.FacilityId,
@@ -48,9 +50,19 @@ namespace Safehouse.Data
 
             var hideout = Obj(root["hideout"], "hideout");
             var facilities = Arr(hideout["facilities"], "facilities").Select(ReadFacility);
+            var fuelToken = hideout["fuel"];
+            var fuel = fuelToken != null && (fuelToken.Type == JTokenType.Float || fuelToken.Type == JTokenType.Integer)
+                ? fuelToken.Value<double>()
+                : Hideout.DefaultFuel;
             var characterOrder = Arr(root["character_order"], "character_order").Select(token => Str(token, "character_id"));
 
-            return new Account(new Hideout(facilities), characterOrder);
+            var lastFuelTickToken = root["last_fuel_tick"];
+            var lastFuelTick = lastFuelTickToken != null &&
+                (lastFuelTickToken.Type == JTokenType.Float || lastFuelTickToken.Type == JTokenType.Integer)
+                ? lastFuelTickToken.Value<double>()
+                : 0.0;
+
+            return new Account(new Hideout(facilities, fuel), characterOrder, lastFuelTick);
         }
 
         private static Facility ReadFacility(JToken token)

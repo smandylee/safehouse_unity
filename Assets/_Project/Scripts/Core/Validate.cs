@@ -72,5 +72,16 @@ namespace Safehouse.Core
 
             return value;
         }
+
+        public static double Double(double value, string label, double low = 0.0, double high = CoreLimits.MaxMoney)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value)
+                || value < low || value > high)
+            {
+                throw new ValidationException($"{label} must be a number between {low} and {high}.");
+            }
+
+            return value;
+        }
     }
 }
