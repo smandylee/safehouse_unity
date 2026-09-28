@@ -20,6 +20,8 @@ namespace Safehouse.Editor
         private const string TradersUxmlPath = UiFolder + "/TradersScreen.uxml";
         private const string HideoutUxmlPath = UiFolder + "/HideoutScreen.uxml";
         private const string SettingsUxmlPath = UiFolder + "/SettingsScreen.uxml";
+        private const string ScavengeUxmlPath = UiFolder + "/ScavengeScreen.uxml";
+        private const string CharacterUxmlPath = UiFolder + "/CharacterScreen.uxml";
         private const string ScenePath = "Assets/_Project/Scenes/Gear.unity";
 
         [MenuItem("Safehouse/Build Gear Scene")]
@@ -82,6 +84,20 @@ namespace Safehouse.Editor
                 return;
             }
 
+            var scavengeUxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(ScavengeUxmlPath);
+            if (scavengeUxml == null)
+            {
+                Debug.LogError($"GearSceneBuilder: no VisualTreeAsset at {ScavengeUxmlPath}.");
+                return;
+            }
+
+            var characterUxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(CharacterUxmlPath);
+            if (characterUxml == null)
+            {
+                Debug.LogError($"GearSceneBuilder: no VisualTreeAsset at {CharacterUxmlPath}.");
+                return;
+            }
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // UI Toolkit's Screen Space - Overlay panel (our PanelSettings mode) draws straight to
@@ -120,6 +136,18 @@ namespace Safehouse.Editor
             settingsDocument.panelSettings = panelSettings;
             settingsDocument.visualTreeAsset = settingsUxml;
             settingsHost.AddComponent<SettingsScreenController>();
+
+            var scavengeHost = new GameObject("ScavengeScreen");
+            var scavengeDocument = scavengeHost.AddComponent<UIDocument>();
+            scavengeDocument.panelSettings = panelSettings;
+            scavengeDocument.visualTreeAsset = scavengeUxml;
+            scavengeHost.AddComponent<ScavengeScreenController>();
+
+            var characterHost = new GameObject("CharacterScreen");
+            var characterDocument = characterHost.AddComponent<UIDocument>();
+            characterDocument.panelSettings = panelSettings;
+            characterDocument.visualTreeAsset = characterUxml;
+            characterHost.AddComponent<CharacterScreenController>();
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();

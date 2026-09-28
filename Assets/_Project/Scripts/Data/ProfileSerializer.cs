@@ -85,6 +85,7 @@ namespace Safehouse.Data
                 {
                     ["level"] = profile.Room.Level,
                 },
+                ["gundog"] = GundogJson(profile.Gundog),
             };
         }
 
@@ -105,7 +106,7 @@ namespace Safehouse.Data
         }));
 
         /// <summary>
-        /// Reads a current-schema (8) profile. Older documents go through <see cref="ProfileMigrations.Upgrade"/>
+        /// Reads a current-schema (9) profile. Older documents go through <see cref="ProfileMigrations.Upgrade"/>
         /// first; anything else - including a newer schema - is refused rather than guessed at.
         /// </summary>
         public static Profile FromJson(JToken document)
@@ -136,7 +137,43 @@ namespace Safehouse.Data
                 ReadConditions(root["conditions"]),
                 Obj(root["bio"], "bio").Properties().ToDictionary(p => p.Name, p => Str(p.Value, p.Name)),
                 Obj(root["abilities"], "abilities").Properties().ToDictionary(p => p.Name, p => Int(p.Value, p.Name)),
-                ReadRoom(root["personal_room"]));
+                ReadRoom(root["personal_room"]),
+                ReadGundog(root["gundog"]));
+        }
+
+        private static JObject GundogJson(GundogSheet sheet) => new JObject
+        {
+            ["abilities"] = new JObject(Gundog.Abilities.Select(stat =>
+                new JProperty(stat.StatId, sheet.Abilities[stat.StatId]))),
+            ["main_class"] = sheet.MainClass,
+            ["sub_class"] = sheet.SubClass,
+            ["arts"] = new JArray(sheet.Arts),
+            ["career"] = new JArray(sheet.Career),
+            ["reward_points"] = sheet.RewardPoints,
+            ["movement"] = sheet.Movement,
+            ["durability"] = sheet.Durability,
+            ["rank"] = sheet.Rank,
+            ["language"] = sheet.Language,
+            ["occupation"] = sheet.Occupation,
+            ["era"] = sheet.Era,
+        };
+
+        private static GundogSheet ReadGundog(JToken token)
+        {
+            var sheet = Obj(token, "gundog");
+            return new GundogSheet(
+                Obj(sheet["abilities"], "gundog abilities").Properties().ToDictionary(p => p.Name, p => Int(p.Value, p.Name)),
+                Str(sheet["main_class"], "main_class"),
+                Str(sheet["sub_class"], "sub_class"),
+                Arr(sheet["arts"], "arts").Select(entry => Str(entry, "art")),
+                Arr(sheet["career"], "career").Select(entry => Str(entry, "career")).ToList(),
+                Int(sheet["reward_points"], "reward_points"),
+                Int(sheet["movement"], "movement"),
+                Int(sheet["durability"], "durability"),
+                Str(sheet["rank"], "rank"),
+                Str(sheet["language"], "language"),
+                Str(sheet["occupation"], "occupation"),
+                Str(sheet["era"], "era"));
         }
 
         private static PersonalRoom ReadRoom(JToken token) =>

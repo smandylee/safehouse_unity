@@ -1,0 +1,31 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:sh="Safehouse.UI.Chrome">
+    <ui:Style src="Theme.uss" />
+
+    <ui:VisualElement name="scavenge-root" class="gear-root" style="flex-direction: column;">
+        <ui:VisualElement class="bar bar-top">
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 22px;">
+                <ui:Label text="SAFEHOUSE" class="text-heading" />
+            </ui:VisualElement>
+            <ui:Button text="CHARACTER" name="navtab-character" class="navtab" />
+            <ui:Button text="GEAR" name="navtab-gear" class="navtab" />
+            <ui:Button text="HIDEOUT" name="navtab-hideout" class="navtab" />
+            <ui:Button text="TRADERS" name="navtab-traders" class="navtab" />
+            <ui:Button text="SCAVENGE" name="navtab-scavenge" class="navtab navtab-active" />
+            <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:Button text="SETTINGS" name="navtab-settings" class="navtab" />
+        </ui:VisualElement>
+
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row; padding: 14px 24px; min-height: 0;">
+            <ui:VisualElement name="scavenge-main" style="flex-grow: 1; flex-direction: column; margin-right: 16px; min-height: 0;" />
+            <sh:FacetedPanel style="width: 400px; flex-shrink: 0; flex-direction: column; padding: 16px 16px 14px 16px;">
+                <ui:VisualElement name="scavenge-detail" style="flex-shrink: 0;" />
+                <ui:Label text="LOG" class="text-section" style="margin-bottom: 8px;" />
+                <ui:ScrollView name="scavenge-log-scroll">
+                    <ui:Label name="scavenge-log" text="" class="text-muted" style="white-space: normal; font-size: 12px;" />
+                </ui:ScrollView>
+                <ui:Label name="scavenge-error" text="" class="text-danger" style="white-space: normal; margin-top: 10px; flex-shrink: 0;" />
+            </sh:FacetedPanel>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -43,10 +43,11 @@ namespace Safehouse.Data
             new Dictionary<int, Func<JObject, JObject>>
             {
                 [1] = V1ToV2, [2] = V2ToV3, [3] = V3ToV4, [4] = V4ToV5, [5] = V5ToV6, [6] = V6ToV7, [7] = V7ToV8,
+                [8] = V8ToV9,
             };
 
         /// <summary>
-        /// Upgrades a copy of the document to schema 8. Anything this version cannot upgrade - not an object,
+        /// Upgrades a copy of the document to schema 9. Anything this version cannot upgrade - not an object,
         /// a version it does not know, or a newer one - is returned unchanged, so reading it reports the
         /// problem instead of guessing.
         /// </summary>
@@ -192,6 +193,30 @@ namespace Safehouse.Data
             raw["personal_room"] = new JObject
             {
                 ["level"] = PersonalRoom.DefaultLevel,
+            };
+            return raw;
+        }
+
+        private static JObject V8ToV9(JObject raw)
+        {
+            // A blank Gundog sheet. Expeditions do not read it.
+            var blank = GundogSheet.Blank;
+            raw["schema_version"] = 9;
+            raw["gundog"] = new JObject
+            {
+                ["abilities"] = new JObject(Gundog.Abilities.Select(stat =>
+                    new JProperty(stat.StatId, blank.Abilities[stat.StatId]))),
+                ["main_class"] = "",
+                ["sub_class"] = "",
+                ["arts"] = new JArray(),
+                ["career"] = new JArray(blank.Career),
+                ["reward_points"] = 0,
+                ["movement"] = 0,
+                ["durability"] = 0,
+                ["rank"] = "",
+                ["language"] = "",
+                ["occupation"] = "",
+                ["era"] = "",
             };
             return raw;
         }

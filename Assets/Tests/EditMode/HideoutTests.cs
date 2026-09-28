@@ -321,8 +321,9 @@ namespace Safehouse.Tests
             var upgraded = ProfileMigrations.Upgrade(document);
             var profile = ProfileSerializer.FromJson(upgraded);
 
-            Assert.AreEqual(8, upgraded["schema_version"].Value<int>());
+            Assert.AreEqual(9, upgraded["schema_version"].Value<int>());
             Assert.AreEqual(1, profile.Room.Level);
+            Assert.AreEqual("", profile.Gundog.MainClass);
         }
 
         // ---- repository ----

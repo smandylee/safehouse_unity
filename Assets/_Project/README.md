@@ -272,10 +272,12 @@ The stash is the character's own size (10 x 20 by default, larger after a hideou
 
 - `Scripts/Editor` has no README-documented scope beyond `GearSceneBuilder` yet; add more tooling
   there as it's needed (data import from the Tarkov snapshot, build scripts).
-- Combat, expeditions, gear and the injury system are still Python-only. They wait on the
-  Gundog Revised combat/ability rules being settled.
-- Expeditions are not ported. Settings has a basic screen (data-folder path + open folder) but no deep options yet.
-- No screen creates or deletes a character (the repository can).
+- SCAVENGE is ported for both expedition kinds (simulated real-time farming and direct node maps).
+  Combat is the Python automatic fight, including injuries. Skills and classes are not read.
+  The screen sends the open character; a party of up to three is supported by the rules.
+- Settings has a basic screen (data-folder path + open folder) but no deep options yet.
+- CHARACTER creates a character and stores the Gundog sheet (abilities, main/sub class, class arts, career).
+  Those values are not read by expeditions. There is still no delete-character screen.
 - Hideout effects other than stash size / fuel consumption / production speed are not wired to combat or expeditions
   yet; the UI upgrades and saves them, but the systems that will read them are still Python-only.
 - Korean text (character bios, names) has no font yet - see "Fonts" above.

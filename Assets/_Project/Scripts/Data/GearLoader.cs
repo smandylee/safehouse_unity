@@ -7,8 +7,8 @@ namespace Safehouse.Data
 {
     /// <summary>
     /// Turns gear.json into <see cref="GearData"/>. The C# side of the Python gear.load_gear: it owns
-    /// the JSON shape, while Safehouse.Core only ever sees validated objects. Combat-only tables
-    /// (enemies) and the numbers only combat reads are left for the combat port.
+    /// the JSON shape, while Safehouse.Core only ever sees validated objects. Enemies live in the same
+    /// file and are loaded here because expeditions fight them.
     /// </summary>
     public static class GearLoader
     {
@@ -16,18 +16,38 @@ namespace Safehouse.Data
         {
             var weapons = Table(document, "weapons").Select(row => Read(row, catalog, "Weapon", (id, r) =>
                 new WeaponStats(id, r.Value<string>("caliber"),
-                    r.Value<int>("ergonomics"), r.Value<int>("recoil")))).ToList();
+                    r.Value<int>("ergonomics"), r.Value<int>("recoil"),
+                    r.Value<int>("fire_rate"), r.Value<string>("weapon_class") ?? "",
+                    r.Value<int>("effective_distance")))).ToList();
             var ammo = Table(document, "ammo").Select(row => Read(row, catalog, "Ammo", (id, r) =>
-                new AmmoStats(id, r.Value<string>("caliber"), r.Value<int>("damage")))).ToList();
+                new AmmoStats(id, r.Value<string>("caliber"), r.Value<int>("damage"),
+                    r.Value<int>("penetration"), r.Value<int>("armor_damage"),
+                    System.Math.Max(1, r.Value<int?>("projectiles") ?? 1)))).ToList();
             var equipment = Table(document, "equipment").Select(row => Read(row, catalog, "Equipment", (id, r) =>
                 new EquipmentStats(id, r.Value<string>("slot"),
                     r.Value<int>("armor_class"), r.Value<int>("capacity")))).ToList();
             var meds = Table(document, "meds").Select(row => Read(row, catalog, "Med", (id, r) =>
-                new MedStats(id, r.Value<int>("uses")))).ToList();
+                new MedStats(id, r.Value<int>("uses"), r.Value<int?>("heal") ?? 0,
+                    r.Value<bool?>("stops_light_bleed") ?? false,
+                    r.Value<bool?>("stops_heavy_bleed") ?? false,
+                    r.Value<bool?>("treats_fracture") ?? false))).ToList();
+            var mobs = document["mobs"] is JObject
+                ? Table(document, "mobs").Select(row =>
+                {
+                    if (!(row.Value is JObject fields))
+                    {
+                        throw new GameDataException($"Enemy {row.Key} must be an object.");
+                    }
+
+                    return new MobStats(row.Key, fields.Value<string>("name"), fields.Value<int>("health"),
+                        fields.Value<int>("armor_class"), fields.Value<int>("penetration"),
+                        fields.Value<int>("damage"), fields.Value<int>("fire_rate"));
+                }).ToList()
+                : new List<MobStats>();
 
             try
             {
-                return new GearData(weapons, ammo, equipment, meds);
+                return new GearData(weapons, ammo, equipment, meds, mobs);
             }
             catch (ValidationException error)
             {

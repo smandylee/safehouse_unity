@@ -19,38 +19,61 @@ namespace Safehouse.Core
         public static bool IsSlot(string slot) => slot != null && ((IList<string>)All).Contains(slot);
     }
 
-    // Only the numbers the loadout screen and the equip rules read. The Python gear tables carry more
-    // (fire rate, penetration, durability, heal amounts, ...); those arrive with the combat and
-    // expedition ports that actually use them, so this does not guess at them now.
+    /// <summary>Weapon classes combat.json keys a fight by. The same list as the Python gear.WEAPON_CLASSES.</summary>
+    public static class WeaponClasses
+    {
+        public static readonly IReadOnlyList<string> All = new[]
+        {
+            "assault-rifle", "carbine", "smg", "shotgun", "marksman", "bolt-action",
+            "machine-gun", "pistol", "special",
+        };
+    }
 
     public sealed class WeaponStats
     {
-        public WeaponStats(string itemId, string caliber, int ergonomics, int recoil)
+        public WeaponStats(string itemId, string caliber, int ergonomics, int recoil,
+            int fireRate = 0, string weaponClass = "", int effectiveDistance = 0)
         {
             ItemId = Validate.Identifier(itemId, "item_id");
             Caliber = Validate.Text(caliber, "caliber", 60);
             Ergonomics = ergonomics;
             Recoil = recoil;
+            FireRate = fireRate;
+            WeaponClass = weaponClass ?? "";
+            EffectiveDistance = effectiveDistance;
         }
 
         public string ItemId { get; }
         public string Caliber { get; }
         public int Ergonomics { get; }
         public int Recoil { get; }
+        public int FireRate { get; }
+        public string WeaponClass { get; }
+        public int EffectiveDistance { get; }
     }
 
     public sealed class AmmoStats
     {
-        public AmmoStats(string itemId, string caliber, int damage)
+        public AmmoStats(string itemId, string caliber, int damage,
+            int penetration = 0, int armorDamage = 0, int projectiles = 1)
         {
             ItemId = Validate.Identifier(itemId, "item_id");
             Caliber = Validate.Text(caliber, "caliber", 60);
             Damage = damage;
+            Penetration = penetration;
+            ArmorDamage = armorDamage;
+            Projectiles = projectiles < 1 ? 1 : projectiles;
         }
 
         public string ItemId { get; }
         public string Caliber { get; }
         public int Damage { get; }
+        public int Penetration { get; }
+        public int ArmorDamage { get; }
+        public int Projectiles { get; }
+
+        /// <summary>A shotgun shell counts every pellet.</summary>
+        public int ShotDamage => Damage * Projectiles;
     }
 
     public sealed class EquipmentStats
@@ -96,14 +119,46 @@ namespace Safehouse.Core
 
     public sealed class MedStats
     {
-        public MedStats(string itemId, int uses)
+        public MedStats(string itemId, int uses, int heal = 0,
+            bool stopsLightBleed = false, bool stopsHeavyBleed = false, bool treatsFracture = false)
         {
             ItemId = Validate.Identifier(itemId, "item_id");
             Uses = uses;
+            Heal = heal;
+            StopsLightBleed = stopsLightBleed;
+            StopsHeavyBleed = stopsHeavyBleed;
+            TreatsFracture = treatsFracture;
         }
 
         public string ItemId { get; }
         public int Uses { get; }
+        public int Heal { get; }
+        public bool StopsLightBleed { get; }
+        public bool StopsHeavyBleed { get; }
+        public bool TreatsFracture { get; }
+    }
+
+    /// <summary>An enemy as the game equips it. Mob ids keep the game's own spelling, which is not an item id.</summary>
+    public sealed class MobStats
+    {
+        public MobStats(string mobId, string name, int health, int armorClass, int penetration, int damage, int fireRate)
+        {
+            MobId = Validate.Text(mobId, "mob_id", 60);
+            Name = Validate.Text(name, "Enemy name", 60);
+            Health = health;
+            ArmorClass = armorClass;
+            Penetration = penetration;
+            Damage = damage;
+            FireRate = fireRate;
+        }
+
+        public string MobId { get; }
+        public string Name { get; }
+        public int Health { get; }
+        public int ArmorClass { get; }
+        public int Penetration { get; }
+        public int Damage { get; }
+        public int FireRate { get; }
     }
 
     /// <summary>
@@ -116,15 +171,25 @@ namespace Safehouse.Core
         private readonly Dictionary<string, AmmoStats> _ammo = new Dictionary<string, AmmoStats>();
         private readonly Dictionary<string, EquipmentStats> _equipment = new Dictionary<string, EquipmentStats>();
         private readonly Dictionary<string, MedStats> _meds = new Dictionary<string, MedStats>();
+        private readonly Dictionary<string, MobStats> _mobs = new Dictionary<string, MobStats>();
 
         public GearData(IEnumerable<WeaponStats> weapons, IEnumerable<AmmoStats> ammo,
-            IEnumerable<EquipmentStats> equipment, IEnumerable<MedStats> meds)
+            IEnumerable<EquipmentStats> equipment, IEnumerable<MedStats> meds, IEnumerable<MobStats> mobs = null)
         {
             var seen = new HashSet<string>();
             foreach (var row in weapons ?? new WeaponStats[0]) { Add(seen, _weapons, row.ItemId, row); }
             foreach (var row in ammo ?? new AmmoStats[0]) { Add(seen, _ammo, row.ItemId, row); }
             foreach (var row in equipment ?? new EquipmentStats[0]) { Add(seen, _equipment, row.ItemId, row); }
             foreach (var row in meds ?? new MedStats[0]) { Add(seen, _meds, row.ItemId, row); }
+            foreach (var row in mobs ?? new MobStats[0])
+            {
+                if (_mobs.ContainsKey(row.MobId))
+                {
+                    throw new ValidationException($"An enemy appears more than once: {row.MobId}.");
+                }
+
+                _mobs[row.MobId] = row;
+            }
         }
 
         public static GearData Empty { get; } = new GearData(null, null, null, null);
@@ -144,6 +209,47 @@ namespace Safehouse.Core
         public IReadOnlyDictionary<string, AmmoStats> Ammo => _ammo;
         public IReadOnlyDictionary<string, EquipmentStats> Equipment => _equipment;
         public IReadOnlyDictionary<string, MedStats> Meds => _meds;
+        public IReadOnlyDictionary<string, MobStats> Mobs => _mobs;
+
+        /// <summary>Carrying capacity from the rig and backpack a character wears. Pockets are added by the expedition rules.</summary>
+        public int CarryCells(IEnumerable<string> itemIds)
+        {
+            var cells = 0;
+            foreach (var itemId in itemIds)
+            {
+                if (itemId != null && _equipment.TryGetValue(itemId, out var gear))
+                {
+                    cells += gear.Capacity;
+                }
+            }
+
+            return cells;
+        }
+
+        /// <summary>Which body parts are actually covered: a helmet protects the head, a vest the torso.</summary>
+        public Dictionary<string, int> ArmorClasses(IEnumerable<string> itemIds)
+        {
+            var classes = new Dictionary<string, int>();
+            foreach (var itemId in itemIds)
+            {
+                if (itemId == null || !_equipment.TryGetValue(itemId, out var equip) || equip.ArmorClass <= 0)
+                {
+                    continue;
+                }
+
+                var parts = equip.Slot == LoadoutSlots.Helmet
+                    ? new[] { "head" }
+                    : equip.Slot == LoadoutSlots.Armor ? new[] { "thorax", "stomach" } : new string[0];
+                foreach (var part in parts)
+                {
+                    classes[part] = classes.TryGetValue(part, out var current)
+                        ? System.Math.Max(current, equip.ArmorClass)
+                        : equip.ArmorClass;
+                }
+            }
+
+            return classes;
+        }
 
         /// <summary>Which loadout slot an item belongs in, or null when it cannot be equipped.</summary>
         public string SlotOf(string itemId)

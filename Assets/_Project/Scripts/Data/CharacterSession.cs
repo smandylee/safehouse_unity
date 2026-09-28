@@ -142,6 +142,51 @@ namespace Safehouse.Data
             Account = candidate;
         }
 
+        /// <summary>Reads the open character and the account back from disk after another writer, such as an expedition, changed them.</summary>
+        public void Reload(ICollection<string> notices = null)
+        {
+            if (Repository == null)
+            {
+                return;
+            }
+
+            Profile = Repository.Load(Profile.ProfileId, notices);
+            if (AccountRepository != null)
+            {
+                Account = AccountRepository.Load(notices);
+            }
+        }
+
+        /// <summary>
+        /// Saves a new character with the given Gundog sheet, adds them to the account, and opens them.
+        /// The current character is left as it was if the save fails.
+        /// </summary>
+        public Profile CreateCharacter(string displayName, IReadOnlyDictionary<string, string> bio, GundogSheet sheet)
+        {
+            if (Repository == null)
+            {
+                throw new StorageException("A character cannot be created while saving is unavailable.");
+            }
+
+            if (Repository.CharacterIds().Count >= CharacterSheet.MaxCharacters)
+            {
+                throw new StorageException($"At most {CharacterSheet.MaxCharacters} characters can be kept.");
+            }
+
+            var profile = HideoutRules.EnsureRoomStashSize(HideoutLoader.Load(),
+                Profile.CreateNew(Guid.NewGuid().ToString("N"), displayName, bio: bio, gundog: sheet));
+            Repository.Save(profile);
+            if (!Account.CharacterOrder.Contains(profile.ProfileId))
+            {
+                var account = Account.With(characterOrder: Account.CharacterOrder.Concat(new[] { profile.ProfileId }));
+                AccountRepository.Save(account);
+                Account = account;
+            }
+
+            Profile = profile;
+            return profile;
+        }
+
         /// <summary>Opens another character. The current one is untouched if that fails.</summary>
         public void Switch(string profileId, ICollection<string> notices = null)
         {

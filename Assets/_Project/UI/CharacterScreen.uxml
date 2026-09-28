@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:sh="Safehouse.UI.Chrome">
+    <ui:Style src="Theme.uss" />
+
+    <ui:VisualElement name="character-root" class="gear-root" style="flex-direction: column;">
+        <ui:VisualElement class="bar bar-top">
+            <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 22px;">
+                <ui:Label text="SAFEHOUSE" class="text-heading" />
+            </ui:VisualElement>
+            <ui:Button text="CHARACTER" name="navtab-character" class="navtab navtab-active" />
+            <ui:Button text="GEAR" name="navtab-gear" class="navtab" />
+            <ui:Button text="HIDEOUT" name="navtab-hideout" class="navtab" />
+            <ui:Button text="TRADERS" name="navtab-traders" class="navtab" />
+            <ui:Button text="SCAVENGE" name="navtab-scavenge" class="navtab" />
+            <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:Button text="SETTINGS" name="navtab-settings" class="navtab" />
+        </ui:VisualElement>
+
+        <ui:VisualElement style="flex-grow: 1; flex-direction: column; padding: 14px 24px; min-height: 0;">
+            <ui:ScrollView name="character-scroll" style="flex-grow: 1;" />
+            <ui:Label name="character-error" text="" class="text-danger" style="white-space: normal; margin-top: 8px; flex-shrink: 0;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

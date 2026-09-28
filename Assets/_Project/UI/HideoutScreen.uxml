@@ -12,11 +12,11 @@
             <ui:VisualElement style="flex-direction: row; align-items: center; margin-right: 22px;">
                 <ui:Label text="SAFEHOUSE" class="text-heading" />
             </ui:VisualElement>
-            <ui:Button text="CHARACTER" class="navtab" />
+            <ui:Button text="CHARACTER" name="navtab-character" class="navtab" />
             <ui:Button text="GEAR" name="navtab-gear" class="navtab" />
             <ui:Button text="HIDEOUT" name="navtab-hideout" class="navtab navtab-active" />
             <ui:Button text="TRADERS" name="navtab-traders" class="navtab" />
-            <ui:Button text="SCAVENGE" class="navtab" />
+            <ui:Button text="SCAVENGE" name="navtab-scavenge" class="navtab" />
             <ui:Button text="QUESTS" class="navtab navtab-disabled" focusable="false" />
             <ui:VisualElement style="flex-grow: 1;" />
             <ui:Button text="SETTINGS" name="navtab-settings" class="navtab" />

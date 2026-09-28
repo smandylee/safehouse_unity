@@ -7,14 +7,14 @@ namespace Safehouse.Core
     /// One character, exactly as saved. Immutable: a change builds a new profile (see <see cref="With"/>),
     /// so a change that fails to save can never leave a half-changed one behind. The C# side of the Python
     /// models.Profile, plus the rig and backpack grids, which the Python save has no concept of (schema 7),
-    /// and the personal room level (schema 8).
+    /// the personal room level (schema 8), and the Gundog sheet (schema 9).
     ///
     /// The constructor checks every field on its own; whether the items exist in the catalog and fit their
     /// grids needs the catalog, and is <see cref="ProfileRules.ValidateAgainstCatalog"/>.
     /// </summary>
     public sealed class Profile
     {
-        public const int SchemaVersion = 8;
+        public const int SchemaVersion = 9;
 
         public const int DefaultMoney = 500_000;
         public const int DefaultStashWidth = 10;
@@ -34,7 +34,8 @@ namespace Safehouse.Core
             IReadOnlyDictionary<string, IReadOnlyList<string>> conditions,
             IReadOnlyDictionary<string, string> bio,
             IReadOnlyDictionary<string, int> abilities,
-            PersonalRoom room = null)
+            PersonalRoom room = null,
+            GundogSheet gundog = null)
         {
             ProfileId = Validate.Identifier(profileId, "profile_id", instance: true);
             DisplayName = Validate.Text(displayName, "Character name", CharacterSheet.MaxNameLength).Trim();
@@ -71,6 +72,7 @@ namespace Safehouse.Core
             Bio = CheckBio(bio);
             Abilities = CheckAbilities(abilities);
             Room = room ?? PersonalRoom.Default;
+            Gundog = gundog ?? GundogSheet.Blank;
         }
 
         public string ProfileId { get; }
@@ -88,12 +90,16 @@ namespace Safehouse.Core
         public IReadOnlyDictionary<string, int> Abilities { get; }
         public PersonalRoom Room { get; }
 
+        /// <summary>Gundog Revised sheet. Not read by expeditions.</summary>
+        public GundogSheet Gundog { get; }
+
         /// <summary>Total hit points: derived from the body parts, never stored.</summary>
         public int Health => BodyParts.Values.Sum();
 
         /// <summary>A brand-new healthy character with nothing on, in nothing.</summary>
         public static Profile CreateNew(string profileId, string displayName, int money = DefaultMoney,
-            int stashWidth = DefaultStashWidth, int stashHeight = DefaultStashHeight) =>
+            int stashWidth = DefaultStashWidth, int stashHeight = DefaultStashHeight,
+            IReadOnlyDictionary<string, string> bio = null, GundogSheet gundog = null) =>
             new Profile(profileId, displayName, money,
                 new StashGrid(stashWidth, stashHeight),
                 new StashGrid(DefaultRigWidth, DefaultRigHeight),
@@ -101,17 +107,24 @@ namespace Safehouse.Core
                 null, CharacterSheet.Active, Loadout.Empty,
                 CharacterSheet.BodyPartMaxHealth.ToDictionary(pair => pair.Key, pair => pair.Value),
                 new Dictionary<string, IReadOnlyList<string>>(),
-                CharacterSheet.BioFields.ToDictionary(field => field, field => ""),
-                CharacterSheet.Abilities.ToDictionary(ability => ability, ability => CharacterSheet.AbilityBase));
+                bio ?? CharacterSheet.BioFields.ToDictionary(field => field, field => ""),
+                CharacterSheet.Abilities.ToDictionary(ability => ability, ability => CharacterSheet.AbilityBase),
+                null, gundog);
 
         /// <summary>A copy with some parts replaced; anything left out is kept.</summary>
         public Profile With(StashGrid stash = null, StashGrid rig = null, StashGrid backpack = null,
             Loadout loadout = null, int? money = null, string status = null,
-            IEnumerable<TraderState> traders = null, PersonalRoom room = null) =>
+            IEnumerable<TraderState> traders = null, PersonalRoom room = null,
+            IReadOnlyDictionary<string, int> bodyParts = null,
+            IReadOnlyDictionary<string, IReadOnlyList<string>> conditions = null,
+            IReadOnlyDictionary<string, int> abilities = null,
+            IReadOnlyDictionary<string, string> bio = null,
+            GundogSheet gundog = null) =>
             new Profile(ProfileId, DisplayName, money ?? Money,
                 stash ?? Stash, rig ?? Rig, backpack ?? Backpack,
                 traders ?? Traders, status ?? Status, loadout ?? Loadout,
-                BodyParts, Conditions, Bio, Abilities, room ?? Room);
+                bodyParts ?? BodyParts, conditions ?? Conditions, bio ?? Bio, abilities ?? Abilities,
+                room ?? Room, gundog ?? Gundog);
 
         private static IReadOnlyDictionary<string, int> CheckBodyParts(IReadOnlyDictionary<string, int> parts)
         {

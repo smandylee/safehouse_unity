@@ -27,9 +27,11 @@ namespace Safehouse.UI
             _buttonOpenFolder = _root.Q<Button>("button-open-folder");
             _labelStatus = _root.Q<Label>("label-status");
 
+            _root.Q<Button>("navtab-character").clicked += () => ScreenNavigator.Go("character");
             _root.Q<Button>("navtab-gear").clicked += () => ScreenNavigator.Go("gear");
             _root.Q<Button>("navtab-traders").clicked += () => ScreenNavigator.Go("traders");
             _root.Q<Button>("navtab-hideout").clicked += () => ScreenNavigator.Go("hideout");
+            _root.Q<Button>("navtab-scavenge").clicked += () => ScreenNavigator.Go("scavenge");
             _buttonOpenFolder.clicked += OpenDataFolder;
 
             ScreenNavigator.Register("settings", Show, Hide);

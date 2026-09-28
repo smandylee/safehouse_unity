@@ -453,3 +453,229 @@
 #facility-scroll .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
 #facility-scroll .unity-scroller__low-button,
 #facility-scroll .unity-scroller__high-button { display: none; }
+
+/* ---- direct raid map ---- */
+
+.raid-map {
+    flex-grow: 1;
+    position: relative;
+    min-height: 0;
+    background-color: rgb(11, 13, 12);
+    border-width: 1px;
+    border-color: rgb(38, 45, 54);
+    overflow: hidden;
+}
+
+.raid-plate { background-color: rgb(11, 13, 12); }
+
+.raid-legend {
+    position: absolute;
+    left: 16px;
+    bottom: 12px;
+    letter-spacing: 1.6px;
+}
+
+.raid-token {
+    position: absolute;
+    width: 80px;
+    align-items: center;
+}
+
+.raid-ring {
+    position: absolute;
+    left: 2px;
+    top: -6px;
+    width: 76px;
+    height: 76px;
+    border-radius: 38px;
+    border-width: 1px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.raid-ring-current {
+    border-width: 2px;
+    border-color: rgb(217, 164, 65);
+    background-color: rgba(217, 164, 65, 0.10);
+}
+
+.raid-ring-open { border-color: rgba(217, 164, 65, 0.45); }
+
+.raid-node {
+    width: 64px;
+    height: 64px;
+    margin-top: 0;
+    padding: 0;
+    border-width: 0;
+    border-radius: 32px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.raid-node-open:hover { translate: 0 -2px; }
+.raid-node-cleared { opacity: 0.42; }
+.raid-node-locked { opacity: 0.28; }
+
+.raid-node-label {
+    margin-top: 3px;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+    -unity-font-style: normal;
+    -unity-text-align: middle-center;
+    color: rgb(154, 165, 177);
+    white-space: nowrap;
+}
+
+.raid-node-label-current { color: rgb(217, 164, 65); }
+
+.raid-kicker {
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    color: rgb(217, 164, 65);
+    margin-bottom: 4px;
+}
+
+.raid-title {
+    font-size: 18px;
+    letter-spacing: 0.6px;
+    white-space: normal;
+    margin-bottom: 6px;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+    -unity-font-style: normal;
+}
+
+.raid-body {
+    font-size: 12px;
+    color: rgb(154, 165, 177);
+    white-space: normal;
+    margin-bottom: 12px;
+}
+
+.raid-choice { margin-bottom: 6px; align-self: stretch; }
+
+.raid-party {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top-width: 1px;
+    border-top-color: rgb(36, 43, 51);
+}
+
+.raid-part-track {
+    height: 4px;
+    margin-top: 3px;
+    background-color: rgb(36, 43, 51);
+}
+
+.raid-part-fill { height: 4px; background-color: rgb(111, 158, 92); }
+.raid-part-hurt { background-color: rgb(217, 164, 65); }
+.raid-part-down { background-color: rgb(200, 80, 60); }
+
+.map-grid { flex-direction: row; flex-wrap: wrap; margin-bottom: 8px; }
+.map-tile {
+    width: 156px;
+    height: 156px;
+    min-width: 156px;
+    min-height: 156px;
+    margin: 0 8px 8px 0;
+    padding: 0;
+    border-width: 2px;
+    border-color: rgb(36, 43, 51);
+    border-radius: 0;
+    background-color: rgb(17, 20, 23);
+    -unity-background-scale-mode: scale-and-crop;
+    overflow: hidden;
+    justify-content: flex-end;
+}
+.map-tile-on { border-color: rgb(217, 164, 65); }
+.map-tile-name {
+    margin: 0;
+    padding: 6px 4px;
+    background-color: rgba(10, 12, 14, 0.78);
+    color: rgb(232, 226, 214);
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+    -unity-font-style: normal;
+}
+
+#scavenge-log-scroll { flex-grow: 1; min-height: 80px; }
+#scavenge-log-scroll .unity-scroller { background-color: rgb(17, 20, 23); }
+#scavenge-log-scroll .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }
+#scavenge-log-scroll .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
+#scavenge-log-scroll .unity-scroller__low-button,
+#scavenge-log-scroll .unity-scroller__high-button { display: none; }
+
+/* ---- character sheet ---- */
+
+.sheet-section { margin-bottom: 16px; }
+.sheet-row { flex-direction: row; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+.sheet-stat {
+    width: 48px;
+    min-width: 48px;
+    margin-right: 6px;
+    flex-shrink: 0;
+    -unity-text-align: middle-right;
+}
+.sheet-value { width: 28px; margin-right: 4px; -unity-text-align: middle-center; }
+.sheet-step { width: 28px; height: 26px; margin-right: 4px; padding: 0; }
+.sheet-class { height: 28px; margin: 0 6px 6px 0; padding-left: 10px; padding-right: 10px; }
+.sheet-art { height: 28px; margin: 0 6px 6px 0; }
+.sheet-art-on { border-color: rgb(217, 164, 65); color: rgb(217, 164, 65); }
+
+.sheet-field {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    margin: 0 18px 8px 0;
+    flex-grow: 0;
+}
+.sheet-field .unity-base-text-field__input,
+.sheet-field .unity-base-field__input {
+    width: 420px;
+    min-width: 420px;
+    max-width: 420px;
+    flex-grow: 0;
+    height: 32px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-color: rgb(196, 202, 208);
+    color: rgb(20, 23, 26);
+    -unity-font-style: normal;
+    font-size: 13px;
+}
+.sheet-field .unity-base-field__input .unity-text-element {
+    color: rgb(20, 23, 26);
+}
+.sheet-field-wide {
+    width: 100%;
+    margin-right: 0;
+}
+.sheet-field-wide .unity-base-text-field__input,
+.sheet-field-wide .unity-base-field__input {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    flex-grow: 1;
+}
+.sheet-field .unity-base-text-field__label,
+.sheet-field .unity-base-field__label {
+    min-width: 0;
+    width: auto;
+    margin-right: 6px;
+    padding-left: 0;
+    padding-right: 0;
+    flex-grow: 0;
+    color: rgb(120, 132, 143);
+    font-size: 12px;
+    -unity-text-align: middle-right;
+    -unity-font-definition: url("Fonts/Oswald/Oswald-Medium.ttf");
+}
+
+#character-scroll .unity-scroller { background-color: rgb(17, 20, 23); }
+#character-scroll .unity-base-slider__tracker { background-color: rgb(25, 29, 35); border-width: 0; }
+#character-scroll .unity-base-slider__dragger { background-color: rgb(59, 68, 80); border-width: 0; }
+#character-scroll .unity-scroller__low-button,
+#character-scroll .unity-scroller__high-button { display: none; }
