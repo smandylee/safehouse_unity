@@ -167,9 +167,12 @@ namespace Safehouse.UI
         {
             var map = _maps[trip.MapId];
             var zone = map.Zone(trip.ZoneId, trip.Night);
+            var placeName = map.Locations != null && trip.LocationId != null
+                ? map.Locations.Get(trip.LocationId).Name
+                : zone.Name;
             var column = Column();
             column.style.flexGrow = 1;
-            column.Add(Heading(map.Name.ToUpperInvariant() + "   ·   " + zone.Name.ToUpperInvariant()
+            column.Add(Heading(map.Name.ToUpperInvariant() + "   ·   " + placeName.ToUpperInvariant()
                 + (trip.Night ? "   ·   NIGHT" : "   ·   DAY")));
             if (trip.Mode == ExpeditionModes.Simulation)
             {
@@ -249,12 +252,44 @@ namespace Safehouse.UI
 
             if (node.Kind == "exit")
             {
-                var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+                var map = _maps[trip.MapId];
+                var row = new VisualElement { style = { flexDirection = FlexDirection.Row, flexWrap = Wrap.Wrap } };
                 var extract = ChoiceButton("EXTRACT", true,
                     () => Run(() => Expeditions(session).LeaveZone(trip, "extract"), session));
                 extract.style.flexGrow = 1;
+                extract.style.minWidth = 100;
                 row.Add(extract);
-                if (ExpeditionRules.CanGoDeeper(trip))
+
+                if (map.Locations != null && trip.LocationId != null)
+                {
+                    var here = map.Locations.Get(trip.LocationId);
+                    if (ExpeditionRules.CanGoDeeper(trip, map))
+                    {
+                        // One button per place this location leads to, instead of a single "go deeper": the
+                        // player is choosing a destination on the map, not just descending a fixed depth ladder.
+                        foreach (var neighborId in here.ConnectsTo)
+                        {
+                            var neighbor = map.Locations.Get(neighborId);
+                            var destinationId = neighborId;
+                            var go = ChoiceButton(neighbor.Name.ToUpperInvariant(), false,
+                                () => Run(() => Expeditions(session).LeaveZone(trip, destinationId), session));
+                            go.style.flexGrow = 1;
+                            go.style.minWidth = 100;
+                            go.style.marginLeft = 8;
+                            row.Add(go);
+                        }
+                    }
+                    else if (here.ConnectsTo.Count > 0)
+                    {
+                        // Not a dead end - the cap (ExpeditionRules.MaxNodesPerExpedition) is why only EXTRACT shows.
+                        var note = new Label("The party has pushed as far as they safely can this trip.");
+                        note.AddToClassList("text-muted");
+                        note.style.whiteSpace = WhiteSpace.Normal;
+                        note.style.marginTop = 6;
+                        _detail.Add(note);
+                    }
+                }
+                else if (ExpeditionRules.CanGoDeeper(trip))
                 {
                     var deeper = ChoiceButton("GO DEEPER", false,
                         () => Run(() => Expeditions(session).LeaveZone(trip, "deeper"), session));
@@ -454,6 +489,7 @@ namespace Safehouse.UI
             }
 
             _maps = MapLoader.LoadMaps(Catalog());
+            LocationLoader.LoadInto(_maps);
             if (!_maps.ContainsKey(_mapId))
             {
                 _mapId = _maps.Keys.First();

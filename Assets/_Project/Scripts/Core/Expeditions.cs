@@ -47,7 +47,7 @@ namespace Safehouse.Core
 
     public sealed class Expedition
     {
-        public const int SchemaVersion = 2;
+        public const int SchemaVersion = 4;
         public const int MaxParty = 3;
         public const int MaxLogEntries = 200;
         public const int MaxLootPerCharacter = 2000;
@@ -55,7 +55,8 @@ namespace Safehouse.Core
         public Expedition(string expeditionId, string mapId, bool night, IReadOnlyList<string> party,
             long startedAt, string zoneId, long zoneStartedAt, string status, string outcome,
             IReadOnlyDictionary<string, IReadOnlyList<string>> loot, IReadOnlyList<string> discarded,
-            IReadOnlyList<string> log, RngState rngState, string mode, Route route)
+            IReadOnlyList<string> log, RngState rngState, string mode, Route route, string locationId = null,
+            int nodesVisited = 0)
         {
             ExpeditionId = Validate.Identifier(expeditionId, "expedition_id", instance: true);
             MapId = Validate.Identifier(mapId, "map_id");
@@ -106,6 +107,9 @@ namespace Safehouse.Core
             {
                 throw new ValidationException("A simulated expedition cannot have a route.");
             }
+
+            LocationId = locationId;
+            NodesVisited = nodesVisited;
         }
 
         public string ExpeditionId { get; }
@@ -124,10 +128,28 @@ namespace Safehouse.Core
         public string Mode { get; }
         public Route Route { get; }
 
+        /// <summary>
+        /// Which named place on the map the party is currently at, for maps with an authored
+        /// <see cref="LocationGraph"/>. Null for simulated expeditions and for maps with no location graph,
+        /// which still just march outer/center/deep by <see cref="ZoneId"/> alone.
+        /// </summary>
+        public string LocationId { get; }
+
+        /// <summary>
+        /// How many nodes the party has walked into so far this trip, across every location (never reset by a
+        /// location change, only by a brand new expedition) - the start node of the first location counts as
+        /// 1. 0 for a simulated expedition, which has no nodes at all. Checked against
+        /// <see cref="ExpeditionRules.MaxNodesPerExpedition"/>: once reached, the party can still finish
+        /// working through wherever they already are (walking the rest of a route is never blocked - every
+        /// node has a path on to that location's exit, by construction), but cannot push on to a further zone
+        /// or location. Extract is always available regardless.
+        /// </summary>
+        public int NodesVisited { get; }
+
         public Expedition With(string zoneId = null, long? zoneStartedAt = null, string status = null,
             string outcome = null, bool keepOutcome = true, Route route = null, bool keepRoute = true,
             Dictionary<string, List<string>> loot = null, List<string> discarded = null, List<string> log = null,
-            RngState rngState = null)
+            RngState rngState = null, string locationId = null, bool keepLocation = true, int? nodesVisited = null)
         {
             IReadOnlyDictionary<string, IReadOnlyList<string>> lootValue = loot == null
                 ? Loot.ToDictionary(pair => pair.Key, pair => (IReadOnlyList<string>)pair.Value.ToList())
@@ -136,7 +158,9 @@ namespace Safehouse.Core
                 zoneStartedAt ?? ZoneStartedAt, status ?? Status,
                 keepOutcome ? (outcome ?? Outcome) : outcome,
                 lootValue, discarded ?? Discarded, log ?? Log, rngState ?? RngState, Mode,
-                keepRoute ? (route ?? Route) : route);
+                keepRoute ? (route ?? Route) : route,
+                keepLocation ? (locationId ?? LocationId) : locationId,
+                nodesVisited ?? NodesVisited);
         }
     }
 
@@ -171,14 +195,21 @@ namespace Safehouse.Core
             return (long)now;
         }
 
+        /// <summary>At most this many nodes (across every location, the whole trip through) in a single
+        /// direct-play expedition. A pacing choice, not a game rule - raise it freely. 40 is roughly a
+        /// comfortable 3-4 average locations' worth (each location has 8-12 nodes, see raid_nodes.json's
+        /// nodes_per_zone), without hard-coding a location count the way an earlier version of this did.</summary>
+        public const int MaxNodesPerExpedition = 40;
+
         public static Expedition Create(string mapId, bool night, IReadOnlyList<string> party, double now,
-            string mode, Route route, PythonRandom random)
+            string mode, Route route, PythonRandom random, string zoneId = null, string locationId = null)
         {
             var started = Timestamp(now);
             var state = random.GetState();
-            return new Expedition(Guid.NewGuid().ToString("N"), mapId, night, party, started, MapZones.Ids[0], started,
-                ExpeditionStatus.Active, null, new Dictionary<string, IReadOnlyList<string>>(), new string[0],
-                new string[0], new RngState(state.Version, state.Words, state.Index, state.GaussNext), mode, route);
+            return new Expedition(Guid.NewGuid().ToString("N"), mapId, night, party, started, zoneId ?? MapZones.Ids[0],
+                started, ExpeditionStatus.Active, null, new Dictionary<string, IReadOnlyList<string>>(), new string[0],
+                new string[0], new RngState(state.Version, state.Words, state.Index, state.GaussNext), mode, route,
+                locationId, mode == ExpeditionModes.Direct ? 1 : 0);
         }
 
         public static bool Due(Expedition expedition, double now) =>
@@ -186,7 +217,26 @@ namespace Safehouse.Core
             && expedition.Status == ExpeditionStatus.Active
             && Timestamp(now) >= expedition.ZoneStartedAt + ZoneSeconds(expedition.ZoneId, expedition.Night);
 
-        public static bool CanGoDeeper(Expedition expedition) => expedition.ZoneId != MapZones.Ids[MapZones.Ids.Count - 1];
+        /// <summary>
+        /// Whether there is somewhere further to go: not at <see cref="MaxNodesPerExpedition"/> yet (direct play
+        /// only; a simulated trip has no nodes), and then, for a map with an authored <see cref="LocationGraph"/>
+        /// (pass <paramref name="map"/>), whichever locations the current one connects to; otherwise simply
+        /// "not at the last of outer/center/deep yet".
+        /// </summary>
+        public static bool CanGoDeeper(Expedition expedition, MapDefinition map = null)
+        {
+            if (expedition.Mode == ExpeditionModes.Direct && expedition.NodesVisited >= MaxNodesPerExpedition)
+            {
+                return false;
+            }
+
+            if (map?.Locations != null && expedition.LocationId != null)
+            {
+                return map.Locations.Get(expedition.LocationId).ConnectsTo.Count > 0;
+            }
+
+            return expedition.ZoneId != MapZones.Ids[MapZones.Ids.Count - 1];
+        }
 
         public static Fighter BuildFighter(Profile profile, GearData gear)
         {
@@ -300,7 +350,8 @@ namespace Safehouse.Core
             var next = expedition.With(route: expedition.Route.With(currentNodeId: nodeId), log: Trim(log),
                 rngState: new RngState(state.Version, state.Words, state.Index, state.GaussNext),
                 status: wiped ? ExpeditionStatus.Completed : expedition.Status,
-                outcome: wiped ? "wiped" : expedition.Outcome);
+                outcome: wiped ? "wiped" : expedition.Outcome,
+                nodesVisited: expedition.NodesVisited + 1);
             return (next, updated);
         }
 
@@ -383,6 +434,13 @@ namespace Safehouse.Core
             return (next, updated);
         }
 
+        /// <summary>
+        /// Leaving the zone's exit node: "extract" ends the trip. Anything else is where to go next - a
+        /// neighboring location's id, for a map with a <see cref="LocationGraph"/> (must be one of the current
+        /// location's <see cref="MapLocation.ConnectsTo"/>), or the literal "deeper" for a map with none, which
+        /// still just steps to the next of outer/center/deep. Refused, changing nothing, if that destination is
+        /// not actually reachable from here.
+        /// </summary>
         public static (Expedition Expedition, Dictionary<string, Fighter> Fighters) LeaveZone(
             Expedition expedition, string action, MapDefinition map, RaidRules rules, GearData gear,
             CombatNumbers numbers, IReadOnlyDictionary<string, Fighter> fighters)
@@ -393,14 +451,11 @@ namespace Safehouse.Core
                 throw new ValidationException("The party must be at the zone's exit node to leave it.");
             }
 
-            if (action == "deeper" && !CanGoDeeper(expedition))
+            string nextZoneId = null;
+            string nextLocationId = null;
+            if (action != "extract")
             {
-                throw new ValidationException("There is no deeper zone on this map. Extract instead.");
-            }
-
-            if (action != "deeper" && action != "extract")
-            {
-                throw new ValidationException("action must be 'deeper' or 'extract'.");
+                (nextZoneId, nextLocationId) = Destination(expedition, action, map);
             }
 
             var ended = CombatRules.ApplyZoneEnd(fighters.ToDictionary(pair => pair.Key, pair => pair.Value.Copy()), numbers);
@@ -416,13 +471,47 @@ namespace Safehouse.Core
                 return (expedition.With(status: ExpeditionStatus.AwaitingChoice, log: Trim(log)), ended.Fighters);
             }
 
-            var nextZoneId = MapZones.Ids[MapZones.Ids.ToList().IndexOf(expedition.ZoneId) + 1];
             var random = expedition.RngState.Restore();
             var route = RaidMaps.Generate(map.Zone(nextZoneId, expedition.Night), expedition.Night, rules, gear, numbers, random);
             var state = random.GetState();
             var next = expedition.With(zoneId: nextZoneId, route: route, log: Trim(log),
-                rngState: new RngState(state.Version, state.Words, state.Index, state.GaussNext));
+                rngState: new RngState(state.Version, state.Words, state.Index, state.GaussNext),
+                locationId: nextLocationId, keepLocation: nextLocationId != null,
+                nodesVisited: expedition.NodesVisited + 1);
             return (next, ended.Fighters);
+        }
+
+        /// <summary>The zone and (when the map has a location graph) location that <paramref name="action"/> leads to.</summary>
+        private static (string ZoneId, string LocationId) Destination(Expedition expedition, string action, MapDefinition map)
+        {
+            if (expedition.NodesVisited >= MaxNodesPerExpedition)
+            {
+                throw new ValidationException("The party has pushed as far as they safely can this trip. Extract instead.");
+            }
+
+            if (map.Locations != null && expedition.LocationId != null)
+            {
+                var current = map.Locations.Get(expedition.LocationId);
+                if (!current.ConnectsTo.Contains(action))
+                {
+                    throw new ValidationException($"{action} is not reachable from {current.Name}.");
+                }
+
+                var destination = map.Locations.Get(action);
+                return (destination.ZoneId, destination.LocationId);
+            }
+
+            if (action != "deeper")
+            {
+                throw new ValidationException("action must be 'deeper' or 'extract'.");
+            }
+
+            if (!CanGoDeeper(expedition))
+            {
+                throw new ValidationException("There is no deeper zone on this map. Extract instead.");
+            }
+
+            return (MapZones.Ids[MapZones.Ids.ToList().IndexOf(expedition.ZoneId) + 1], null);
         }
 
         public static Expedition Continue(Expedition expedition, double now)

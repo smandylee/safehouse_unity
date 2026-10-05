@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "note": "Unity-only, not from the game and not copied from the Python build: named places within each map, layered on the real outer/center/deep loot/pacing/combat data those zones already carry (see maps.json). Loot, engagement range and bosses still come entirely from the zone a location's zone_id points at; a location only adds a name and a travel choice. connects_to is forward-only, same as the node routes within one location - once the party leaves, that location is behind them. A location with no connects_to is a dead end: extract is the only choice there. Keep zone_id in the same loose order (outer before center before deep) a map's locations are listed in; nothing enforces it, but it reads like the map.",
+  "maps": {
+    "customs": {
+      "entry_location_id": "gas-station",
+      "locations": [
+        {"location_id": "gas-station", "name": "Gas Station", "zone_id": "outer", "connects_to": ["old-gas-station", "dorms-perimeter"]},
+        {"location_id": "old-gas-station", "name": "Old Gas Station", "zone_id": "outer", "connects_to": ["dorms-perimeter"]},
+        {"location_id": "dorms-perimeter", "name": "Dorms", "zone_id": "center", "connects_to": ["trailer-park", "military-base"]},
+        {"location_id": "trailer-park", "name": "Trailer Park", "zone_id": "center", "connects_to": ["military-base", "zb-013"]},
+        {"location_id": "military-base", "name": "Military Base", "zone_id": "deep", "connects_to": []},
+        {"location_id": "zb-013", "name": "ZB-013", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "woods": {
+      "entry_location_id": "sawmill-road",
+      "locations": [
+        {"location_id": "sawmill-road", "name": "Sawmill Road", "zone_id": "outer", "connects_to": ["lumber-mill", "old-station"]},
+        {"location_id": "west-fence", "name": "West Fence", "zone_id": "outer", "connects_to": ["lumber-mill"]},
+        {"location_id": "lumber-mill", "name": "Lumber Mill", "zone_id": "center", "connects_to": ["bunker", "scav-camp"]},
+        {"location_id": "old-station", "name": "Old Station", "zone_id": "center", "connects_to": ["scav-camp"]},
+        {"location_id": "bunker", "name": "Bunker", "zone_id": "deep", "connects_to": []},
+        {"location_id": "scav-camp", "name": "Scav Camp", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "factory": {
+      "entry_location_id": "loading-yard",
+      "locations": [
+        {"location_id": "loading-yard", "name": "Loading Yard", "zone_id": "outer", "connects_to": ["factory-floor"]},
+        {"location_id": "factory-floor", "name": "Factory Floor", "zone_id": "center", "connects_to": ["boiler-room"]},
+        {"location_id": "boiler-room", "name": "Boiler Room", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "interchange": {
+      "entry_location_id": "parking-lot",
+      "locations": [
+        {"location_id": "parking-lot", "name": "Parking Lot", "zone_id": "outer", "connects_to": ["mall-concourse"]},
+        {"location_id": "outer-ring-road", "name": "Outer Ring Road", "zone_id": "outer", "connects_to": ["loading-docks"]},
+        {"location_id": "mall-concourse", "name": "Mall Concourse", "zone_id": "center", "connects_to": ["tech-store", "security-office"]},
+        {"location_id": "loading-docks", "name": "Loading Docks", "zone_id": "center", "connects_to": ["security-office"]},
+        {"location_id": "tech-store", "name": "Tech Store", "zone_id": "deep", "connects_to": []},
+        {"location_id": "security-office", "name": "Security Office", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "shoreline": {
+      "entry_location_id": "pier",
+      "locations": [
+        {"location_id": "pier", "name": "Pier", "zone_id": "outer", "connects_to": ["resort-grounds"]},
+        {"location_id": "village", "name": "Village", "zone_id": "outer", "connects_to": ["resort-grounds", "tunnel"]},
+        {"location_id": "resort-grounds", "name": "Resort Grounds", "zone_id": "center", "connects_to": ["resort-interior"]},
+        {"location_id": "tunnel", "name": "Tunnel", "zone_id": "center", "connects_to": ["pumping-station"]},
+        {"location_id": "resort-interior", "name": "Resort Interior", "zone_id": "deep", "connects_to": []},
+        {"location_id": "pumping-station", "name": "Pumping Station", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "reserve": {
+      "entry_location_id": "treeline",
+      "locations": [
+        {"location_id": "treeline", "name": "Treeline", "zone_id": "outer", "connects_to": ["train-yard"]},
+        {"location_id": "checkpoint", "name": "Checkpoint", "zone_id": "outer", "connects_to": ["barracks"]},
+        {"location_id": "train-yard", "name": "Train Yard", "zone_id": "center", "connects_to": ["bunker-entrance"]},
+        {"location_id": "barracks", "name": "Barracks", "zone_id": "center", "connects_to": ["bunker-entrance", "command-bunker"]},
+        {"location_id": "bunker-entrance", "name": "Bunker Entrance", "zone_id": "deep", "connects_to": ["command-bunker"]},
+        {"location_id": "command-bunker", "name": "Command Bunker", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "lighthouse": {
+      "entry_location_id": "beach",
+      "locations": [
+        {"location_id": "beach", "name": "Beach", "zone_id": "outer", "connects_to": ["fishing-village"]},
+        {"location_id": "cliffside", "name": "Cliffside", "zone_id": "outer", "connects_to": ["water-treatment"]},
+        {"location_id": "fishing-village", "name": "Fishing Village", "zone_id": "center", "connects_to": ["lighthouse-tower"]},
+        {"location_id": "water-treatment", "name": "Water Treatment", "zone_id": "center", "connects_to": ["rogue-camp"]},
+        {"location_id": "lighthouse-tower", "name": "Lighthouse Tower", "zone_id": "deep", "connects_to": []},
+        {"location_id": "rogue-camp", "name": "Rogue Camp", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "streets-of-tarkov": {
+      "entry_location_id": "back-alleys",
+      "locations": [
+        {"location_id": "back-alleys", "name": "Back Alleys", "zone_id": "outer", "connects_to": ["apartment-block"]},
+        {"location_id": "market-square", "name": "Market Square", "zone_id": "outer", "connects_to": ["construction-site"]},
+        {"location_id": "apartment-block", "name": "Apartment Block", "zone_id": "center", "connects_to": ["office-tower"]},
+        {"location_id": "construction-site", "name": "Construction Site", "zone_id": "center", "connects_to": ["metro-station"]},
+        {"location_id": "office-tower", "name": "Office Tower", "zone_id": "deep", "connects_to": []},
+        {"location_id": "metro-station", "name": "Metro Station", "zone_id": "deep", "connects_to": []}
+      ]
+    },
+    "ground-zero": {
+      "entry_location_id": "checkpoint-perimeter",
+      "locations": [
+        {"location_id": "checkpoint-perimeter", "name": "Checkpoint Perimeter", "zone_id": "outer", "connects_to": ["central-plaza"]},
+        {"location_id": "collapsed-block", "name": "Collapsed Block", "zone_id": "outer", "connects_to": ["school"]},
+        {"location_id": "central-plaza", "name": "Central Plaza", "zone_id": "center", "connects_to": ["underground-passage"]},
+        {"location_id": "school", "name": "School", "zone_id": "center", "connects_to": ["underground-passage"]},
+        {"location_id": "underground-passage", "name": "Underground Passage", "zone_id": "deep", "connects_to": []}
+      ]
+    }
+  }
+}

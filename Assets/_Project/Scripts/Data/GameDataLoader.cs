@@ -29,9 +29,15 @@ namespace Safehouse.Data
         public const string MapsOverrides = "maps_overrides";
         public const string Hideout = "hideout";
 
+        /// <summary>
+        /// Named places within each map to travel between (Dorms, Gas Station, ...) and how they connect.
+        /// Unity-only content, not copied from the Python build: see <see cref="LocationLoader"/>.
+        /// </summary>
+        public const string Locations = "locations";
+
         public static readonly IReadOnlyList<string> All = new[]
         {
-            Items, Traders, Maps, Gear, Containers, Combat, RaidNodes, MapsOverrides, Hideout,
+            Items, Traders, Maps, Gear, Containers, Combat, RaidNodes, MapsOverrides, Hideout, Locations,
         };
     }
 

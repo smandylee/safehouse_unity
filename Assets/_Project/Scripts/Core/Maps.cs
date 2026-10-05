@@ -91,7 +91,7 @@ namespace Safehouse.Core
     public sealed class MapDefinition
     {
         public MapDefinition(string mapId, string name, int raidMinutes, string engagementRange,
-            IReadOnlyList<Zone> zones, IReadOnlyList<Zone> nightZones = null)
+            IReadOnlyList<Zone> zones, IReadOnlyList<Zone> nightZones = null, LocationGraph locations = null)
         {
             MapId = mapId;
             Name = name;
@@ -99,6 +99,7 @@ namespace Safehouse.Core
             EngagementRange = engagementRange;
             Zones = zones;
             NightZones = nightZones ?? new Zone[0];
+            Locations = locations;
         }
 
         public string MapId { get; }
@@ -107,6 +108,16 @@ namespace Safehouse.Core
         public string EngagementRange { get; }
         public IReadOnlyList<Zone> Zones { get; }
         public IReadOnlyList<Zone> NightZones { get; }
+
+        /// <summary>
+        /// The named places within this map to travel between (Dorms, Gas Station, ...), each tagged with
+        /// which of the three zones below backs its loot, pacing and combat numbers. Null for a map with no
+        /// authored locations yet, which falls back to the plain outer/center/deep march.
+        /// </summary>
+        public LocationGraph Locations { get; }
+
+        public MapDefinition WithLocations(LocationGraph locations) =>
+            new MapDefinition(MapId, Name, RaidMinutes, EngagementRange, Zones, NightZones, locations);
 
         public Zone Zone(string zoneId, bool night)
         {
@@ -121,6 +132,132 @@ namespace Safehouse.Core
 
             throw new ValidationException($"{Name} has no {zoneId} zone.");
         }
+    }
+
+    /// <summary>
+    /// One named place within a map (Dorms, Gas Station, ...). Not from the game - invented content, the same
+    /// way raid_nodes.json's node kinds are - layered on top of the real outer/center/deep loot data: a
+    /// location borrows its zone's loot tables, engagement range and bosses, and only adds a name and a
+    /// travel choice. <see cref="ConnectsTo"/> is forward-only, like the node routes within a location: once
+    /// the party leaves, that location is behind them.
+    /// </summary>
+    public sealed class MapLocation
+    {
+        public MapLocation(string locationId, string name, string zoneId, IReadOnlyList<string> connectsTo)
+        {
+            LocationId = Validate.Identifier(locationId, "location_id");
+            Name = Validate.Text(name, "location name", 60);
+            if (!MapZones.Ids.Contains(zoneId))
+            {
+                throw new ValidationException($"{name}: zone_id must be one of {string.Join(", ", MapZones.Ids)}.");
+            }
+
+            ZoneId = zoneId;
+            ConnectsTo = (connectsTo ?? Enumerable.Empty<string>()).ToList();
+        }
+
+        public string LocationId { get; }
+        public string Name { get; }
+        public string ZoneId { get; }
+
+        /// <summary>Locations reachable from this one's exit. Empty means this is a dead end: extract only.</summary>
+        public IReadOnlyList<string> ConnectsTo { get; }
+    }
+
+    /// <summary>A map's named locations and how they connect. One graph per map; <see cref="MapDefinition.Locations"/>.</summary>
+    public sealed class LocationGraph
+    {
+        public LocationGraph(string entryLocationId, IReadOnlyList<MapLocation> locations)
+        {
+            var list = (locations ?? Enumerable.Empty<MapLocation>()).ToList();
+            if (list.Count == 0)
+            {
+                throw new ValidationException("A location graph needs at least one location.");
+            }
+
+            var byId = new Dictionary<string, MapLocation>();
+            foreach (var location in list)
+            {
+                if (!byId.TryAdd(location.LocationId, location))
+                {
+                    throw new ValidationException($"Duplicate location_id: {location.LocationId}.");
+                }
+            }
+
+            foreach (var location in list)
+            {
+                foreach (var target in location.ConnectsTo)
+                {
+                    if (!byId.ContainsKey(target))
+                    {
+                        throw new ValidationException(
+                            $"{location.Name} connects to unknown location: {target}.");
+                    }
+
+                    if (target == location.LocationId)
+                    {
+                        throw new ValidationException($"{location.Name} cannot connect to itself.");
+                    }
+                }
+            }
+
+            if (!byId.ContainsKey(entryLocationId))
+            {
+                throw new ValidationException($"entry_location_id {entryLocationId} is not one of this map's locations.");
+            }
+
+            CheckNoCycle(list);
+            EntryLocationId = entryLocationId;
+            Locations = byId;
+        }
+
+        /// <summary>
+        /// ConnectsTo must only ever lead forward: without this, a future edit that links two locations back
+        /// to each other would let a party bounce between them forever, re-rolling a cleared location's loot
+        /// each time. Classic three-colour DFS: a location found still "in progress" (gray) when revisited
+        /// means the path back to it closes a loop.
+        /// </summary>
+        private static void CheckNoCycle(IReadOnlyList<MapLocation> list)
+        {
+            var byId = list.ToDictionary(location => location.LocationId);
+            var state = list.ToDictionary(location => location.LocationId, _ => 0); // 0 white, 1 gray, 2 black
+            foreach (var location in list)
+            {
+                if (state[location.LocationId] == 0)
+                {
+                    Visit(location, byId, state);
+                }
+            }
+        }
+
+        private static void Visit(MapLocation location, IReadOnlyDictionary<string, MapLocation> byId,
+            Dictionary<string, int> state)
+        {
+            state[location.LocationId] = 1;
+            foreach (var targetId in location.ConnectsTo)
+            {
+                if (state[targetId] == 1)
+                {
+                    throw new ValidationException(
+                        $"This location graph has a cycle through {location.Name}. Locations must only lead forward.");
+                }
+
+                if (state[targetId] == 0)
+                {
+                    Visit(byId[targetId], byId, state);
+                }
+            }
+
+            state[location.LocationId] = 2;
+        }
+
+        public string EntryLocationId { get; }
+        public IReadOnlyDictionary<string, MapLocation> Locations { get; }
+
+        public MapLocation Get(string locationId) =>
+            locationId != null && Locations.TryGetValue(locationId, out var location)
+                ? location
+                : throw new ValidationException($"Unknown location: {locationId}.");
     }
 
     public sealed class ContainerRule

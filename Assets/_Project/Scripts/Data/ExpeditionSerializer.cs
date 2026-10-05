@@ -8,7 +8,12 @@ using Safehouse.Core;
 
 namespace Safehouse.Data
 {
-    /// <summary>Expedition files, schema 2. A schema 1 file is a simulated expedition from before direct play existed.</summary>
+    /// <summary>
+    /// Expedition files, schema 4. A schema 1 file is a simulated expedition from before direct play existed; a
+    /// schema 2 file is a direct-play one from before maps had named locations (its location_id is just null -
+    /// it still plays out as a plain outer/center/deep march, since that map's MapDefinition.Locations is too);
+    /// a schema 3 file has a location_id but predates node_visits (the cap on nodes per trip).
+    /// </summary>
     public static class ExpeditionSerializer
     {
         public static byte[] Serialize(Expedition expedition) =>
@@ -47,15 +52,18 @@ namespace Safehouse.Data
                 ["rng_state"] = new JArray { expedition.RngState.Version, words, Gauss(expedition.RngState.GaussNext) },
                 ["mode"] = expedition.Mode,
                 ["route"] = expedition.Route == null ? JValue.CreateNull() : RouteJson(expedition.Route),
+                ["location_id"] = expedition.LocationId == null ? JValue.CreateNull() : new JValue(expedition.LocationId),
+                ["node_visits"] = expedition.NodesVisited,
             };
         }
 
         public static Expedition FromJson(JObject raw)
         {
             var version = raw.Value<int?>("schema_version");
-            if (version != 1 && version != Expedition.SchemaVersion)
+            if (version != 1 && version != 2 && version != 3 && version != Expedition.SchemaVersion)
             {
-                throw new ValidationException($"Expedition file must contain schema_version 1 or {Expedition.SchemaVersion}.");
+                throw new ValidationException(
+                    $"Expedition file must contain schema_version 1, 2, 3 or {Expedition.SchemaVersion}.");
             }
 
             var legacy = version == 1;
@@ -82,6 +90,16 @@ namespace Safehouse.Data
             var route = legacy || raw["route"] == null || raw["route"].Type == JTokenType.Null
                 ? null
                 : ReadRoute((JObject)raw["route"]);
+            // schema 1 and 2 files predate named locations: null plays out as the plain outer/center/deep march.
+            var locationToken = raw["location_id"];
+            var locationId = locationToken == null || locationToken.Type == JTokenType.Null
+                ? null : locationToken.Value<string>();
+            var resumedMode = legacy ? ExpeditionModes.Simulation : raw.Value<string>("mode");
+            // schema < 4 files predate node_visits: a direct-play trip resumes as if just arriving at its
+            // current node, the same count a fresh Create() would give it; a simulated one never had any.
+            var visitsToken = raw["node_visits"];
+            var nodesVisited = visitsToken != null && visitsToken.Type != JTokenType.Null
+                ? visitsToken.Value<int>() : (resumedMode == ExpeditionModes.Direct ? 1 : 0);
             return new Expedition(
                 raw.Value<string>("expedition_id"), raw.Value<string>("map_id"), raw.Value<bool>("night"), party,
                 raw.Value<long>("started_at"), raw.Value<string>("zone_id"), raw.Value<long>("zone_started_at"),
@@ -90,7 +108,7 @@ namespace Safehouse.Data
                 raw["log"].Select(token => token.Value<string>()).ToList(),
                 new RngState(rng[0].Value<int>(), words, sequence[PythonRandom.StateLength].Value<int>(),
                     rng[2].Type == JTokenType.Null ? (double?)null : rng[2].Value<double>()),
-                legacy ? ExpeditionModes.Simulation : raw.Value<string>("mode"), route);
+                resumedMode, route, locationId, nodesVisited);
         }
 
         private static JToken Gauss(double? value) =>

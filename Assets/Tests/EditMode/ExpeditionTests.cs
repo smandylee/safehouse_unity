@@ -142,6 +142,139 @@ namespace Safehouse.Tests
             }
         }
 
+        // ---- named locations (LocationGraph) ----
+
+        private static Route ExitRoute() => new Route("n0", new Dictionary<string, RouteNode>
+        {
+            ["n0"] = new RouteNode("n0", "exit", 1, 0.5, new string[0], false, null, null),
+        });
+
+        private static (MapDefinition Map, GearData Gear, CombatNumbers Combat, RaidRules Rules) CustomsWithLocations()
+        {
+            var catalog = CatalogLoader.Load();
+            var maps = MapLoader.LoadMaps(catalog);
+            LocationLoader.LoadInto(maps);
+            return (maps["customs"], GearLoader.Load(catalog), CombatLoader.Load(), RaidLoader.Load());
+        }
+
+        private static (Expedition Expedition, Dictionary<string, Fighter> Fighters) DirectTrip(
+            MapDefinition map, GearData gear, string zoneId, string locationId)
+        {
+            var profile = Profile.CreateNew(ProfileId(), "Ana");
+            var expedition = ExpeditionRules.Create(map.MapId, false, new[] { profile.ProfileId }, 1_000,
+                ExpeditionModes.Direct, ExitRoute(), PythonRandom.Seed(1), zoneId, locationId);
+            return (expedition, new Dictionary<string, Fighter> { [profile.ProfileId] = ExpeditionRules.BuildFighter(profile, gear) });
+        }
+
+        [Test]
+        public void CanGoDeeperFollowsTheLocationGraphWhenOneIsGiven()
+        {
+            var (map, _, _, _) = CustomsWithLocations();
+            var (atGasStation, _) = DirectTrip(map, GearLoader.Load(CatalogLoader.Load()), "outer", "gas-station");
+            var atDeadEnd = atGasStation.With(locationId: "military-base");
+
+            Assert.IsTrue(ExpeditionRules.CanGoDeeper(atGasStation, map), "gas-station connects onward");
+            Assert.IsFalse(ExpeditionRules.CanGoDeeper(atDeadEnd, map), "military-base is a dead end");
+            Assert.IsTrue(ExpeditionRules.CanGoDeeper(atGasStation), "omitting the map falls back to the old outer/center/deep check");
+        }
+
+        [Test]
+        public void LeavingToAConnectedLocationMovesThereAndRegeneratesTheRoute()
+        {
+            var (map, gear, combat, rules) = CustomsWithLocations();
+            var (expedition, fighters) = DirectTrip(map, gear, "outer", "gas-station");
+
+            var (moved, _) = ExpeditionRules.LeaveZone(expedition, "dorms-perimeter", map, rules, gear, combat, fighters);
+
+            Assert.AreEqual("dorms-perimeter", moved.LocationId);
+            Assert.AreEqual("center", moved.ZoneId);
+            Assert.AreEqual("start", moved.Route.Nodes[moved.Route.StartNodeId].Kind, "a fresh route at the new location");
+        }
+
+        [Test]
+        public void LeavingToALocationThatIsNotConnectedIsRefusedAndChangesNothing()
+        {
+            var (map, gear, combat, rules) = CustomsWithLocations();
+            var (expedition, fighters) = DirectTrip(map, gear, "outer", "gas-station");
+
+            var error = Assert.Throws<ValidationException>(
+                () => ExpeditionRules.LeaveZone(expedition, "zb-013", map, rules, gear, combat, fighters));
+
+            StringAssert.Contains("not reachable", error.Message);
+        }
+
+        [Test]
+        public void ExtractingStillWorksAndTheLocationIsUnchangedUntilAMoveHappens()
+        {
+            var (map, gear, combat, rules) = CustomsWithLocations();
+            var (expedition, fighters) = DirectTrip(map, gear, "outer", "gas-station");
+
+            var (left, _) = ExpeditionRules.LeaveZone(expedition, "extract", map, rules, gear, combat, fighters);
+
+            Assert.AreEqual(ExpeditionStatus.AwaitingChoice, left.Status);
+            Assert.AreEqual("gas-station", left.LocationId);
+        }
+
+        [Test]
+        public void EachLocationChangeCountsTowardsTheTripWideNodeCapButDoesNotSetItsOwnPace()
+        {
+            var (map, gear, combat, rules) = CustomsWithLocations();
+            var (expedition, fighters) = DirectTrip(map, gear, "outer", "gas-station");
+            Assert.AreEqual(1, expedition.NodesVisited, "the entry location's start node counts as the first node");
+
+            var (atOldGasStation, _) = ExpeditionRules.LeaveZone(expedition, "old-gas-station", map, rules, gear, combat, fighters);
+            Assert.AreEqual(2, atOldGasStation.NodesVisited, "arriving at the next location's start node is one more");
+        }
+
+        [Test]
+        public void MovingWithinARouteIsNeverBlockedByTheNodeCapButLeavingToANewLocationIs()
+        {
+            var (map, gear, combat, rules) = CustomsWithLocations();
+            var route = new Route("n0", new Dictionary<string, RouteNode>
+            {
+                ["n0"] = new RouteNode("n0", "start", 0, 0.5, new[] { "n1" }, false, null, null),
+                ["n1"] = new RouteNode("n1", "exit", 1, 0.5, new string[0], false, null, null),
+            });
+            var profile = Profile.CreateNew(ProfileId(), "Ana");
+            var atCap = ExpeditionRules.Create("customs", false, new[] { profile.ProfileId }, 1_000,
+                ExpeditionModes.Direct, route, PythonRandom.Seed(1), "outer", "gas-station")
+                .With(nodesVisited: ExpeditionRules.MaxNodesPerExpedition - 1);
+            var fighters = new Dictionary<string, Fighter> { [profile.ProfileId] = ExpeditionRules.BuildFighter(profile, gear) };
+
+            // Moving within the current location's own route is never blocked - every node has a path on to
+            // that location's exit by construction, so capping Move itself could strand the party mid-route.
+            var (moved, _) = ExpeditionRules.Move(atCap, "n1", map, combat, rules, fighters);
+
+            Assert.AreEqual(ExpeditionRules.MaxNodesPerExpedition, moved.NodesVisited);
+            Assert.AreEqual("n1", moved.Route.CurrentNodeId);
+            Assert.IsFalse(ExpeditionRules.CanGoDeeper(moved, map), "the cap is reached even though gas-station still has neighbors");
+
+            var error = Assert.Throws<ValidationException>(
+                () => ExpeditionRules.LeaveZone(moved, "dorms-perimeter", map, rules, gear, combat, fighters));
+            StringAssert.Contains("pushed as far as they safely can", error.Message);
+            Assert.DoesNotThrow(() => ExpeditionRules.LeaveZone(moved, "extract", map, rules, gear, combat, fighters),
+                "extract is always available, even at the cap");
+        }
+
+        [Test]
+        public void AMapWithNoLocationGraphStillUsesThePlainDeeperAction()
+        {
+            var catalog = CatalogLoader.Load();
+            var map = MapLoader.LoadMaps(catalog)["customs"]; // LocationLoader is deliberately not run here
+            var gear = GearLoader.Load(catalog);
+            var combat = CombatLoader.Load();
+            var rules = RaidLoader.Load();
+            var (expedition, fighters) = DirectTrip(map, gear, null, null); // zoneId defaults to outer, no location
+
+            var (moved, _) = ExpeditionRules.LeaveZone(expedition, "deeper", map, rules, gear, combat, fighters);
+            Assert.AreEqual("center", moved.ZoneId);
+            Assert.IsNull(moved.LocationId);
+
+            var error = Assert.Throws<ValidationException>(
+                () => ExpeditionRules.LeaveZone(expedition, "dorms-perimeter", map, rules, gear, combat, fighters));
+            StringAssert.Contains("'deeper' or 'extract'", error.Message);
+        }
+
         private static (Expedition Expedition, Dictionary<string, Fighter> Fighters) Resolve(LoadedWorld world, Profile profile, int seed)
         {
             var expedition = ExpeditionRules.Create(world.Map.MapId, false, new[] { profile.ProfileId }, 100,

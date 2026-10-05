@@ -141,15 +141,29 @@ namespace Safehouse.Data
                 }
             }
 
+            var map = _maps[mapId];
             var random = PythonRandom.Create();
             Route route = null;
+            string zoneId = null;
+            string locationId = null;
             if (mode == ExpeditionModes.Direct)
             {
-                route = RaidMaps.Generate(_maps[mapId].Zone(MapZones.Ids[0], night), night, _raids, _gear, _combat, random);
+                if (map.Locations != null)
+                {
+                    var entry = map.Locations.Get(map.Locations.EntryLocationId);
+                    zoneId = entry.ZoneId;
+                    locationId = entry.LocationId;
+                }
+                else
+                {
+                    zoneId = MapZones.Ids[0];
+                }
+
+                route = RaidMaps.Generate(map.Zone(zoneId, night), night, _raids, _gear, _combat, random);
             }
 
             var expedition = ExpeditionRules.Create(mapId, night, party.Select(profile => profile.ProfileId).ToList(),
-                now, mode, route, random);
+                now, mode, route, random, zoneId, locationId);
             var updated = party.ToDictionary(profile => profile.ProfileId,
                 profile => profile.With(status: CharacterSheet.OnExpedition));
             Commit(expedition, updated, null);
